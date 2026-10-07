@@ -1,0 +1,77 @@
+@import "../styles/tokens.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: var(--surface);
+  color: var(--text);
+  font-size: 17px;
+  line-height: 1.75;
+  text-align: start;
+}
+
+@media (min-width: 768px) {
+  body {
+    font-size: 18px;
+  }
+}
+
+:focus-visible {
+  outline: 3px solid var(--ink-950);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 6px var(--surface);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer utilities {
+  /* Decorative backgrounds for dark sections. Colors come from the design tokens only. */
+  .bg-aurora {
+    background-image:
+      repeating-radial-gradient(
+        circle at 100% 0%,
+        transparent 0 58px,
+        rgb(255 255 255 / 0.045) 58px 59px
+      ),
+      radial-gradient(60% 55% at 85% 0%, rgb(0 210 255 / 0.2), transparent 65%),
+      radial-gradient(55% 50% at 5% 100%, rgb(0 169 209 / 0.2), transparent 65%),
+      radial-gradient(45% 40% at 50% 55%, rgb(27 47 77 / 0.55), transparent 70%);
+    mask-image: linear-gradient(to bottom, #000 55%, rgb(0 0 0 / 0.55));
+  }
+  .text-gradient {
+    background-image: linear-gradient(90deg, var(--brand), var(--surface));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes grow-y {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}

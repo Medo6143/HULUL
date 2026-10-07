@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HULOL TECH - Home Design Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink-950:#050B14;--ink-900:#0A1628;--ink-800:#0F2038;--ink-700:#1B2F4D;
+  --brand:#00D2FF;--brand-strong:#00A9D1;--brand-soft:#E0F8FF;--wa:#25D366;
+  --surface:#fff;--muted:#F7F9FC;--line:#E2E8F0;--text:#0F172A;--text-muted:#475569;
+  --r-card:16px;--r-ctl:12px;--shadow:0 12px 32px rgb(10 22 40 / .10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'IBM Plex Sans Arabic','Inter',system-ui,sans-serif;color:var(--text);background:var(--surface);line-height:1.75;font-size:17px}
+html[lang=en] body{font-family:'Inter','IBM Plex Sans Arabic',system-ui,sans-serif}
+a{color:inherit;text-decoration:none}
+svg{display:block;flex:none}
+.ic{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.wrap{max-width:1140px;margin-inline:auto;padding-inline:20px}
+:focus-visible{outline:3px solid var(--brand-strong);outline-offset:3px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 26px;border-radius:var(--r-ctl);font:inherit;font-weight:600;font-size:16px;border:1.5px solid transparent;cursor:pointer;transition:transform .18s,background .18s}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:var(--brand);color:var(--ink-950)}
+.btn-primary:hover{background:#33DBFF}
+.btn-ghost{background:transparent;border-color:rgb(255 255 255 / .35);color:#fff}
+.btn-wa{background:var(--wa);color:#04210f}
+.rtl-flip{transform:scaleX(1)}
+[dir=rtl] .rtl-flip{transform:scaleX(-1)}
+
+/* nav */
+nav{position:sticky;top:0;z-index:40;background:rgb(10 22 40 / .94);backdrop-filter:blur(10px);color:#fff}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;height:72px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px}
+.logo img{width:36px;height:36px;object-fit:contain}
+.logo .fallback{display:none;width:36px;height:36px;border-radius:9px;background:var(--brand);color:var(--ink-950);align-items:center;justify-content:center;font-weight:800}
+nav ul{display:flex;gap:28px;list-style:none;font-size:15px;color:#CBD5E1}
+nav ul a:hover{color:#fff}
+.nav-r{display:flex;align-items:center;gap:10px}
+.lang{min-height:40px;padding:0 14px;border-radius:10px;border:1px solid rgb(255 255 255 / .3);background:none;color:#fff;font:inherit;cursor:pointer}
+.nav-r .btn{min-height:40px;padding:0 18px;font-size:14px}
+
+/* hero */
+.hero{background:radial-gradient(900px 420px at 85% -10%,rgb(0 210 255 / .18),transparent),var(--ink-900);color:#fff;padding:84px 0 76px}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgb(0 210 255 / .12);color:var(--brand);padding:6px 14px;border-radius:99px;font-size:14px;margin-bottom:18px}
+.hero h1{font-size:46px;line-height:1.3;margin-bottom:16px}
+.hero h1 em{font-style:normal;color:var(--brand)}
+.hero p.lead{color:#CBD5E1;font-size:18px;max-width:540px;margin-bottom:28px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.promises{display:flex;gap:20px;flex-wrap:wrap;margin-top:24px;font-size:14px;color:#94A3B8}
+.promises span{display:inline-flex;align-items:center;gap:8px}
+.promises .ic{width:18px;height:18px;color:var(--brand)}
+.mock{position:relative;height:340px}
+.browser{position:absolute;inset:0 0 34px 44px;background:#fff;border-radius:14px;box-shadow:0 30px 60px rgb(0 0 0 / .45);overflow:hidden}
+.browser .bar{height:30px;background:#E8EDF4;display:flex;gap:6px;align-items:center;padding-inline:12px}
+.browser .bar b{width:9px;height:9px;border-radius:50%;background:#CBD5E1}
+.browser .body{padding:18px;display:grid;gap:10px}
+.l{height:12px;border-radius:6px;background:var(--line)}
+.l.a{width:58%;background:linear-gradient(90deg,var(--brand-strong),var(--brand))}
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.cards3 div{height:74px;border-radius:10px;background:var(--muted);border:1px solid var(--line)}
+.phone{position:absolute;bottom:0;inset-inline-start:0;width:122px;height:236px;background:var(--ink-800);border:5px solid var(--ink-700);border-radius:24px;box-shadow:0 20px 40px rgb(0 0 0 / .5);padding:14px 10px;display:grid;gap:8px;align-content:start}
+.phone div{height:34px;border-radius:8px;background:var(--ink-700)}
+.phone div:first-child{height:64px;background:linear-gradient(135deg,var(--brand-strong),var(--brand))}
+.note-tag{position:absolute;inset-inline-end:8px;bottom:0;font-size:12px;color:#94A3B8}
+
+/* sections */
+section{padding:88px 0}
+.alt{background:var(--muted)}
+.dark{background:var(--ink-900);color:#fff}
+.sh{text-align:center;max-width:640px;margin:0 auto 48px}
+.sh small{color:var(--brand-strong);font-weight:600}
+.dark .sh small{color:var(--brand)}
+.sh h2{font-size:34px;line-height:1.35;margin:6px 0 10px}
+.sh p{color:var(--text-muted)}
+.dark .sh p{color:#CBD5E1}
+
+.trust{background:#fff;border-bottom:1px solid var(--line)}
+.trust .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding-block:28px;text-align:center}
+.trust b{display:block;font-size:24px;color:var(--ink-900)}
+.trust span{color:var(--text-muted);font-size:14px}
+.ph{background:repeating-linear-gradient(45deg,#FFF6D6,#FFF6D6 8px,#FFFBEA 8px,#FFFBEA 16px);border:1px dashed #D6B656;border-radius:8px;padding:2px 8px;font-size:12px;color:#7A5B00;display:inline-block}
+
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r-card);padding:28px;transition:.2s}
+.card:hover{box-shadow:var(--shadow);transform:translateY(-4px)}
+.ico{width:54px;height:54px;border-radius:14px;display:grid;place-items:center;background:var(--brand-soft);color:var(--ink-900);margin-bottom:16px}
+.ico .ic{width:26px;height:26px}
+.card h3{font-size:20px;margin-bottom:6px}
+.card p{color:var(--text-muted);font-size:15px;margin-bottom:12px}
+.card ul{list-style:none;display:grid;gap:8px;margin-bottom:16px;font-size:15px}
+.card li{display:flex;gap:10px;align-items:flex-start}
+.card li .ic{width:18px;height:18px;color:var(--brand-strong);margin-top:5px}
+.link{display:inline-flex;gap:8px;align-items:center;color:var(--brand-strong);font-weight:600}
+.link .ic{width:18px;height:18px}
+
+.work .img{height:190px;border-radius:12px;margin-bottom:14px;display:grid;place-items:center;color:#fff;font-weight:700}
+.work .c1{background:linear-gradient(135deg,var(--ink-900),#0b5566)}
+.work .c2{background:linear-gradient(135deg,var(--ink-800),var(--ink-700))}
+.work .c3{background:linear-gradient(135deg,#0b5566,var(--brand-strong))}
+.work small{color:var(--text-muted)}
+.work .res{font-weight:700;color:var(--ink-900);margin-top:6px}
+
+.stars{display:flex;gap:2px;color:#F59E0B}
+.stars .ic{width:18px;height:18px;fill:#F59E0B;stroke:#F59E0B}
+.quote{margin:12px 0 16px}
+.who{display:flex;gap:12px;align-items:center;font-size:14px}
+.who i{width:44px;height:44px;border-radius:50%;background:var(--ink-900);color:var(--brand);display:grid;place-items:center;font-style:normal;font-weight:700}
+.who span{display:block;color:var(--text-muted);font-size:13px}
+
+.journey{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;counter-reset:j;position:relative}
+.step{background:var(--ink-800);border:1px solid var(--ink-700);border-radius:var(--r-card);padding:22px;position:relative}
+.step::before{counter-increment:j;content:counter(j);display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--brand);color:var(--ink-950);font-weight:700;margin-bottom:12px}
+.step h3{font-size:18px;margin-bottom:6px}
+.step p{color:#CBD5E1;font-size:14px;line-height:1.7}
+.step .sla{margin-top:12px;display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--brand)}
+.step .sla .ic{width:16px;height:16px}
+
+.cost{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.cost .card{text-align:start}
+
+.consult .wrap{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
+.consult h2{font-size:32px;margin-bottom:10px}
+.consult .opts{display:grid;gap:12px;margin:20px 0}
+.opt{display:flex;gap:14px;align-items:center;background:rgb(255 255 255 / .06);border:1px solid rgb(255 255 255 / .12);border-radius:12px;padding:14px 16px}
+.opt .ic{color:var(--brand)}
+form{background:#fff;color:var(--text);border-radius:var(--r-card);padding:28px;display:grid;gap:14px;box-shadow:var(--shadow)}
+.steps-bar{display:flex;gap:8px}
+.steps-bar i{flex:1;height:5px;border-radius:5px;background:var(--line)}
+.steps-bar i.on{background:var(--brand-strong)}
+label{font-size:14px;font-weight:600;display:grid;gap:6px}
+input,select,textarea{font:inherit;width:100%;min-height:48px;padding:10px 14px;border:1.5px solid var(--line);border-radius:var(--r-ctl);background:#fff;color:var(--text)}
+textarea{min-height:90px}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--brand-strong);box-shadow:0 0 0 3px rgb(0 169 209 / .2)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.phone-f{display:flex;gap:8px;direction:ltr}
+.phone-f span{display:grid;place-items:center;padding:0 14px;border:1.5px solid var(--line);border-radius:var(--r-ctl);background:var(--muted);font-weight:600}
+.phone-f input{direction:ltr;text-align:start}
+.consent{display:flex;gap:10px;align-items:flex-start;font-weight:400;font-size:13px;color:var(--text-muted)}
+.consent input{width:20px;min-height:20px;margin-top:3px}
+.hint{font-size:13px;color:var(--text-muted)}
+.ok{display:none;align-items:center;gap:10px;color:#166534;font-weight:600}
+
+.faq{max-width:780px;margin-inline:auto;display:grid;gap:12px}
+details{background:#fff;border:1px solid var(--line);border-radius:var(--r-ctl);padding:16px 20px}
+summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px;align-items:center}
+summary::-webkit-details-marker{display:none}
+details p{margin-top:10px;color:var(--text-muted);font-size:15px}
+
+.final{background:linear-gradient(135deg,var(--ink-900),#0b5566);color:#fff;text-align:center;padding:72px 0}
+.final h2{font-size:34px;margin-bottom:10px}
+.final .cta{justify-content:center;margin-top:22px}
+footer{background:var(--ink-950);color:#94A3B8;padding:52px 0 26px;font-size:14px}
+footer .wrap{display:grid;grid-template-columns:1.5fr 1fr 1fr 1.2fr;gap:30px}
+footer h4{color:#fff;margin-bottom:10px;font-size:15px}
+footer ul{list-style:none;display:grid;gap:6px}
+.copy{text-align:center;margin-top:30px;border-top:1px solid rgb(255 255 255 / .08);padding-top:18px}
+.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+
+.wafloat{position:fixed;bottom:22px;inset-inline-start:22px;z-index:50;display:flex;align-items:center;gap:10px;background:var(--wa);color:#04210f;padding:13px 20px;border-radius:99px;font-weight:700;box-shadow:0 10px 30px rgb(37 211 102 / .45)}
+.wafloat .ic{fill:#04210f;stroke:none;width:24px;height:24px}
+.cookie{position:fixed;inset-inline:16px;bottom:16px;z-index:60;max-width:560px;margin-inline:auto;background:var(--ink-900);color:#fff;border-radius:var(--r-card);padding:16px 18px;box-shadow:var(--shadow);display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:14px}
+.cookie p{flex:1 1 220px;color:#CBD5E1}
+.cookie .btn{min-height:40px;padding:0 16px;font-size:14px}
+
+@media(prefers-reduced-motion:reduce){.btn,.card{transition:none}}
+@media(max-width:900px){
+  nav ul{display:none}
+  .hero .wrap,.consult .wrap{grid-template-columns:1fr}
+  .hero h1{font-size:32px}
+  .mock{display:none}
+  .grid3,.cost{grid-template-columns:1fr}
+  .journey{grid-template-columns:1fr}
+  .trust .wrap{grid-template-columns:1fr 1fr}
+  footer .wrap{grid-template-columns:1fr 1fr}
+  .row2{grid-template-columns:1fr}
+  section{padding:60px 0}
+  .wafloat span{display:none}.wafloat{padding:14px}
+  .cookie{inset-block-end:84px}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 16.9 6.6 19.9l1-6.1L3.2 9.5l6.1-.9Z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8.5 8.5 0 0 1-12.4 7.5L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12Z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-wa" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.2 14.2c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.3-.7-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.3 0 .5l-.4.6c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.1 1 2 1.3 2.3 1.4.3.1.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3.1.2.1.8-.1 1.4Z"/></symbol>
+</svg>
+
+<nav>
+ <div class="wrap">
+  <a class="logo" href="#top" aria-label="HULOL TECH">
+    <img src="https://hulol-tech.vercel.app/icons/nav-logo.png" alt="HULOL TECH Logo" width="36" height="36" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <span class="fallback">H</span>
+    <span data-ar="حلول تك" data-en="HULOL TECH">حلول تك</span>
+  </a>
+  <ul>
+   <li><a href="#services" data-ar="خدماتنا" data-en="Services">خدماتنا</a></li>
+   <li><a href="#work" data-ar="أعمالنا" data-en="Our work">أعمالنا</a></li>
+   <li><a href="#journey" data-ar="كيف نشتغل" data-en="How we work">كيف نشتغل</a></li>
+   <li><a href="#reviews" data-ar="آراء العملاء" data-en="Reviews">آراء العملاء</a></li>
+  </ul>
+  <div class="nav-r">
+   <button class="lang" id="langBtn" type="button" aria-label="Language">EN</button>
+   <a class="btn btn-primary" href="#consult" data-ar="احجز استشارة مجانية" data-en="Free consultation">احجز استشارة مجانية</a>
+  </div>
+ </div>
+</nav>
+
+<header class="hero" id="top">
+ <div class="wrap">
+  <div>
+   <span class="badge"><svg class="ic"><use href="#i-pin"/></svg><span data-ar="الرياض، المملكة العربية السعودية" data-en="Riyadh, Saudi Arabia">الرياض، المملكة العربية السعودية</span></span>
+   <h1 data-ar="نبني لك <em>موقع وتطبيق وهوية</em> تخلّي عملاءك يجونك من أول يوم" data-en="We build your <em>website, app and brand</em> so customers find you from day one">نبني لك <em>موقع وتطبيق وهوية</em> تخلّي عملاءك يجونك من أول يوم</h1>
+   <p class="lead" data-ar="حيّاك الله. نبدأ معك باستشارة مجانية بدون أي التزام، ونطلّعك بتصور واضح وعرض مكتوب." data-en="Welcome. We start with a free, no-obligation consultation, then give you a clear scope and a written proposal.">حيّاك الله. نبدأ معك باستشارة مجانية بدون أي التزام، ونطلّعك بتصور واضح وعرض مكتوب.</p>
+   <div class="cta">
+    <a class="btn btn-primary" href="#consult"><span data-ar="احجز استشارتك المجانية" data-en="Book your free consultation">احجز استشارتك المجانية</span><svg class="ic rtl-flip"><use href="#i-arrow"/></svg></a>
+    <a class="btn btn-ghost" href="#"><svg class="ic" style="fill:currentColor;stroke:none"><use href="#i-wa"/></svg><span data-ar="كلّمنا على الواتساب" data-en="Chat on WhatsApp">كلّمنا على الواتساب</span></a>
+   </div>
+   <div class="promises">
+    <span><svg class="ic"><use href="#i-clock"/></svg><span data-ar="نرد خلال ساعة عمل" data-en="We reply within 1 business hour">نرد خلال ساعة عمل</span></span>
+    <span><svg class="ic"><use href="#i-check"/></svg><span data-ar="عرض مكتوب مفصّل بعد الاستشارة" data-en="Detailed written proposal after the call">عرض مكتوب مفصّل بعد الاستشارة</span></span>
+    <span><svg class="ic"><use href="#i-check"/></svg><span data-ar="دعم فني بعد التسليم" data-en="Support after delivery">دعم فني بعد التسليم</span></span>
+   </div>
+  </div>
+  <div class="mock" aria-hidden="true">
+   <div class="browser"><div class="bar"><b></b><b></b><b></b></div><div class="body"><div class="l a"></div><div class="l" style="width:86%"></div><div class="l" style="width:70%"></div><div class="cards3"><div></div><div></div><div></div></div></div></div>
+   <div class="phone"><div></div><div></div><div></div><div></div></div>
+   <span class="note-tag" data-ar="يُستبدل بلقطات مشاريعكم الحقيقية" data-en="Replace with real project screenshots">يُستبدل بلقطات مشاريعكم الحقيقية</span>
+  </div>
+ </div>
+</header>
+
+<div class="trust">
+ <div class="wrap">
+  <div><b class="ltr">CR: <span class="ph">XXXXXXXX</span></b><span data-ar="سجل تجاري سعودي" data-en="Saudi commercial registration">سجل تجاري سعودي</span></div>
+  <div><b><span class="ph">XX</span></b><span data-ar="مشروع منفّذ (رقم حقيقي)" data-en="Projects delivered (real number)">مشروع منفّذ (رقم حقيقي)</span></div>
+  <div><b data-ar="ساعة عمل" data-en="1 business hour">ساعة عمل</b><span data-ar="لأول رد على طلبك" data-en="To first reply on your request">لأول رد على طلبك</span></div>
+  <div><b data-ar="الرياض" data-en="Riyadh">الرياض</b><span data-ar="فريق محلي وعنوان وطني" data-en="Local team and national address">فريق محلي وعنوان وطني</span></div>
+ </div>
+</div>
+
+<section id="services">
+ <div class="wrap">
+  <div class="sh"><small data-ar="خدماتنا" data-en="Our services">خدماتنا</small><h2 data-ar="ثلاث خدمات... وكل شي تحتاجه" data-en="Three services. Everything you need.">ثلاث خدمات... وكل شي تحتاجه</h2><p data-ar="نركّز على اللي نتقنه، عشان تطلع النتيجة بأعلى جودة." data-en="We focus on what we do best, so the result is top quality.">نركّز على اللي نتقنه، عشان تطلع النتيجة بأعلى جودة.</p></div>
+  <div class="grid3">
+   <article class="card"><div class="ico"><svg class="ic"><use href="#i-globe"/></svg></div><h3 data-ar="تطوير المواقع" data-en="Web development">تطوير المواقع</h3><p data-ar="مواقع سريعة ومتجاوبة ومهيّأة لمحركات البحث." data-en="Fast, responsive, search-ready websites.">مواقع سريعة ومتجاوبة ومهيّأة لمحركات البحث.</p>
+    <ul><li><svg class="ic"><use href="#i-check"/></svg><span data-ar="مواقع شركات ومتاجر إلكترونية" data-en="Company sites and online stores">مواقع شركات ومتاجر إلكترونية</span></li><li><svg class="ic"><use href="#i-check"/></svg><span data-ar="ربط بوابات الدفع المحلية" data-en="Local payment gateways">ربط بوابات الدفع المحلية</span></li><li><svg class="ic"><use href="#i-check"/></svg><span data-ar="لوحة تحكم عربية سهلة" data-en="Easy Arabic dashboard">لوحة تحكم عربية سهلة</span></li></ul>
+    <a class="link" href="#"><span data-ar="اعرف أكثر" data-en="Learn more">اعرف أكثر</span><svg class="ic rtl-flip"><use href="#i-arrow"/></svg></a></article>
+   <article class="card"><div class="ico"><svg class="ic"><use href="#i-phone"/></svg></div><h3 data-ar="تطبيقات الجوال" data-en="Mobile apps">تطبيقات الجوال</h3><p data-ar="تطبيقات iOS وAndroid بتجربة سلسة." data-en="iOS and Android apps with a smooth experience.">تطبيقات iOS وAndroid بتجربة سلسة.</p>
+    <ul><li><svg class="ic"><use href="#i-check"/></svg><span data-ar="تطبيق واحد لكل المنصات" data-en="One app for both platforms">تطبيق واحد لكل المنصات</span></li><li><svg class="ic"><use href="#i-check"/></svg><span data-ar="إشعارات وربط مع أنظمتك" data-en="Notifications and integrations">إشعارات وربط مع أنظمتك</span></li><li><svg class="ic"><use href="#i-check"/></svg><span data-ar="نشر على المتاجر" data-en="Store publishing">نشر على المتاجر</span></li></ul>
+    <a class="link" href="#"><span data-ar="اعرف أكثر" data-en="Learn more">اعرف أكثر</span><svg class="ic rtl-flip"><use href="#i-arrow"/></svg></a></article>
+   <article class="card"><div class="ico"><svg class="ic"><use href="#i-pen"/></svg></div><h3 data-ar="التصميم والهوية" data-en="Design and branding">التصميم والهوية</h3><p data-ar="تصاميم تُظهر قيمة علامتك من النظرة الأولى." data-en="Design that shows your brand's value at first glance.">تصاميم تُظهر قيمة علامتك من النظرة الأولى.</p>
+    <ul><li><svg class="ic"><use href="#i-check"/></svg><span data-ar="تصميم واجهات المواقع والتطبيقات" data-en="UI/UX for web and apps">تصميم واجهات المواقع والتطبيقات</span></li><li><svg class="ic"><use href="#i-check"/></svg><span data-ar="شعار وهوية بصرية كاملة" data-en="Logo and full identity">شعار وهوية بصرية كاملة</span></li><li><svg class="ic"><use href="#i-check"/></svg><span data-ar="تصاميم السوشيال ميديا" data-en="Social media design">تصاميم السوشيال ميديا</span></li></ul>
+    <a class="link" href="#"><span data-ar="اعرف أكثر" data-en="Learn more">اعرف أكثر</span><svg class="ic rtl-flip"><use href="#i-arrow"/></svg></a></article>
+  </div>
+ </div>
+</section>
+
+<section id="work" class="alt work">
+ <div class="wrap">
+  <div class="sh"><small data-ar="أعمالنا" data-en="Our work">أعمالنا</small><h2 data-ar="مشاريع حقيقية، ونتائج تتقاس" data-en="Real projects, measurable results">مشاريع حقيقية، ونتائج تتقاس</h2><p><span class="ph" data-ar="3 دراسات حالة حقيقية تُضاف هنا" data-en="Add 3 real case studies here">3 دراسات حالة حقيقية تُضاف هنا</span></p></div>
+  <div class="grid3">
+   <article class="card"><div class="img c1">The Grid</div><small data-ar="نظام إدارة مطاعم" data-en="Restaurant management system">نظام إدارة مطاعم</small><h3 style="font-size:18px" data-ar="تبسيط إدارة الفروع وتسريع تجهيز الطلبات" data-en="Simpler branch operations, faster order prep">تبسيط إدارة الفروع وتسريع تجهيز الطلبات</h3><div class="res"><span class="ph" data-ar="الرقم الحقيقي للنتيجة" data-en="Real result metric">الرقم الحقيقي للنتيجة</span></div></article>
+   <article class="card"><div class="img c2"><span data-ar="مشروع 2" data-en="Project 2">مشروع 2</span></div><small data-ar="تطبيق جوال" data-en="Mobile app">تطبيق جوال</small><h3 style="font-size:18px"><span class="ph" data-ar="عنوان المشروع" data-en="Project title">عنوان المشروع</span></h3><div class="res"><span class="ph" data-ar="الرقم الحقيقي للنتيجة" data-en="Real result metric">الرقم الحقيقي للنتيجة</span></div></article>
+   <article class="card"><div class="img c3"><span data-ar="مشروع 3" data-en="Project 3">مشروع 3</span></div><small data-ar="هوية وتصميم" data-en="Brand and design">هوية وتصميم</small><h3 style="font-size:18px"><span class="ph" data-ar="عنوان المشروع" data-en="Project title">عنوان المشروع</span></h3><div class="res"><span class="ph" data-ar="الرقم الحقيقي للنتيجة" data-en="Real result metric">الرقم الحقيقي للنتيجة</span></div></article>
+  </div>
+ </div>
+</section>
+
+<section id="reviews">
+ <div class="wrap">
+  <div class="sh"><small data-ar="آراء عملائنا" data-en="Testimonials">آراء عملائنا</small><h2 data-ar="كلامهم أصدق من كلامنا" data-en="Their words say it best">كلامهم أصدق من كلامنا</h2></div>
+  <div class="grid3">
+   <article class="card"><div class="stars" aria-label="5 / 5"><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg></div><p class="quote" data-ar="نظام إدارة المطاعم وشاشات المطبخ سهّل علينا إدارة الفروع، ووقت تجهيز الطلبات نقص بشكل ملحوظ. نتائج احترافية." data-en="The restaurant system and kitchen displays simplified multi-branch operations and noticeably cut order prep time. Professional results.">نظام إدارة المطاعم وشاشات المطبخ سهّل علينا إدارة الفروع، ووقت تجهيز الطلبات نقص بشكل ملحوظ. نتائج احترافية.</p><div class="who"><i>S</i><div><b data-ar="م. سلطان الشمري" data-en="Eng. Sultan Al-Shammari">م. سلطان الشمري</b><span data-ar="مالك The Grid، الرياض" data-en="Owner, The Grid, Riyadh">مالك The Grid، الرياض</span></div></div></article>
+   <article class="card"><div class="stars"><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg></div><p class="quote"><span class="ph" data-ar="رأي عميل حقيقي ثانٍ" data-en="Second real client quote">رأي عميل حقيقي ثانٍ</span></p><div class="who"><i>?</i><div><b><span class="ph" data-ar="الاسم" data-en="Name">الاسم</span></b><span><span class="ph" data-ar="الشركة، المدينة" data-en="Company, City">الشركة، المدينة</span></span></div></div></article>
+   <article class="card"><div class="stars"><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg><svg class="ic"><use href="#i-star"/></svg></div><p class="quote"><span class="ph" data-ar="رأي عميل حقيقي ثالث" data-en="Third real client quote">رأي عميل حقيقي ثالث</span></p><div class="who"><i>?</i><div><b><span class="ph" data-ar="الاسم" data-en="Name">الاسم</span></b><span><span class="ph" data-ar="الشركة، المدينة" data-en="Company, City">الشركة، المدينة</span></span></div></div></article>
+  </div>
+ </div>
+</section>
+
+<section id="journey" class="dark">
+ <div class="wrap">
+  <div class="sh"><small data-ar="رحلتك معنا" data-en="Your journey with us">رحلتك معنا</small><h2 data-ar="من أول مكالمة إلى ما بعد التسليم" data-en="From the first call to after delivery">من أول مكالمة إلى ما بعد التسليم</h2><p data-ar="تعرف كل مرحلة وكم تاخذ، وتتابع مشروعك خطوة بخطوة." data-en="You know every stage and how long it takes, and follow your project step by step.">تعرف كل مرحلة وكم تاخذ، وتتابع مشروعك خطوة بخطوة.</p></div>
+  <div class="journey">
+   <div class="step"><h3 data-ar="الاستشارة" data-en="Consultation">الاستشارة</h3><p data-ar="نسمعك ونفهم فكرتك وهدفك، ونرسل لك ملخصاً مكتوباً بعد المكالمة." data-en="We listen, understand your idea and goals, and send a written summary after the call.">نسمعك ونفهم فكرتك وهدفك، ونرسل لك ملخصاً مكتوباً بعد المكالمة.</p><span class="sla"><svg class="ic"><use href="#i-clock"/></svg><span data-ar="مجانية، بدون التزام" data-en="Free, no obligation">مجانية، بدون التزام</span></span></div>
+   <div class="step"><h3 data-ar="العرض المكتوب" data-en="Written proposal">العرض المكتوب</h3><p data-ar="نطاق العمل والمخرجات والجدول والسعر بالريال شامل الضريبة ودفعات واضحة." data-en="Scope, deliverables, timeline, price in SAR including VAT, and clear payments.">نطاق العمل والمخرجات والجدول والسعر بالريال شامل الضريبة ودفعات واضحة.</p><span class="sla"><svg class="ic"><use href="#i-clock"/></svg><span data-ar="خلال 3 أيام عمل" data-en="Within 3 business days">خلال 3 أيام عمل</span></span></div>
+   <div class="step"><h3 data-ar="التنفيذ" data-en="Delivery">التنفيذ</h3><p data-ar="تقرير أسبوعي وعرض عند كل مرحلة، وتشوف تقدّم مشروعك أول بأول." data-en="A weekly report and a demo at each stage, so you always see progress.">تقرير أسبوعي وعرض عند كل مرحلة، وتشوف تقدّم مشروعك أول بأول.</p><span class="sla"><svg class="ic"><use href="#i-clock"/></svg><span data-ar="تقرير كل أسبوع" data-en="Weekly report">تقرير كل أسبوع</span></span></div>
+   <div class="step"><h3 data-ar="التسليم" data-en="Handover">التسليم</h3><p data-ar="اختبار قبول معك، وملف تسليم كامل وتدريب لفريقك." data-en="Acceptance testing with you, a full handover pack and training for your team.">اختبار قبول معك، وملف تسليم كامل وتدريب لفريقك.</p><span class="sla"><svg class="ic"><use href="#i-clock"/></svg><span data-ar="خلال 5 أيام من الاعتماد" data-en="Within 5 days of approval">خلال 5 أيام من الاعتماد</span></span></div>
+   <div class="step"><h3 data-ar="الدعم بعد الاستلام" data-en="Support after launch">الدعم بعد الاستلام</h3><p data-ar="فترة ضمان لإصلاح أي ملاحظة، ثم دعم وصيانة بتقارير شهرية." data-en="A warranty period to fix any issue, then support and maintenance with monthly reports.">فترة ضمان لإصلاح أي ملاحظة، ثم دعم وصيانة بتقارير شهرية.</p><span class="sla"><svg class="ic"><use href="#i-clock"/></svg><span data-ar="مدد الرد تؤكدها الإدارة" data-en="Response times to be confirmed">مدد الرد تؤكدها الإدارة</span></span></div>
+  </div>
+ </div>
+</section>
+
+<section class="alt">
+ <div class="wrap">
+  <div class="sh"><small data-ar="التكلفة" data-en="Cost">التكلفة</small><h2 data-ar="كيف نحدد تكلفة مشروعك" data-en="How we price your project">كيف نحدد تكلفة مشروعك</h2><p data-ar="لكل مشروع ظروفه، فنعطيك سعراً مكتوباً بعد ما نفهم احتياجك، مو رقماً عاماً." data-en="Every project is different, so you get a written price after we understand your needs, not a generic number.">لكل مشروع ظروفه، فنعطيك سعراً مكتوباً بعد ما نفهم احتياجك، مو رقماً عاماً.</p></div>
+  <div class="cost">
+   <div class="card"><h3 data-ar="نطاق العمل" data-en="Scope">نطاق العمل</h3><p data-ar="كم صفحة أو شاشة، وكم ميزة، وهل المحتوى جاهز." data-en="How many pages or screens, how many features, and whether content is ready.">كم صفحة أو شاشة، وكم ميزة، وهل المحتوى جاهز.</p></div>
+   <div class="card"><h3 data-ar="التعقيد" data-en="Complexity">التعقيد</h3><p data-ar="الربط مع أنظمة أو بوابات دفع، ولوحات التحكم، ومتطلبات الأمان." data-en="Integrations with systems or payment gateways, dashboards, and security requirements.">الربط مع أنظمة أو بوابات دفع، ولوحات التحكم، ومتطلبات الأمان.</p></div>
+   <div class="card"><h3 data-ar="الوقت" data-en="Timeline">الوقت</h3><p data-ar="الموعد المطلوب للإطلاق، وهل عندك موعد حرج." data-en="Your launch date, and whether you have a critical deadline.">الموعد المطلوب للإطلاق، وهل عندك موعد حرج.</p></div>
+  </div>
+  <p style="text-align:center;margin-top:28px"><a class="btn btn-primary" href="#consult"><span data-ar="احجز استشارتك المجانية" data-en="Book your free consultation">احجز استشارتك المجانية</span></a></p>
+ </div>
+</section>
+
+<section id="consult" class="dark consult">
+ <div class="wrap">
+  <div>
+   <h2 data-ar="استشارة مجانية 30 دقيقة" data-en="Free 30-minute consultation">استشارة مجانية 30 دقيقة</h2>
+   <p style="color:#CBD5E1" data-ar="نوضّح لك كيف تبدأ، بدون أي التزام. اختر الطريقة اللي تريّحك:" data-en="We show you how to start, with no obligation. Pick what suits you:">نوضّح لك كيف تبدأ، بدون أي التزام. اختر الطريقة اللي تريّحك:</p>
+   <div class="opts">
+    <div class="opt"><svg class="ic" style="fill:currentColor;stroke:none"><use href="#i-wa"/></svg><span data-ar="احجز مباشرة عبر الواتساب (أسرع طريقة)" data-en="Book directly on WhatsApp (fastest)">احجز مباشرة عبر الواتساب (أسرع طريقة)</span></div>
+    <div class="opt"><svg class="ic"><use href="#i-mail"/></svg><span data-ar="عبّي النموذج ونرد عليك على الإيميل" data-en="Fill in the form and we reply by email">عبّي النموذج ونرد عليك على الإيميل</span></div>
+   </div>
+   <a class="btn btn-wa" href="#"><svg class="ic"><use href="#i-wa"/></svg><span data-ar="احجز عبر الواتساب" data-en="Book on WhatsApp">احجز عبر الواتساب</span></a>
+  </div>
+  <form id="f" novalidate>
+   <div class="steps-bar" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+   <label><span data-ar="الخدمة المطلوبة" data-en="Service needed">الخدمة المطلوبة</span>
+    <select><option data-ar="موقع إلكتروني" data-en="Website">موقع إلكتروني</option><option data-ar="تطبيق جوال" data-en="Mobile app">تطبيق جوال</option><option data-ar="تصميم وهوية" data-en="Design and branding">تصميم وهوية</option><option data-ar="مو متأكد" data-en="Not sure">مو متأكد</option></select></label>
+   <div class="row2">
+    <label><span data-ar="الاسم" data-en="Name">الاسم</span><input required autocomplete="name"></label>
+    <label><span data-ar="رقم الجوال" data-en="Mobile number">رقم الجوال</span><div class="phone-f"><span>+966</span><input type="tel" inputmode="tel" placeholder="5XXXXXXXX" required autocomplete="tel-national"></div></label>
+   </div>
+   <label><span data-ar="الإيميل (اختياري)" data-en="Email (optional)">الإيميل (اختياري)</span><input type="email" autocomplete="email" style="direction:ltr"></label>
+   <label><span data-ar="ميزانيتك التقريبية (اختياري)" data-en="Approximate budget (optional)">ميزانيتك التقريبية (اختياري)</span>
+    <select><option data-ar="أفضّل أناقشها في الاستشارة" data-en="I prefer to discuss it in the call">أفضّل أناقشها في الاستشارة</option><option data-ar="نطاق 1 (يحدده الفريق)" data-en="Range 1 (set by team)">نطاق 1 (يحدده الفريق)</option><option data-ar="نطاق 2 (يحدده الفريق)" data-en="Range 2 (set by team)">نطاق 2 (يحدده الفريق)</option></select>
+    <span class="hint" data-ar="السؤال اختياري ويساعدنا نقترح لك الحل الأنسب." data-en="Optional. It helps us suggest the best fit.">السؤال اختياري ويساعدنا نقترح لك الحل الأنسب.</span></label>
+   <label class="consent"><input type="checkbox" required><span data-ar="أوافق على معالجة بياناتي للتواصل معي بخصوص طلبي، وفق سياسة الخصوصية." data-en="I agree to the processing of my data to contact me about my request, per the privacy policy.">أوافق على معالجة بياناتي للتواصل معي بخصوص طلبي، وفق سياسة الخصوصية.</span></label>
+   <button class="btn btn-primary" type="submit"><span data-ar="أرسل الطلب" data-en="Send request">أرسل الطلب</span></button>
+   <div class="hint" style="text-align:center" data-ar="نرد عليك خلال ساعة عمل" data-en="We reply within 1 business hour">نرد عليك خلال ساعة عمل</div>
+   <div class="ok" id="ok" role="status"><svg class="ic"><use href="#i-check"/></svg><span data-ar="وصلنا طلبك. بيتواصل معك أحد من فريقنا قريباً." data-en="We received your request. Someone from our team will contact you soon.">وصلنا طلبك. بيتواصل معك أحد من فريقنا قريباً.</span></div>
+  </form>
+ </div>
+</section>
+
+<section>
+ <div class="wrap">
+  <div class="sh"><small data-ar="أسئلة شائعة" data-en="FAQ">أسئلة شائعة</small><h2 data-ar="قبل ما تبدأ" data-en="Before you start">قبل ما تبدأ</h2></div>
+  <div class="faq">
+   <details><summary><span data-ar="هل الاستشارة مجانية فعلاً؟" data-en="Is the consultation really free?">هل الاستشارة مجانية فعلاً؟</span><svg class="ic"><use href="#i-plus"/></svg></summary><p data-ar="نعم، 30 دقيقة بدون أي التزام، وتطلع منها بتصور واضح وملخص مكتوب." data-en="Yes. 30 minutes with no obligation, and you leave with a clear picture and a written summary.">نعم، 30 دقيقة بدون أي التزام، وتطلع منها بتصور واضح وملخص مكتوب.</p></details>
+   <details><summary><span data-ar="كم تاخذ المدة من الطلب لين الإطلاق؟" data-en="How long from request to launch?">كم تاخذ المدة من الطلب لين الإطلاق؟</span><svg class="ic"><use href="#i-plus"/></svg></summary><p><span class="ph" data-ar="تؤكدها الإدارة بمدد واقعية لكل خدمة" data-en="To be confirmed by management with realistic timelines per service">تؤكدها الإدارة بمدد واقعية لكل خدمة</span></p></details>
+   <details><summary><span data-ar="هل السعر نهائي أو يتغير؟" data-en="Is the price final or can it change?">هل السعر نهائي أو يتغير؟</span><svg class="ic"><use href="#i-plus"/></svg></summary><p data-ar="السعر في العرض المكتوب محدد بالنطاق المتفق عليه. أي إضافة خارج النطاق تُعرض عليك أولاً وتوافق عليها قبل التنفيذ." data-en="The price in the written proposal is fixed for the agreed scope. Anything outside it is quoted first and needs your approval.">السعر في العرض المكتوب محدد بالنطاق المتفق عليه. أي إضافة خارج النطاق تُعرض عليك أولاً وتوافق عليها قبل التنفيذ.</p></details>
+   <details><summary><span data-ar="وش يصير بعد التسليم؟" data-en="What happens after delivery?">وش يصير بعد التسليم؟</span><svg class="ic"><use href="#i-plus"/></svg></summary><p data-ar="فترة ضمان لإصلاح أي ملاحظة، ثم تقدر تشترك في باقة دعم وصيانة بتقارير شهرية." data-en="A warranty period to fix any issue, then you can subscribe to a support and maintenance plan with monthly reports.">فترة ضمان لإصلاح أي ملاحظة، ثم تقدر تشترك في باقة دعم وصيانة بتقارير شهرية.</p></details>
+  </div>
+ </div>
+</section>
+
+<section class="final">
+ <div class="wrap">
+  <h2 data-ar="جاهز تبدأ مشروعك؟" data-en="Ready to start your project?">جاهز تبدأ مشروعك؟</h2>
+  <p style="color:#CBD5E1" data-ar="خلّنا نحوّل فكرتك لمنتج يشتغل في السوق السعودي." data-en="Let's turn your idea into a product that works in the Saudi market.">خلّنا نحوّل فكرتك لمنتج يشتغل في السوق السعودي.</p>
+  <div class="cta"><a class="btn btn-primary" href="#consult"><span data-ar="ابدأ مشروعك" data-en="Start your project">ابدأ مشروعك</span></a><a class="btn btn-wa" href="#"><svg class="ic"><use href="#i-wa"/></svg><span data-ar="واتساب" data-en="WhatsApp">واتساب</span></a></div>
+ </div>
+</section>
+
+<footer>
+ <div class="wrap">
+  <div><div class="logo" style="color:#fff;margin-bottom:12px"><img src="https://hulol-tech.vercel.app/icons/nav-logo.png" alt="" width="36" height="36" onerror="this.style.display='none'"><span data-ar="حلول تك" data-en="HULOL TECH">حلول تك</span></div><p data-ar="شريكك التقني الأول في السعودية. الرياض، المملكة العربية السعودية." data-en="Your first technical partner in Saudi Arabia. Riyadh, KSA.">شريكك التقني الأول في السعودية. الرياض، المملكة العربية السعودية.</p></div>
+  <div><h4 data-ar="الخدمات" data-en="Services">الخدمات</h4><ul><li data-ar="تطوير المواقع" data-en="Web development">تطوير المواقع</li><li data-ar="تطبيقات الجوال" data-en="Mobile apps">تطبيقات الجوال</li><li data-ar="التصميم والهوية" data-en="Design and branding">التصميم والهوية</li></ul></div>
+  <div><h4 data-ar="الشركة" data-en="Company">الشركة</h4><ul><li data-ar="من نحن" data-en="About">من نحن</li><li data-ar="الخصوصية" data-en="Privacy">الخصوصية</li><li data-ar="الشروط" data-en="Terms">الشروط</li><li data-ar="ملفات الكوكيز" data-en="Cookies">ملفات الكوكيز</li></ul></div>
+  <div><h4 data-ar="تواصل" data-en="Contact">تواصل</h4><ul><li><span class="ltr ph">+966 5X XXX XXXX</span></li><li><span class="ltr ph">hello@your-domain</span></li><li><span class="ph" data-ar="السجل التجاري، رقم الضريبة، العنوان الوطني" data-en="CR, VAT number, national address">السجل التجاري، رقم الضريبة، العنوان الوطني</span></li></ul></div>
+ </div>
+ <div class="copy">2026 HULOL TECH</div>
+</footer>
+
+<a class="wafloat" href="#" aria-label="WhatsApp"><svg class="ic"><use href="#i-wa"/></svg><span data-ar="تواصل معنا" data-en="Chat with us">تواصل معنا</span></a>
+
+<div class="cookie" id="cookie" role="dialog" aria-label="Cookies">
+ <p data-ar="نستخدم ملفات ضرورية لتشغيل الموقع، وملفات تحليلات وتسويق بموافقتك فقط." data-en="We use essential cookies to run the site, and analytics and marketing cookies only with your consent.">نستخدم ملفات ضرورية لتشغيل الموقع، وملفات تحليلات وتسويق بموافقتك فقط.</p>
+ <button class="btn btn-primary" type="button" id="ck-ok"><span data-ar="أوافق" data-en="Accept">أوافق</span></button>
+ <button class="btn btn-ghost" type="button" id="ck-no"><span data-ar="الضرورية فقط" data-en="Essential only">الضرورية فقط</span></button>
+</div>
+
+<script>
+var lang='ar';
+function apply(l){
+  lang=l;
+  document.documentElement.lang=l;
+  document.documentElement.dir=l==='ar'?'rtl':'ltr';
+  document.querySelectorAll('[data-ar]').forEach(function(e){e.innerHTML=e.getAttribute('data-'+l)});
+  document.getElementById('langBtn').textContent=l==='ar'?'EN':'AR';
+}
+document.getElementById('langBtn').onclick=function(){apply(lang==='ar'?'en':'ar')};
+document.getElementById('f').onsubmit=function(e){e.preventDefault();document.getElementById('ok').style.display='flex';};
+function hideCookie(){document.getElementById('cookie').style.display='none'}
+document.getElementById('ck-ok').onclick=hideCookie;
+document.getElementById('ck-no').onclick=hideCookie;
+</script>
+</body>
+</html>

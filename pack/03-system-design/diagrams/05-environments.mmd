@@ -1,0 +1,4 @@
+flowchart LR
+    DEV[Local<br/>Firebase Emulator] --> PR[Pull Request<br/>Vercel Preview + staging Firebase]
+    PR --> MAIN[main branch<br/>protected]
+    MAIN --> PROD[Production<br/>Vercel + prod Firebase]

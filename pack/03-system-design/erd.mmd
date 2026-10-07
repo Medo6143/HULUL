@@ -1,0 +1,295 @@
+erDiagram
+    ADMIN_USER {
+        string uid PK
+        string name
+        string email
+        string role "owner | agent"
+        boolean active
+        timestamp created_at
+    }
+    CLIENT {
+        string id PK "equals auth uid when portal enabled"
+        string company_name
+        string contact_name
+        string phone "E.164"
+        string email
+        string cr_number "commercial registration"
+        string vat_number
+        string city
+        string segment "sme | startup | agency | enterprise"
+        timestamp created_at
+    }
+    LEAD {
+        string id PK
+        string type "project | consultation"
+        string segment
+        string service "web | mobile | design | unsure"
+        string name
+        string phone "E.164"
+        string email
+        string preferred_contact "whatsapp | call | email"
+        string business_type
+        string budget_range "optional bucket, not a price"
+        string timeline
+        string description
+        string locale "ar | en"
+        string status "new | contacted | consultation | proposal | negotiation | won | lost | parked"
+        string lost_reason
+        string assigned_to FK
+        string client_id FK "set when won"
+        timestamp first_response_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    LEAD_SOURCE {
+        string lead_id PK, FK
+        string utm_source
+        string utm_medium
+        string utm_campaign
+        string utm_term
+        string landing_page
+        string referrer
+    }
+    LEAD_ATTACHMENT {
+        string id PK
+        string lead_id FK
+        string storage_path
+        string file_name
+        int size_bytes
+        string mime_type
+    }
+    LEAD_NOTE {
+        string id PK
+        string lead_id FK
+        string author_uid FK
+        string text
+        timestamp created_at
+    }
+    LEAD_STATUS_HISTORY {
+        string id PK
+        string lead_id FK
+        string from_status
+        string to_status
+        string changed_by FK
+        string reason
+        timestamp changed_at
+    }
+    CONSENT {
+        string id PK
+        string subject_type "lead | client | visitor"
+        string subject_id
+        string kind "pdpl_form | cookies_analytics | cookies_marketing"
+        string policy_version
+        boolean granted
+        string ip_hash
+        timestamp granted_at
+    }
+    CONSULTATION {
+        string id PK
+        string lead_id FK
+        string owner_uid FK
+        timestamp scheduled_at
+        string channel "call | whatsapp | video"
+        string status "scheduled | done | no_show | cancelled"
+        string summary
+        string next_steps
+    }
+    PROPOSAL {
+        string id PK
+        string lead_id FK
+        string client_id FK "set when portal is enabled"
+        string number "unique, human readable"
+        int version
+        string status "draft | sent | viewed | accepted | rejected | expired"
+        string currency "SAR"
+        decimal vat_percent
+        decimal subtotal
+        decimal vat_amount
+        decimal total
+        timestamp valid_until
+        string pdf_path
+        string signed_by
+        timestamp sent_at
+        timestamp viewed_at
+        timestamp decided_at
+    }
+    PROPOSAL_ITEM {
+        string id PK
+        string proposal_id FK
+        string title
+        string description
+        decimal quantity
+        decimal unit_price
+        decimal amount
+    }
+    PROPOSAL_MILESTONE {
+        string id PK
+        string proposal_id FK
+        string name
+        decimal percent
+        string due_rule "e.g. on_signing, on_uat, on_go_live"
+    }
+    CONTRACT {
+        string id PK
+        string proposal_id FK
+        string client_id FK "denormalized for portal access"
+        string number
+        string governing_language "ar"
+        string status "draft | sent | signed | void"
+        string pdf_path
+        timestamp signed_at
+    }
+    PROJECT {
+        string id PK
+        string client_id FK
+        string proposal_id FK
+        string name
+        string service
+        string status "kickoff | in_progress | uat | handed_over | warranty | closed"
+        string health "green | amber | red"
+        timestamp start_at
+        timestamp planned_end_at
+        timestamp handover_at
+        timestamp warranty_until
+    }
+    PROJECT_STAGE {
+        string id PK
+        string project_id FK
+        string name
+        int sort_order
+        string status "todo | doing | review | done"
+        int progress_percent
+        timestamp due_at
+        timestamp completed_at
+    }
+    WEEKLY_REPORT {
+        string id PK
+        string project_id FK
+        date week_of
+        string summary
+        string next_steps
+        string blockers
+    }
+    PROJECT_FILE {
+        string id PK
+        string project_id FK
+        string storage_path
+        string file_name
+        string visibility "internal | client"
+        string uploaded_by
+    }
+    PAYMENT {
+        string id PK
+        string project_id FK
+        string client_id FK "denormalized for portal access"
+        string milestone_id FK
+        string invoice_number
+        decimal amount
+        string status "pending | invoiced | paid | overdue"
+        timestamp due_at
+        timestamp paid_at
+    }
+    TICKET {
+        string id PK
+        string project_id FK
+        string client_id FK
+        string subject
+        string priority "critical | high | normal"
+        string status "open | in_progress | waiting_client | resolved | closed"
+        timestamp respond_by "SLA"
+        timestamp resolve_by "SLA"
+        timestamp first_response_at
+        timestamp resolved_at
+    }
+    TICKET_MESSAGE {
+        string id PK
+        string ticket_id FK
+        string author_type "client | staff"
+        string author_id
+        string body
+        timestamp created_at
+    }
+    MAINTENANCE_PLAN {
+        string id PK
+        string client_id FK
+        string project_id FK
+        string tier
+        decimal monthly_price
+        string status "active | paused | cancelled"
+        timestamp renews_at
+    }
+    NOTIFICATION_LOG {
+        string id PK
+        string lead_id FK
+        string channel "email | telegram"
+        string template
+        string status "sent | failed"
+        string error
+        timestamp sent_at
+    }
+    CASE_STUDY {
+        string id PK
+        string slug "unique"
+        string service
+        string title_ar
+        string title_en
+        string problem_ar
+        string solution_ar
+        string result_metric
+        string cover_path
+        boolean published
+    }
+    TESTIMONIAL {
+        string id PK
+        string case_study_id FK
+        string person_name
+        string role
+        string company
+        string city
+        string text_ar
+        string text_en
+        int rating
+        boolean consent_to_publish
+        boolean published
+    }
+    SITE_SETTING {
+        string id PK "singleton: site"
+        string whatsapp_number
+        string public_email
+        string cr_number
+        string vat_number
+        string national_address
+        string social_links
+    }
+
+    ADMIN_USER ||--o{ LEAD : "assigned to"
+    ADMIN_USER ||--o{ LEAD_NOTE : writes
+    ADMIN_USER ||--o{ CONSULTATION : owns
+    ADMIN_USER ||--o{ LEAD_STATUS_HISTORY : "changes status"
+    LEAD ||--|| LEAD_SOURCE : "attributed by"
+    LEAD ||--o{ LEAD_ATTACHMENT : has
+    LEAD ||--o{ LEAD_NOTE : has
+    LEAD ||--o{ LEAD_STATUS_HISTORY : tracks
+    LEAD ||--o{ CONSENT : "grants"
+    LEAD ||--o{ CONSULTATION : "leads to"
+    LEAD ||--o{ PROPOSAL : "receives"
+    LEAD ||--o{ NOTIFICATION_LOG : triggers
+    LEAD }o--o| CLIENT : "becomes"
+    CLIENT ||--o{ PROPOSAL : "reviews in portal"
+    PROPOSAL ||--o{ PROPOSAL_ITEM : contains
+    PROPOSAL ||--o{ PROPOSAL_MILESTONE : "pays by"
+    PROPOSAL ||--o| CONTRACT : "formalized by"
+    PROPOSAL ||--o| PROJECT : "starts"
+    CLIENT ||--o{ PROJECT : owns
+    CLIENT ||--o{ TICKET : opens
+    CLIENT ||--o{ MAINTENANCE_PLAN : subscribes
+    CLIENT ||--o{ CONSENT : grants
+    PROJECT ||--o{ PROJECT_STAGE : "divided into"
+    PROJECT ||--o{ WEEKLY_REPORT : reports
+    PROJECT ||--o{ PROJECT_FILE : stores
+    PROJECT ||--o{ PAYMENT : bills
+    PROJECT ||--o{ TICKET : supports
+    PROJECT ||--o| MAINTENANCE_PLAN : "maintained by"
+    PROPOSAL_MILESTONE ||--o{ PAYMENT : "generates"
+    TICKET ||--o{ TICKET_MESSAGE : contains
+    CASE_STUDY ||--o{ TESTIMONIAL : "quoted in"

@@ -1,0 +1,17 @@
+flowchart LR
+    V[Visitor / Lead<br/>browser or phone] -->|HTTPS| EDGE[Vercel Edge Network<br/>CDN + Middleware locale]
+    EDGE --> NEXT[Next.js App<br/>Server Components + Route Handlers]
+    C[Client portal user<br/>phase 2] --> NEXT
+    A[Admin team] --> NEXT
+
+    NEXT -->|firebase-admin| FS[(Firestore)]
+    NEXT -->|signed URLs| ST[(Cloud Storage)]
+    NEXT --> AUTH[Firebase Auth<br/>+ Custom Claims]
+    FS -->|onDocumentCreated / scheduler| FN[Cloud Functions]
+    FN --> MAIL[Email provider<br/>Resend]
+    FN --> TG[Telegram bot<br/>optional]
+    FN --> FS
+
+    V -.->|click-to-chat| WA[WhatsApp wa.me]
+    NEXT -.-> GA[GA4 / Clarity / Pixels<br/>after cookie consent]
+    NEXT --> APPCHK[Firebase App Check<br/>reCAPTCHA]

@@ -1,0 +1,576 @@
+{
+  "meta": {
+    "title": "HULOL TECH",
+    "description": "HULOL TECH builds websites, mobile apps, and brand design for companies in Riyadh and the Gulf. The free consultation comes first."
+  },
+  "brand": {
+    "name": "HULOL TECH",
+    "logoAlt": "HULOL TECH Logo"
+  },
+  "nav": {
+    "services": "Services",
+    "work": "Our work",
+    "process": "How we work",
+    "consultation": "Book a free consultation",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "about": "About"
+  },
+  "hero": {
+    "badge": "Riyadh, Saudi Arabia",
+    "title": "We build your <em>website, app and brand</em> so customers find you from day one",
+    "subtitle": "Welcome. We start with a free consultation, with no obligation, and leave you with a clear picture and a written proposal.",
+    "ctaPrimary": "Book your free consultation",
+    "ctaWhatsapp": "Chat on WhatsApp",
+    "promise2": "A detailed written proposal after the consultation",
+    "promise3": "Technical support after delivery"
+  },
+  "a11y": {
+    "skip": "Skip to content"
+  },
+  "lang": {
+    "switch": "AR",
+    "label": "Switch language to Arabic"
+  },
+  "footer": {
+    "blurb": "HULOL TECH. Riyadh, Saudi Arabia.",
+    "services": "Services",
+    "company": "Company",
+    "about": "About",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "cookies": "Cookies",
+    "rights": "HULOL TECH",
+    "segments": "Who we serve"
+  },
+  "cookie": {
+    "label": "Cookies",
+    "body": "We use essential cookies to run the site, and analytics and marketing cookies only with your consent.",
+    "necessary": "Essential",
+    "necessaryHint": "Required to run the site. These stay on.",
+    "analytics": "Analytics",
+    "marketing": "Marketing",
+    "accept": "Accept",
+    "essential": "Essential only",
+    "save": "Save choices",
+    "customize": "Customize",
+    "policy": "Cookie policy"
+  },
+  "whatsapp": {
+    "float": "Chat with us"
+  },
+  "consultation": {
+    "title": "Free consultation",
+    "body": "Welcome. The consultation is free and without obligation, and you leave with a clear picture and a written proposal.",
+    "intro": "Welcome. The consultation is free with no obligation, and you leave with a clear picture and a written proposal."
+  },
+  "services": {
+    "title": "Services",
+    "intro": "We focus on web, mobile, and design, so the result is clear from the start.",
+    "more": "Learn more",
+    "web": {
+      "title": "Web development",
+      "summary": "Fast, responsive, search-ready websites."
+    },
+    "mobile": {
+      "title": "Mobile apps",
+      "summary": "iOS and Android apps with a smooth experience."
+    },
+    "design": {
+      "title": "Design and branding",
+      "summary": "Design that shows your brand value at first glance."
+    }
+  },
+  "work": {
+    "title": "Our work",
+    "heading": "Real projects, measurable results",
+    "emptyTitle": "Our work is published here with the owners' approval",
+    "emptyBody": "We add each project with its real result once the client signs off."
+  },
+  "about": {
+    "title": "About",
+    "body": "HULOL TECH is a software company in Riyadh. Our scope is websites, mobile apps, and design.",
+    "pillarsEyebrow": "What we work on",
+    "pillarsTitle": "Three services we focus on",
+    "locationTitle": "Where we are",
+    "locationBody": "Riyadh, Saudi Arabia.",
+    "storyEyebrow": "About us",
+    "storyTitle": "We build the digital product that serves your business",
+    "storyP1": "HULOL TECH is a software company in Riyadh working in three areas: websites, mobile apps, and design and branding.",
+    "storyP2": "We start by understanding your business and goal before any talk of technology, then write the scope and deliverables in a clear proposal, and build with you step by step.",
+    "valuesEyebrow": "Our principles",
+    "valuesTitle": "How we work with you",
+    "valuesIntro": "Four principles we apply on every project.",
+    "values": {
+      "clarity": {
+        "title": "Clarity in writing",
+        "text": "Scope, deliverables, and payments are written in a clear proposal before work starts."
+      },
+      "arabic": {
+        "title": "Arabic first",
+        "text": "We design right-to-left from the ground up, and deliver an English version with the same care."
+      },
+      "visibility": {
+        "title": "See your progress",
+        "text": "We show you the result at every stage, so you are not waiting until the end."
+      },
+      "support": {
+        "title": "With you after handover",
+        "text": "Warranty and technical support after delivery, and you can continue on a support and maintenance plan."
+      }
+    }
+  },
+  "processPage": {
+    "title": "How we work",
+    "intro": "You see every stage and follow the project step by step. Final timelines are written in the proposal after we confirm them.",
+    "consultation": {
+      "title": "Consultation",
+      "text": "We listen, understand your idea and goal, then send a written summary after the call."
+    },
+    "proposal": {
+      "title": "Written proposal",
+      "text": "Scope, deliverables, timeline, price in SAR including VAT, and clear payments."
+    },
+    "build": {
+      "title": "Build",
+      "text": "We build with you, and you see the result at each stage."
+    },
+    "handover": {
+      "title": "Handover",
+      "text": "Acceptance testing with you, a handover pack, and training for your team."
+    },
+    "support": {
+      "title": "Support after delivery",
+      "text": "A warranty and technical support after handover."
+    }
+  },
+  "legal": {
+    "privacyTitle": "Privacy policy",
+    "termsTitle": "Terms",
+    "cookiesTitle": "Cookies",
+    "pending": "This text is waiting for legal review and will not be published before you approve it."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "This link is not valid, or the page is not open yet.",
+    "home": "Back to home"
+  },
+  "error": {
+    "title": "Something unexpected happened",
+    "body": "Try again. If it continues, you can return home.",
+    "retry": "Try again"
+  },
+  "preview": {
+    "title": "Component preview",
+    "intro": "Button, field, and badge states used on the site.",
+    "primary": "Primary button",
+    "secondary": "Secondary button",
+    "ghost": "Ghost button",
+    "whatsapp": "WhatsApp",
+    "disabled": "Disabled",
+    "loading": "Sending",
+    "name": "Name",
+    "nameError": "This field is required",
+    "phone": "Mobile number",
+    "disabledField": "Disabled field",
+    "badgeNeutral": "General",
+    "badgeSuccess": "Done",
+    "badgeWarning": "Waiting",
+    "badgeDanger": "Needs review"
+  },
+  "form": {
+    "consent": "I agree to the processing of my data so you can contact me about my request, per the privacy policy.",
+    "errors": {
+      "required": "This field is required",
+      "phone": "Enter a valid mobile number"
+    }
+  },
+  "errors": {
+    "lead": {
+      "invalid_json": "We could not read the request. Please try again",
+      "payload_too_large": "The request is too large. Shorten the description and try again",
+      "rate_limited": "Too many requests. Please try again shortly",
+      "invalid_input": "Some details are missing or invalid. Check the fields and try again",
+      "invalid_phone": "Enter a valid mobile number",
+      "invalid_name": "Enter your name",
+      "invalid_email": "Enter a valid email address",
+      "consent_required": "We need your consent to the privacy policy to send the request",
+      "internal_error": "Something went wrong on our side. Try again or message us on WhatsApp"
+    },
+    "contact": {
+      "invalid_json": "We could not read the message. Please try again",
+      "payload_too_large": "The message is too long. Shorten it and try again",
+      "rate_limited": "Too many messages. Please try again shortly",
+      "invalid_input": "Some details are missing or invalid. Check the fields and try again",
+      "invalid_name": "Enter your name",
+      "invalid_email": "Enter a valid email address",
+      "invalid_message": "Write your message",
+      "consent_required": "We need your consent to the privacy policy to send the message",
+      "internal_error": "Something went wrong on our side. Try again or message us on WhatsApp"
+    }
+  },
+  "start": {
+    "title": "Start your project",
+    "intro": "Fill in the short form and we will reach out the way you prefer.",
+    "serviceLabel": "What do you want to build?",
+    "services": {
+      "web": "Website",
+      "mobile": "Mobile app",
+      "design": "Brand and UI design",
+      "unsure": "Not sure"
+    },
+    "name": "Name",
+    "phone": "Mobile number",
+    "phoneHint": "Example: 0512345678",
+    "email": "Email (optional)",
+    "preferredContact": "Preferred way to reach you",
+    "channels": {
+      "whatsapp": "WhatsApp",
+      "call": "Call",
+      "email": "Email"
+    },
+    "businessType": "Type of business (optional)",
+    "timeline": "When do you want to start? (optional)",
+    "timelineEmpty": "Choose",
+    "timelines": {
+      "asap": "As soon as possible",
+      "months": "Within one to three months",
+      "flexible": "I am flexible"
+    },
+    "description": "Short description of your project (optional)",
+    "descriptionHint": "It helps us prepare a more useful consultation.",
+    "submit": "Send request",
+    "consentRequired": "We need your consent to send the request",
+    "success": {
+      "title": "We received your request",
+      "body": "Thank you. We will review your request and get in touch.",
+      "whatsapp": "Message us on WhatsApp"
+    },
+    "failed": "We could not send your request right now. Your answers are still on this page. Try again or message us on WhatsApp.",
+    "serverErrors": {
+      "invalid_json": "We could not read the request. Please try again",
+      "payload_too_large": "The request is too large. Shorten the description and try again",
+      "rate_limited": "Too many requests. Please try again shortly",
+      "invalid_input": "Some details are missing or invalid. Check the fields and try again",
+      "invalid_phone": "Enter a valid mobile number",
+      "invalid_name": "Enter your name",
+      "invalid_email": "Enter a valid email address",
+      "consent_required": "We need your consent to the privacy policy to send the request",
+      "internal_error": "Something went wrong on our side. Try again or message us on WhatsApp"
+    }
+  },
+  "home": {
+    "trust": {
+      "cr": "Saudi commercial registration",
+      "location": "Riyadh",
+      "locationHint": "Local team in the Kingdom",
+      "scope": "Three services",
+      "scopeHint": "Web, mobile and design",
+      "free": "Free consultation",
+      "freeHint": "No obligation"
+    },
+    "services": {
+      "eyebrow": "Our services",
+      "title": "Three services. Everything you need.",
+      "web": {
+        "p1": "Company sites and online stores",
+        "p2": "Local payment gateways",
+        "p3": "Easy Arabic dashboard"
+      },
+      "mobile": {
+        "p1": "One app for both platforms",
+        "p2": "Notifications and integrations",
+        "p3": "Store publishing"
+      },
+      "design": {
+        "p1": "UI/UX for web and apps",
+        "p2": "Logo and full identity",
+        "p3": "Social media design"
+      }
+    },
+    "work": {
+      "eyebrow": "Our work",
+      "title": "Real projects, measurable results"
+    },
+    "testimonials": {
+      "eyebrow": "Testimonials",
+      "title": "Their words say it best"
+    },
+    "journey": {
+      "eyebrow": "Your journey with us",
+      "title": "From the first call to after delivery",
+      "intro": "You know every stage and follow your project step by step."
+    },
+    "cost": {
+      "eyebrow": "Cost",
+      "title": "How we price your project",
+      "intro": "Every project is different, so you get a written price after we understand your needs, not a generic number.",
+      "scope": {
+        "title": "Scope",
+        "text": "How many pages or screens, how many features, and whether content is ready."
+      },
+      "complexity": {
+        "title": "Complexity",
+        "text": "Integrations with systems or payment gateways, dashboards, and security requirements."
+      },
+      "time": {
+        "title": "Timeline",
+        "text": "Your launch date, and whether you have a critical deadline."
+      },
+      "note": "After your free consultation we send a detailed written proposal in SAR, including VAT.",
+      "cta": "Book your free consultation"
+    },
+    "consult": {
+      "title": "Free consultation",
+      "intro": "We show you how to start, with no obligation. Fill in the form or talk to us directly.",
+      "whatsappCta": "Book on WhatsApp",
+      "formCta": "Start your project",
+      "panelTitle": "What will you fill in?",
+      "p1": "The service you need",
+      "p2": "Your details and how you prefer to be reached",
+      "p3": "Your project details, if you like"
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Before you start",
+      "q1": "Is the consultation really free?",
+      "a1": "Yes. The consultation is free with no obligation, and you leave with a clear picture.",
+      "q2": "Is the price final or can it change?",
+      "a2": "The price in the written proposal is fixed for the agreed scope. Anything outside it is quoted first and needs your approval.",
+      "q3": "What happens after delivery?",
+      "a3": "Warranty and technical support after handover, and you can continue with a support and maintenance plan."
+    },
+    "final": {
+      "title": "Ready to start your project?",
+      "text": "Let us turn your idea into a product that works in the Saudi market.",
+      "cta": "Start your project",
+      "whatsapp": "WhatsApp"
+    },
+    "contact": {
+      "eyebrow": "Contact us",
+      "title": "We listen the way that suits you",
+      "intro": "Pick the channel that suits you and we will get back to you.",
+      "whatsapp": "WhatsApp",
+      "whatsappHint": "The fastest way to reach us",
+      "phone": "Call",
+      "phoneHint": "Talk to us directly",
+      "email": "Email",
+      "emailHint": "Write to us with the details",
+      "form": "Project request",
+      "formValue": "Fill in the form",
+      "formHint": "A short form, then we get in touch",
+      "location": "Office",
+      "locationValue": "Riyadh",
+      "locationHint": "Saudi Arabia"
+    },
+    "market": {
+      "eyebrow": "The Saudi market",
+      "title": "Your customers are already online",
+      "intro": "Published figures with their sources, showing where people spend their time and why your digital presence matters.",
+      "unitMillion": "M",
+      "unitPercent": "%",
+      "stats": {
+        "internet": "internet users in Saudi Arabia",
+        "mobile": "mobile connections in Saudi Arabia",
+        "sme": "share of GDP from small and medium businesses"
+      },
+      "chartTitle": "Advertising reach by platform",
+      "chartHint": "In millions of users in Saudi Arabia."
+    }
+  },
+  "segments": {
+    "cta": "Start your project",
+    "smes": {
+      "name": "Small and medium businesses",
+      "title": "Your website or store, with a scope and price agreed in writing",
+      "promise": "We start with a free consultation, then send a written proposal with scope and price before any work begins."
+    },
+    "startups": {
+      "name": "Startups",
+      "title": "From idea to a launch-ready app, then growth",
+      "promise": "We build the first version you can launch and test with real customers, then grow the product as the market teaches you."
+    },
+    "agencies": {
+      "name": "Agencies and marketers",
+      "title": "A delivery team under your name, with disciplined handover",
+      "promise": "You keep the client relationship while we build behind the scenes, and the brand stays yours."
+    },
+    "enterprise": {
+      "name": "Enterprises and government",
+      "title": "A technical partner for organization-scale projects",
+      "promise": "We arrange a technical meeting to define the requirements and the way of working that suits your organization."
+    }
+  },
+  "serviceDetail": {
+    "offerTitle": "What you get",
+    "cta": "Start your project",
+    "whatsapp": "Chat on WhatsApp"
+  },
+  "requestSide": {
+    "next": "What happens after you send?",
+    "whatsapp": "Prefer to talk directly?",
+    "whatsappCta": "Chat on WhatsApp"
+  },
+  "contactForm": {
+    "title": "Email us",
+    "intro": "Write your message and we will reply to your email.",
+    "name": "Name",
+    "email": "Email",
+    "message": "Your message",
+    "emailInvalid": "Enter a valid email address",
+    "messageShort": "Write your message",
+    "consent": "I agree to the processing of my data to reply to my message, per the privacy policy.",
+    "consentRequired": "We need your consent to send the message",
+    "submit": "Send message",
+    "success": {
+      "title": "We received your message",
+      "body": "Thank you. We will read your message and reply to your email."
+    },
+    "failed": "We could not send your message right now. Try again or message us on WhatsApp.",
+    "serverErrors": {
+      "invalid_json": "We could not read the message. Please try again",
+      "payload_too_large": "The message is too long. Shorten it and try again",
+      "rate_limited": "Too many messages. Please try again shortly",
+      "invalid_input": "Some details are missing or invalid. Check the fields and try again",
+      "invalid_name": "Enter your name",
+      "invalid_email": "Enter a valid email address",
+      "invalid_message": "Write your message",
+      "consent_required": "We need your consent to the privacy policy to send the message",
+      "internal_error": "Something went wrong on our side. Try again or message us on WhatsApp"
+    }
+  },
+  "admin": {
+    "demoBanner": "Demo data for design only. It does not represent real customers or numbers.",
+    "brand": "Admin",
+    "nav": {
+      "leads": "Leads",
+      "analytics": "Analytics",
+      "site": "View site",
+      "signOut": "Sign out",
+      "menu": "Menu"
+    },
+    "user": {
+      "name": "Demo admin",
+      "role": "Owner"
+    },
+    "status": {
+      "new": "New",
+      "contacted": "Contacted",
+      "consultation": "Consultation",
+      "proposal": "Proposal",
+      "negotiation": "Negotiation",
+      "won": "Won",
+      "lost": "Lost",
+      "parked": "Parked"
+    },
+    "sources": {
+      "google": "Google",
+      "direct": "Direct",
+      "linkedin": "LinkedIn",
+      "snapchat": "Snapchat",
+      "referral": "Referral",
+      "whatsapp": "WhatsApp"
+    },
+    "leads": {
+      "title": "Leads",
+      "subtitle": "Every website request in one place.",
+      "viewTable": "Table",
+      "viewBoard": "Board",
+      "viewLabel": "View",
+      "search": "Search by name or business",
+      "all": "All",
+      "export": "Export CSV",
+      "count": "{count} leads",
+      "empty": "No matching results.",
+      "columns": {
+        "name": "Lead",
+        "service": "Service",
+        "source": "Source",
+        "status": "Status",
+        "created": "Received"
+      },
+      "newBadge": "New",
+      "open": "Open",
+      "boardHint": "Drag and drop between columns is enabled once data is connected.",
+      "emptyColumn": "None"
+    },
+    "lead": {
+      "back": "Back to leads",
+      "received": "Received",
+      "contact": "Contact details",
+      "phone": "Mobile",
+      "email": "Email",
+      "preferred": "Preferred contact",
+      "noEmail": "Not provided",
+      "request": "Request details",
+      "service": "Service",
+      "business": "Business",
+      "timeline": "Start date",
+      "description": "Description",
+      "source": "Source",
+      "campaign": "Campaign",
+      "landing": "Landing page",
+      "statusTitle": "Status",
+      "moveTo": "Move to",
+      "noMoves": "No transitions are available from this status.",
+      "lostReason": "Lost reason",
+      "lostReasonHint": "Required when moving a lead to lost.",
+      "historyTitle": "Status history",
+      "notesTitle": "Notes",
+      "addNote": "Add a note",
+      "notePlaceholder": "Write a note for the team",
+      "noteHint": "Each note is saved with its author and time.",
+      "save": "Save note",
+      "assigned": "Owner",
+      "unassigned": "Unassigned",
+      "whatsapp": "Open WhatsApp",
+      "whatsappDemo": "Works with real data.",
+      "by": "By"
+    },
+    "lostReasons": {
+      "price": "Price",
+      "timing": "Timing",
+      "competitor": "Competitor",
+      "noReply": "No reply",
+      "notFit": "Not a fit",
+      "other": "Other"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "subtitle": "Weekly summary",
+      "range": "Last 7 days",
+      "vsPrev": "vs previous week",
+      "kpi": {
+        "new": "New leads",
+        "consultations": "Consultations",
+        "proposals": "Proposals",
+        "won": "Deals",
+        "firstReply": "First reply (median)"
+      },
+      "hours": "h",
+      "funnel": "Conversion funnel",
+      "funnelHint": "Transition rate between statuses.",
+      "sources": "Sources",
+      "sourcesHint": "Compare deals, not leads.",
+      "leadsCol": "Leads",
+      "dealsCol": "Deals",
+      "services": "Services",
+      "channels": "Form vs WhatsApp",
+      "form": "Form",
+      "whatsapp": "WhatsApp",
+      "sla": "Reply and SLA",
+      "slaMedian": "Median first reply",
+      "slaOver": "Leads past the reply limit",
+      "losses": "Loss reasons"
+    },
+    "login": {
+      "title": "Team sign in",
+      "intro": "Access the admin dashboard.",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "pending": "Sign in is enabled once Firebase Auth is connected. This page is design only.",
+      "back": "Back to the site"
+    }
+  }
+}

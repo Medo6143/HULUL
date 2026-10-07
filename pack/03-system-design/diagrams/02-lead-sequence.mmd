@@ -1,0 +1,25 @@
+sequenceDiagram
+    autonumber
+    participant U as Visitor
+    participant W as Next.js (Wizard UI)
+    participant API as POST /api/leads
+    participant UC as CreateLead use-case
+    participant DB as Firestore
+    participant FN as Cloud Function
+    participant M as Email / Telegram
+    participant AD as Admin dashboard
+
+    U->>W: fills 3-step form (consent unchecked by default)
+    W->>W: validate (Zod) + analytics: form_step_complete
+    W->>API: submit + App Check token
+    API->>API: schema validation, honeypot, rate limit
+    API->>UC: execute(input)
+    UC->>DB: save lead (status=new) + consent record
+    UC-->>API: Result.ok(leadId)
+    API-->>W: 201 {ok:true}
+    W->>U: success page + WhatsApp follow-up button
+    W->>W: analytics: generate_lead
+    DB-->>FN: onDocumentCreated(leads/{id})
+    FN->>M: confirmation to lead (ar/en) + alert to team
+    FN->>DB: notification_log + start SLA timer (first reply within 1 business hour)
+    DB-->>AD: realtime listener shows new lead badge

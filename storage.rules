@@ -1,0 +1,11 @@
+rules_version = '2';
+
+// All file access goes through the server: uploads via short-lived signed URLs,
+// downloads via signed URLs. The browser SDK has no direct access.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

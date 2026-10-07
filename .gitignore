@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+dist
+coverage
+playwright-report
+test-results
+blob-report
+.env.local
+.env.*.local
+.firebase
+*.log
+tsconfig.tsbuildinfo
+.vercel
+functions/lib
+functions/node_modules

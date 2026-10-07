@@ -1,0 +1,27 @@
+{
+  "indexes": [
+    { "collectionGroup": "leads", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" } ] },
+    { "collectionGroup": "leads", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "assignedTo", "order": "ASCENDING" }, { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" } ] },
+    { "collectionGroup": "leads", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "service", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" } ] },
+    { "collectionGroup": "leads", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "segment", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" } ] },
+    { "collectionGroup": "leads", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "source.utmSource", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" } ] },
+    { "collectionGroup": "proposals", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "leadId", "order": "ASCENDING" }, { "fieldPath": "version", "order": "DESCENDING" } ] },
+    { "collectionGroup": "proposals", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "validUntil", "order": "ASCENDING" } ] },
+    { "collectionGroup": "tickets", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "respondBy", "order": "ASCENDING" } ] },
+    { "collectionGroup": "projects", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "clientId", "order": "ASCENDING" }, { "fieldPath": "status", "order": "ASCENDING" } ] },
+    { "collectionGroup": "payments", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "dueAt", "order": "ASCENDING" } ] },
+    { "collectionGroup": "maintenancePlans", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" }, { "fieldPath": "renewsAt", "order": "ASCENDING" } ] }
+  ],
+  "fieldOverrides": []
+}

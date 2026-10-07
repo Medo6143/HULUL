@@ -1,0 +1,10 @@
+export { LEAD_STATUSES, canTransition, requiresReason } from "./domain/lead-status";
+export type { LeadStatus } from "./domain/lead-status";
+export type { Lead, LeadType, NewLeadInput } from "./domain/lead";
+export type { LeadError } from "./domain/lead.errors";
+export { makeCreateLead } from "./application/create-lead.usecase";
+export { makeChangeLeadStatus } from "./application/change-lead-status.usecase";
+export { leadInputSchema, toNewLeadInput } from "./application/lead-input.schema";
+export type { LeadInputPayload } from "./application/lead-input.schema";
+export type { LeadReader, LeadWriter } from "./application/ports";
+export { LeadForm } from "./ui/lead-form";

@@ -1,0 +1,17 @@
+stateDiagram-v2
+    [*] --> new
+    new --> contacted: first reply sent
+    contacted --> consultation: call booked
+    consultation --> proposal: proposal drafted
+    proposal --> negotiation: client asks changes
+    proposal --> won: accepted and signed
+    negotiation --> won
+    negotiation --> lost
+    proposal --> lost
+    contacted --> lost
+    consultation --> lost
+    new --> parked: not now
+    contacted --> parked
+    parked --> contacted: reactivated
+    lost --> contacted: reopened (needs reason)
+    won --> [*]
