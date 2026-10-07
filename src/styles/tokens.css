@@ -1,0 +1,23 @@
+:root {
+  --ink-950: #050b14;
+  --ink-900: #0a1628;
+  --ink-800: #0f2038;
+  --ink-700: #1b2f4d;
+  --brand: #00d2ff;
+  --brand-strong: #00a9d1;
+  --brand-soft: #e0f8ff;
+  --whatsapp: #25d366;
+  --surface: #ffffff;
+  --surface-muted: #f7f9fc;
+  --surface-line: #e2e8f0;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --shadow-card: 0 12px 32px rgb(10 22 40 / 0.1);
+  --radius-card: 24px;
+  --radius-control: 14px;
+  --radius-panel: 32px;
+  --page: 1140px;
+}

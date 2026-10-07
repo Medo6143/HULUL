@@ -1,0 +1,147 @@
+rules_version = '2';
+
+// HULOL TECH — Firestore security rules
+// Principle: default deny. The browser NEVER writes. All writes go through the server (Admin SDK),
+// which bypasses these rules and enforces domain invariants in use-cases.
+// These rules only decide who may READ what.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- helpers ----------
+    function signedIn() {
+      return request.auth != null;
+    }
+    function role() {
+      return signedIn() && 'role' in request.auth.token ? request.auth.token.role : null;
+    }
+    function isStaff() {
+      return role() == 'owner' || role() == 'agent';
+    }
+    function isOwner() {
+      return role() == 'owner';
+    }
+    function isClientUser(clientId) {
+      return signedIn() && request.auth.uid == clientId;
+    }
+
+    // ---------- public content ----------
+    match /caseStudies/{slug} {
+      allow read: if resource.data.published == true || isStaff();
+      allow write: if false;
+    }
+    match /testimonials/{id} {
+      allow read: if (resource.data.published == true && resource.data.consentToPublish == true) || isStaff();
+      allow write: if false;
+    }
+    match /settings/site {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // ---------- staff-only ----------
+    match /admins/{uid} {
+      allow read: if isOwner() || (isStaff() && request.auth.uid == uid);
+      allow write: if false;
+    }
+
+    match /contactMessages/{id} {
+      allow read: if isStaff();
+      allow write: if false;
+    }
+
+    match /leads/{leadId} {
+      allow read: if isStaff();
+      allow write: if false;
+
+      match /notes/{noteId} {
+        allow read: if isStaff();
+        allow write: if false;
+      }
+      match /statusHistory/{historyId} {
+        allow read: if isStaff();
+        allow write: if false;
+      }
+    }
+
+    match /consents/{id} {
+      allow read: if isStaff();
+      allow write: if false;
+    }
+    match /consultations/{id} {
+      allow read: if isStaff();
+      allow write: if false;
+    }
+    match /notificationLogs/{id} {
+      allow read: if isStaff();
+      allow write: if false;
+    }
+    match /stats/{id} {
+      allow read: if isStaff();
+      allow write: if false;
+    }
+
+    // ---------- client portal (phase 2): read own data only ----------
+    match /clients/{clientId} {
+      allow read: if isStaff() || isClientUser(clientId);
+      allow write: if false;
+    }
+
+    match /proposals/{id} {
+      allow read: if isStaff() || (signedIn() && resource.data.clientId == request.auth.uid);
+      allow write: if false;
+    }
+    match /contracts/{id} {
+      allow read: if isStaff() || (signedIn() && resource.data.clientId == request.auth.uid);
+      allow write: if false;
+    }
+
+    match /projects/{projectId} {
+      allow read: if isStaff() || (signedIn() && resource.data.clientId == request.auth.uid);
+      allow write: if false;
+
+      function projectClientId() {
+        return get(/databases/$(database)/documents/projects/$(projectId)).data.clientId;
+      }
+
+      match /stages/{stageId} {
+        allow read: if isStaff() || isClientUser(projectClientId());
+        allow write: if false;
+      }
+      match /reports/{reportId} {
+        allow read: if isStaff() || isClientUser(projectClientId());
+        allow write: if false;
+      }
+      match /files/{fileId} {
+        allow read: if isStaff() || (isClientUser(projectClientId()) && resource.data.visibility == 'client');
+        allow write: if false;
+      }
+    }
+
+    match /payments/{id} {
+      allow read: if isStaff() || (signedIn() && resource.data.clientId == request.auth.uid);
+      allow write: if false;
+    }
+
+    match /tickets/{ticketId} {
+      allow read: if isStaff() || (signedIn() && resource.data.clientId == request.auth.uid);
+      allow write: if false;
+
+      match /messages/{messageId} {
+        allow read: if isStaff() ||
+          (signedIn() && get(/databases/$(database)/documents/tickets/$(ticketId)).data.clientId == request.auth.uid);
+        allow write: if false;
+      }
+    }
+
+    match /maintenancePlans/{id} {
+      allow read: if isStaff() || (signedIn() && resource.data.clientId == request.auth.uid);
+      allow write: if false;
+    }
+
+    // ---------- everything else ----------
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

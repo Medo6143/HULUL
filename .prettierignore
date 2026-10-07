@@ -1,0 +1,10 @@
+pack
+public
+.next
+node_modules
+coverage
+playwright-report
+test-results
+package-lock.json
+firebase.json
+firestore.indexes.json
