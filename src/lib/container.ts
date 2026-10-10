@@ -4,6 +4,10 @@ import { makeSendContactMessage } from "@/features/contact";
 import { makeNotificationService, makeSaveRecipients } from "@/features/notifications";
 import {
   buildInviteEmail,
+  buildPasswordResetEmail,
+  makeChangeOwnPassword,
+  makeDeleteStaff,
+  makeSetStaffPassword,
   makeInviteStaff,
   makeListStaff,
   makeResendInvite,
@@ -117,7 +121,10 @@ async function inviteSender(): Promise<InviteSender> {
         subjectId: input.uid,
         channel: "email_staff",
         to: input.to,
-        message: buildInviteEmail({ name: input.name, link: input.link, role: input.role }),
+        message:
+          input.kind === "reset"
+            ? buildPasswordResetEmail({ name: input.name, link: input.link })
+            : buildInviteEmail({ name: input.name, link: input.link, role: input.role }),
       });
       return outcome.ok;
     },
@@ -299,6 +306,24 @@ export const container = {
   },
   async setStaffDisabled() {
     return makeSetStaffDisabled({ directory: await staffDirectory() });
+  },
+  async deleteStaff() {
+    return makeDeleteStaff({ directory: await staffDirectory() });
+  },
+  async setStaffPassword() {
+    return makeSetStaffPassword({ directory: await staffDirectory() });
+  },
+  async changeOwnPassword() {
+    return makeChangeOwnPassword({
+      directory: await staffDirectory(),
+      verifier: {
+        async verify(email, password) {
+          const result = await signInWithPassword(email, password, serverEnv.NEXT_PUBLIC_FIREBASE_API_KEY);
+          if (result.ok) return "ok";
+          return result.reason === "too_many_attempts" ? "too_many" : result.reason === "invalid_credentials" ? "wrong" : "failed";
+        },
+      },
+    });
   },
   async saveRecipients() {
     return makeSaveRecipients({ store: await recipientStore() });

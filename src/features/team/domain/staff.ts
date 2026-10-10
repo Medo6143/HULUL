@@ -21,6 +21,8 @@ export type TeamError =
   | { code: "invalid_email" }
   | { code: "invalid_role" }
   | { code: "weak_password" }
+  | { code: "wrong_password" }
+  | { code: "too_many_attempts" }
   | { code: "email_exists" }
   | { code: "last_owner" }
   | { code: "self_change" }
@@ -65,5 +67,18 @@ export function checkDisable(
   }
   return null;
 }
+
+/** Nobody deletes themselves, and the last active owner can never be deleted. */
+export function checkDelete(actorUid: string, target: StaffMember, members: StaffMember[]): TeamError | null {
+  if (target.uid === actorUid) return { code: "self_change" };
+  if (target.role === "owner" && !target.disabled && activeOwners(members).length <= 1) return { code: "last_owner" };
+  return null;
+}
+
+export const MIN_PASSWORD_LENGTH = 10;
+export const MAX_PASSWORD_LENGTH = 128;
+
+export const isStrongEnough = (password: string): boolean =>
+  password.length >= MIN_PASSWORD_LENGTH && password.length <= MAX_PASSWORD_LENGTH;
 
 export { err as teamErr, ok as teamOk };

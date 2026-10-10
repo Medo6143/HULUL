@@ -484,7 +484,8 @@
       "caseStudies": "Case studies",
       "calendar": "Appointments",
       "availability": "Consultation hours",
-      "templates": "Invite templates"
+      "templates": "Invite templates",
+      "account": "My account"
     },
     "user": {
       "name": "Demo admin",
@@ -679,7 +680,18 @@
       },
       "tempPassword": "Temporary password (optional)",
       "tempPasswordHint": "If you do not want an invite email, enter a password of at least 10 characters and give it to the member yourself. No email is sent.",
-      "passwordCreated": "The account is ready. Hand the temporary password to the member securely."
+      "passwordCreated": "The account is ready. Hand the temporary password to the member securely.",
+      "setPassword": "New password",
+      "sendReset": "Reset link",
+      "delete": "Delete",
+      "confirmDelete": "Delete {name}'s account permanently? This cannot be undone and they lose access at once.",
+      "deleted": "The account was deleted.",
+      "resetSent": "The reset link was emailed to the member.",
+      "resetNotEmailed": "We could not send the email. Check the Resend settings, or set a password for them yourself.",
+      "newPassword": "New password",
+      "newPasswordHint": "At least 10 characters. Hand it to the member yourself; their current session ends at once.",
+      "savePassword": "Save password",
+      "passwordChanged": "The password was changed and the member's sessions ended. Hand them the new password securely."
     },
     "settings": {
       "title": "Settings",
@@ -909,6 +921,27 @@
       "demoNote": "Actions are disabled in demo mode.",
       "errors": {
         "invalid_input": "Arabic texts are required and must be within the length limits",
+        "generic": "Something went wrong. Try again"
+      }
+    },
+    "account": {
+      "title": "My account",
+      "changeTitle": "Change password",
+      "current": "Current password",
+      "next": "New password",
+      "nextHint": "At least 10 characters, and different from the current one.",
+      "again": "Repeat the new password",
+      "save": "Change password",
+      "changed": "Your password was changed. You will be sent to the sign-in page to use the new one.",
+      "demoNote": "Actions are disabled in demo mode.",
+      "errors": {
+        "weak_password": "The new password must be at least 10 characters and different from the current one",
+        "wrong_password": "The current password is not correct",
+        "too_many_attempts": "Too many attempts. Wait a bit and try again",
+        "mismatch": "The two new passwords do not match",
+        "invalid_input": "The data is invalid",
+        "unauthorized": "Your session expired. Sign in again",
+        "forbidden": "This action is not allowed",
         "generic": "Something went wrong. Try again"
       }
     }

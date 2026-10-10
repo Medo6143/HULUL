@@ -45,3 +45,19 @@ export async function PATCH(request: NextRequest, context: { params: Promise<{ u
     return fail(500, "internal_error");
   }
 }
+
+/** Owner deletes a member's account for good. Not allowed for yourself or the last active owner. */
+export async function DELETE(request: NextRequest, context: { params: Promise<{ uid: string }> }): Promise<NextResponse> {
+  const owner = await authorizeOwner(request);
+  if (!("uid" in owner)) return owner;
+  const { uid } = await context.params;
+  try {
+    const remove = await container.deleteStaff();
+    const result = await remove({ actorUid: owner.uid, uid });
+    if (!result.ok) return fail(STATUS[result.error.code] ?? 400, result.error.code);
+    return success();
+  } catch (error) {
+    logError("staff_delete_failed", error);
+    return fail(500, "internal_error");
+  }
+}

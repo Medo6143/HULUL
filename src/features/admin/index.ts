@@ -22,3 +22,4 @@ export { AvailabilityView } from "./ui/availability-view";
 export type { AvailabilityData, ExceptionRow } from "./ui/availability-view";
 export { TemplatesView } from "./ui/templates-view";
 export type { InviteCardData } from "./ui/invite-card";
+export { AccountView } from "./ui/account-view";

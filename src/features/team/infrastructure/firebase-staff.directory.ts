@@ -87,6 +87,16 @@ export class FirebaseStaffDirectory implements StaffDirectory {
     await this.mirror(uid, { disabled });
   }
 
+  async delete(uid: string): Promise<void> {
+    await this.auth.deleteUser(uid);
+    await this.db.collection("admins").doc(uid).delete();
+  }
+
+  async setPassword(uid: string, password: string): Promise<void> {
+    await this.auth.updateUser(uid, { password });
+    await this.auth.revokeRefreshTokens(uid);
+  }
+
   createPasswordSetupLink(email: string): Promise<string> {
     return this.auth.generatePasswordResetLink(email);
   }

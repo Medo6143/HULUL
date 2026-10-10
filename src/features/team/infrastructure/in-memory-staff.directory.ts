@@ -42,6 +42,17 @@ export class InMemoryStaffDirectory implements StaffDirectory {
     if (m) this.members.set(uid, { ...m, disabled });
   }
 
+  readonly passwords = new Map<string, string>();
+
+  async delete(uid: string): Promise<void> {
+    this.members.delete(uid);
+    this.passwords.delete(uid);
+  }
+
+  async setPassword(uid: string, password: string): Promise<void> {
+    if (this.members.has(uid)) this.passwords.set(uid, password);
+  }
+
   async createPasswordSetupLink(email: string): Promise<string> {
     const link = `https://example.test/reset?e=${encodeURIComponent(email)}`;
     this.links.push(link);

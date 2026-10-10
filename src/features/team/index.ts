@@ -1,11 +1,14 @@
 export {
+  makeChangeOwnPassword,
+  makeDeleteStaff,
+  makeSetStaffPassword,
   makeInviteStaff,
   makeListStaff,
   makeResendInvite,
   makeSetStaffDisabled,
   makeSetStaffRole,
 } from "./application/usecases";
-export type { InviteSender, StaffDirectory } from "./application/ports";
-export { buildInviteEmail } from "./domain/invite-email";
-export { STAFF_ROLES, isStaffRole } from "./domain/staff";
+export type { InviteSender, PasswordVerifier, StaffDirectory } from "./application/ports";
+export { buildInviteEmail, buildPasswordResetEmail } from "./domain/invite-email";
+export { MIN_PASSWORD_LENGTH, STAFF_ROLES, isStaffRole } from "./domain/staff";
 export type { StaffMember, StaffRole, TeamError } from "./domain/staff";

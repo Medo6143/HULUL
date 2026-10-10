@@ -1,9 +1,9 @@
 "use client";
 
-import { Loader2, MailPlus, UserCheck, UserX } from "lucide-react";
+import { KeyRound, Loader2, MailPlus, Trash2, UserCheck, UserX } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useState, type FormEvent } from "react";
+import { Fragment, useState, type FormEvent } from "react";
 import { cn } from "@/lib/cn";
 import { formatDateTime } from "./format";
 
@@ -54,6 +54,8 @@ export function TeamView({ members, currentUid, demo }: { members: TeamRow[]; cu
   const [role, setRole] = useState<"agent" | "owner">("agent");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
+  const [pwFor, setPwFor] = useState<string | null>(null);
+  const [newPw, setNewPw] = useState("");
   const [message, setMessage] = useState<{ kind: "ok" | "warn" | "error"; text: string } | null>(null);
 
   const errorText = (code?: string) =>
@@ -86,6 +88,36 @@ export function TeamView({ members, currentUid, demo }: { members: TeamRow[]; cu
     setBusy(null);
     if (!result.ok) return setMessage({ kind: "error", text: errorText(result.code) });
     router.refresh();
+  }
+
+  async function remove(uid: string) {
+    setBusy(uid);
+    setMessage(null);
+    const result = await call(`/api/admin/team/${uid}`, "DELETE");
+    setBusy(null);
+    if (!result.ok) return setMessage({ kind: "error", text: errorText(result.code) });
+    setMessage({ kind: "ok", text: t("deleted") });
+    router.refresh();
+  }
+
+  async function sendReset(uid: string) {
+    setBusy(uid);
+    setMessage(null);
+    const result = await call(`/api/admin/team/${uid}/reset`, "POST");
+    setBusy(null);
+    if (!result.ok) return setMessage({ kind: "error", text: errorText(result.code) });
+    setMessage(result.emailed ? { kind: "ok", text: t("resetSent") } : { kind: "warn", text: t("resetNotEmailed") });
+  }
+
+  async function savePassword(uid: string) {
+    setBusy(uid);
+    setMessage(null);
+    const result = await call(`/api/admin/team/${uid}/password`, "POST", { password: newPw });
+    setBusy(null);
+    if (!result.ok) return setMessage({ kind: "error", text: errorText(result.code) });
+    setPwFor(null);
+    setNewPw("");
+    setMessage({ kind: "ok", text: t("passwordChanged") });
   }
 
   async function resend(uid: string) {
@@ -199,7 +231,8 @@ export function TeamView({ members, currentUid, demo }: { members: TeamRow[]; cu
               const self = member.uid === currentUid;
               const working = busy === member.uid;
               return (
-                <tr key={member.uid} className="border-b border-surface-line last:border-0">
+              <Fragment key={member.uid}>
+                <tr className="border-b border-surface-line last:border-0">
                   <td className="ps-5 pe-5 py-4">
                     <b className="block">
                       {member.name}
@@ -246,6 +279,42 @@ export function TeamView({ members, currentUid, demo }: { members: TeamRow[]; cu
                           {t("resendInvite")}
                         </button>
                       ) : null}
+                      {!self ? (
+                        <>
+                          <button
+                            type="button"
+                            disabled={demo || working}
+                            onClick={() => {
+                              setPwFor(pwFor === member.uid ? null : member.uid);
+                              setNewPw("");
+                            }}
+                            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-surface-line ps-3 pe-3 text-[14px] font-semibold hover:border-ink-900 disabled:opacity-50"
+                          >
+                            <KeyRound className="size-4" aria-hidden="true" />
+                            {t("setPassword")}
+                          </button>
+                          <button
+                            type="button"
+                            disabled={demo || working}
+                            onClick={() => sendReset(member.uid)}
+                            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-surface-line ps-3 pe-3 text-[14px] font-semibold hover:border-ink-900 disabled:opacity-50"
+                          >
+                            <MailPlus className="size-4" aria-hidden="true" />
+                            {t("sendReset")}
+                          </button>
+                          <button
+                            type="button"
+                            disabled={demo || working}
+                            onClick={() => {
+                              if (window.confirm(t("confirmDelete", { name: member.name }))) remove(member.uid);
+                            }}
+                            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-surface-line ps-3 pe-3 text-[14px] font-semibold text-danger hover:border-danger disabled:opacity-50"
+                          >
+                            <Trash2 className="size-4" aria-hidden="true" />
+                            {t("delete")}
+                          </button>
+                        </>
+                      ) : null}
                       <button
                         type="button"
                         disabled={demo || self || working}
@@ -262,6 +331,36 @@ export function TeamView({ members, currentUid, demo }: { members: TeamRow[]; cu
                     </div>
                   </td>
                 </tr>
+                {pwFor === member.uid ? (
+                  <tr className="border-b border-surface-line bg-surface-muted last:border-0">
+                    <td colSpan={5} className="ps-5 pe-5 py-4">
+                      <div className="flex flex-wrap items-end gap-3">
+                        <label className="grid gap-2 text-[14px] font-semibold">
+                          {t("newPassword")}
+                          <input
+                            type="text"
+                            dir="ltr"
+                            autoComplete="off"
+                            minLength={10}
+                            value={newPw}
+                            onChange={(e) => setNewPw(e.target.value)}
+                            className={field}
+                          />
+                        </label>
+                        <button
+                          type="button"
+                          disabled={working || newPw.length < 10}
+                          onClick={() => savePassword(member.uid)}
+                          className="inline-flex min-h-12 items-center gap-2 rounded-xl bg-ink-900 ps-5 pe-5 font-semibold text-surface hover:bg-ink-800 disabled:opacity-50"
+                        >
+                          {t("savePassword")}
+                        </button>
+                      </div>
+                      <p className="mt-2 text-[13px] text-text-muted">{t("newPasswordHint")}</p>
+                    </td>
+                  </tr>
+                ) : null}
+              </Fragment>
               );
             })}
           </tbody>

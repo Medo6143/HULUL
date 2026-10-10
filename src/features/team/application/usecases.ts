@@ -1,4 +1,6 @@
 import {
+  checkDelete,
+  isStrongEnough,
   checkDisable,
   checkRoleChange,
   isStaffRole,
@@ -10,7 +12,7 @@ import {
   type StaffRole,
   type TeamError,
 } from "../domain/staff";
-import type { InviteSender, StaffDirectory } from "./ports";
+import type { InviteSender, PasswordVerifier, StaffDirectory } from "./ports";
 
 export function makeListStaff(deps: { directory: StaffDirectory }) {
   return async function listStaff(): Promise<StaffMember[]> {
@@ -50,11 +52,11 @@ export function makeInviteStaff(deps: { directory: StaffDirectory; invites: Invi
 }
 
 export function makeResendInvite(deps: { directory: StaffDirectory; invites: InviteSender }) {
-  return async function resendInvite(uid: string): Promise<Result<{ emailed: boolean }, TeamError>> {
+  return async function resendInvite(uid: string, kind: "invite" | "reset" = "invite"): Promise<Result<{ emailed: boolean }, TeamError>> {
     const member = (await deps.directory.list()).find((m) => m.uid === uid);
     if (!member) return teamErr({ code: "not_found" });
     const link = await deps.directory.createPasswordSetupLink(member.email);
-    const emailed = await deps.invites.send({ uid, to: member.email, name: member.name, role: member.role, link });
+    const emailed = await deps.invites.send({ uid, to: member.email, name: member.name, role: member.role, link, kind });
     return teamOk({ emailed });
   };
 }
@@ -88,6 +90,43 @@ export function makeSetStaffDisabled(deps: { directory: StaffDirectory }) {
     const problem = checkDisable(req.actorUid, target, req.disabled, members);
     if (problem) return teamErr(problem);
     await deps.directory.setDisabled(req.uid, req.disabled);
+    return teamOk(null);
+  };
+}
+
+/** Owner deletes another member. The last active owner and the owner themselves can never be deleted. */
+export function makeDeleteStaff(deps: { directory: StaffDirectory }) {
+  return async function deleteStaff(req: { actorUid: string; uid: string }): Promise<Result<null, TeamError>> {
+    const members = await deps.directory.list();
+    const target = members.find((m) => m.uid === req.uid);
+    if (!target) return teamErr({ code: "not_found" });
+    const problem = checkDelete(req.actorUid, target, members);
+    if (problem) return teamErr(problem);
+    await deps.directory.delete(req.uid);
+    return teamOk(null);
+  };
+}
+
+/** Owner sets a new password for another member (they hand it over themselves). Sessions are revoked. */
+export function makeSetStaffPassword(deps: { directory: StaffDirectory }) {
+  return async function setStaffPassword(req: { actorUid: string; uid: string; password: string }): Promise<Result<null, TeamError>> {
+    if (req.uid === req.actorUid) return teamErr({ code: "self_change" });
+    if (!isStrongEnough(req.password)) return teamErr({ code: "weak_password" });
+    const target = (await deps.directory.list()).find((m) => m.uid === req.uid);
+    if (!target) return teamErr({ code: "not_found" });
+    await deps.directory.setPassword(req.uid, req.password);
+    return teamOk(null);
+  };
+}
+
+/** Any member changes their own password after proving they know the current one. */
+export function makeChangeOwnPassword(deps: { directory: StaffDirectory; verifier: PasswordVerifier }) {
+  return async function changeOwnPassword(req: { uid: string; email: string; current: string; next: string }): Promise<Result<null, TeamError>> {
+    if (!isStrongEnough(req.next) || req.next === req.current) return teamErr({ code: "weak_password" });
+    const check = await deps.verifier.verify(req.email, req.current);
+    if (check === "too_many") return teamErr({ code: "too_many_attempts" });
+    if (check !== "ok") return teamErr({ code: "wrong_password" });
+    await deps.directory.setPassword(req.uid, req.next);
     return teamOk(null);
   };
 }
