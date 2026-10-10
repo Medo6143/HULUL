@@ -1,7 +1,17 @@
 import "server-only";
 import { FirestoreLeadRepository } from "@/features/leads/infrastructure/firestore-lead.repository";
 import { makeSendContactMessage } from "@/features/contact";
-import { makeNotificationService } from "@/features/notifications";
+import { makeNotificationService, makeSaveRecipients } from "@/features/notifications";
+import {
+  buildInviteEmail,
+  makeInviteStaff,
+  makeListStaff,
+  makeResendInvite,
+  makeSetStaffDisabled,
+  makeSetStaffRole,
+  type InviteSender,
+} from "@/features/team";
+import { FirebaseStaffDirectory } from "@/features/team/infrastructure/firebase-staff.directory";
 import { FirestoreNotificationLog } from "@/features/notifications/infrastructure/firestore-notification.log";
 import { FirestoreRecipientStore } from "@/features/notifications/infrastructure/firestore-recipient.store";
 import { ResendEmailSender } from "@/features/notifications/infrastructure/resend-email.sender";
@@ -47,6 +57,27 @@ async function notifications() {
     teamEmails: () => recipients.list(),
     clock,
   });
+}
+
+async function staffDirectory() {
+  return new FirebaseStaffDirectory(await getAdminApp());
+}
+
+/** Sends the invitation through the notification service, so it is logged like every other email. */
+async function inviteSender(): Promise<InviteSender> {
+  const service = await notifications();
+  return {
+    async send(input) {
+      const outcome = await service.sendEmail({
+        event: "team.invite",
+        subjectId: input.uid,
+        channel: "email_staff",
+        to: input.to,
+        message: buildInviteEmail({ name: input.name, link: input.link, role: input.role }),
+      });
+      return outcome.ok;
+    },
+  };
 }
 
 async function leadRepository() {
@@ -96,6 +127,24 @@ export const container = {
       policyVersion: PDPL_POLICY_VERSION,
       events: await notifications(),
     });
+  },
+  async listStaff() {
+    return makeListStaff({ directory: await staffDirectory() });
+  },
+  async inviteStaff() {
+    return makeInviteStaff({ directory: await staffDirectory(), invites: await inviteSender() });
+  },
+  async resendInvite() {
+    return makeResendInvite({ directory: await staffDirectory(), invites: await inviteSender() });
+  },
+  async setStaffRole() {
+    return makeSetStaffRole({ directory: await staffDirectory() });
+  },
+  async setStaffDisabled() {
+    return makeSetStaffDisabled({ directory: await staffDirectory() });
+  },
+  async saveRecipients() {
+    return makeSaveRecipients({ store: await recipientStore() });
   },
   async changeLeadStatus() {
     const repo = await leadRepository();

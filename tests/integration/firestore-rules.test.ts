@@ -28,6 +28,7 @@ describe.skipIf(!emulator)("firestore rules", () => {
       await db.doc("consents/c1").set({ kind: "pdpl_form" });
       await db.doc("notificationLogs/x1").set({ status: "sent" });
       await db.doc("rateLimits/r1").set({ count: 1 });
+      await db.doc("settings/notifications").set({ recipients: ["a@example.com"] });
       await db.doc("admins/agent1").set({ role: "agent" });
       await db.doc("admins/owner1").set({ role: "owner" });
       await db.doc("caseStudies/published").set({ published: true });
@@ -102,6 +103,12 @@ describe.skipIf(!emulator)("firestore rules", () => {
       await assertFails(agent().doc("leads/l1").update({ status: "won" }));
       await assertFails(owner().doc("leads/l1/notes/n2").set({ text: "x" }));
       await assertFails(owner().doc("rateLimits/r1").get());
+    });
+    it("only the owner reads the alert recipients, and nobody writes them from the browser", async () => {
+      await assertSucceeds(owner().doc("settings/notifications").get());
+      await assertFails(agent().doc("settings/notifications").get());
+      await assertFails(anon().doc("settings/notifications").get());
+      await assertFails(owner().doc("settings/notifications").set({ recipients: [] }));
     });
     it("an agent reads only their own admin record, the owner reads any", async () => {
       await assertSucceeds(agent().doc("admins/agent1").get());

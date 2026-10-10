@@ -9,3 +9,6 @@ export { computeAnalytics } from "./model/analytics";
 export type { AdminLead, AdminLeadDetail } from "./model/admin-lead";
 export type { AnalyticsData } from "./model/analytics";
 export { leadsToCsv } from "./model/csv";
+export { TeamView } from "./ui/team-view";
+export type { TeamRow } from "./ui/team-view";
+export { SettingsView } from "./ui/settings-view";

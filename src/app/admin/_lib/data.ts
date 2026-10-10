@@ -3,6 +3,7 @@ import { computeAnalytics, demoLeads, findDemoLead, toAdminDetail, toAdminLead }
 import type { AdminLead, AdminLeadDetail, AnalyticsData } from "@/features/admin";
 import { FIRST_REPLY_LIMIT_HOURS } from "@/config/sla";
 import { container } from "@/lib/container";
+import type { TeamRow } from "@/features/admin";
 import { isAdminDemo } from "./staff";
 
 export async function loadLeads(): Promise<{ leads: AdminLead[]; demo: boolean }> {
@@ -32,4 +33,35 @@ export function leadWhatsappHref(phone: string, demo: boolean): string | null {
   if (demo) return null;
   const digits = phone.replace(/\D/g, "");
   return /^[1-9]\d{7,14}$/.test(digits) ? `https://wa.me/${digits}` : null;
+}
+
+export async function loadTeam(): Promise<{ members: TeamRow[]; demo: boolean }> {
+  if (isAdminDemo()) {
+    return {
+      demo: true,
+      members: [
+        { uid: "demo", email: "demo@example.test", name: "مدير تجريبي", role: "owner", disabled: false, lastSignInAt: null },
+        { uid: "demo-2", email: "agent@example.test", name: "موظف تجريبي", role: "agent", disabled: false, lastSignInAt: null },
+      ],
+    };
+  }
+  const list = await container.listStaff();
+  const members = await list();
+  return {
+    demo: false,
+    members: members.map((m) => ({
+      uid: m.uid,
+      email: m.email,
+      name: m.name,
+      role: m.role,
+      disabled: m.disabled,
+      lastSignInAt: m.lastSignInAt ? m.lastSignInAt.toISOString() : null,
+    })),
+  };
+}
+
+export async function loadRecipients(): Promise<{ recipients: string[]; demo: boolean }> {
+  if (isAdminDemo()) return { recipients: ["team@example.test"], demo: true };
+  const store = await container.recipientStore();
+  return { recipients: await store.list(), demo: false };
 }

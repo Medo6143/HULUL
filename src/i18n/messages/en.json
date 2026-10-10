@@ -457,7 +457,9 @@
       "analytics": "Analytics",
       "site": "View site",
       "signOut": "Sign out",
-      "menu": "Menu"
+      "menu": "Menu",
+      "team": "Team",
+      "settings": "Settings"
     },
     "user": {
       "name": "Demo admin",
@@ -605,6 +607,71 @@
       "rate_limited": "Too many requests. Try again shortly",
       "internal_error": "Something went wrong on our side. Try again",
       "retry": "Try again"
+    },
+    "team": {
+      "title": "Team",
+      "subtitle": "Add staff and set their roles. This page is for the owner only.",
+      "inviteTitle": "Invite a team member",
+      "email": "Email",
+      "name": "Name",
+      "role": "Role",
+      "roles": {
+        "owner": "Owner",
+        "agent": "Agent"
+      },
+      "send": "Send invite",
+      "inviteHint": "They receive an email with a link to set their own password, so you never know it. Owners manage the team and settings; agents work with leads only.",
+      "inviteSent": "The invitation was emailed.",
+      "inviteNotEmailed": "The account was created but the email could not be sent. Use Resend invite.",
+      "columns": {
+        "member": "Member",
+        "role": "Role",
+        "status": "Status",
+        "lastSignIn": "Last sign in",
+        "actions": "Actions"
+      },
+      "you": "You",
+      "active": "Active",
+      "disabled": "Disabled",
+      "neverSignedIn": "Not yet",
+      "enable": "Enable",
+      "disable": "Disable",
+      "resendInvite": "Resend invite",
+      "demoNote": "Actions are disabled in demo mode.",
+      "errors": {
+        "invalid_email": "Enter a valid email address",
+        "invalid_role": "The role is not valid",
+        "email_exists": "This email is already registered",
+        "last_owner": "At least one active owner must remain",
+        "self_change": "You cannot change your own role or disable your own account",
+        "not_found": "We could not find this member",
+        "unauthorized": "Your session expired. Sign in again",
+        "forbidden": "This action is for the owner only",
+        "invalid_input": "The data is invalid",
+        "internal_error": "Something went wrong on our side. Try again"
+      }
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Team settings. This page is for the owner only.",
+      "recipientsTitle": "Alert recipients",
+      "recipientsHint": "They receive alerts for new leads, contact messages, and bookings. Up to {max} addresses.",
+      "recipientLabel": "Email {n}",
+      "add": "Add email",
+      "remove": "Remove email",
+      "save": "Save",
+      "saved": "The list was saved.",
+      "fallbackNote": "If no list is saved, the default address from the server settings is used. Changes apply within about a minute.",
+      "demoNote": "Actions are disabled in demo mode.",
+      "errors": {
+        "invalid_email": "One of the emails is not valid",
+        "too_many": "The limit is 10 emails",
+        "empty": "Add at least one email",
+        "unauthorized": "Your session expired. Sign in again",
+        "forbidden": "This action is for the owner only",
+        "invalid_input": "The data is invalid",
+        "internal_error": "Something went wrong on our side. Try again"
+      }
     }
   }
 }

@@ -34,6 +34,11 @@ service cloud.firestore {
       allow read: if (resource.data.published == true && resource.data.consentToPublish == true) || isStaff();
       allow write: if false;
     }
+    // Alert recipients: only the owner reads it from the browser; the server writes it.
+    match /settings/notifications {
+      allow read: if isOwner();
+      allow write: if false;
+    }
     match /settings/site {
       allow read: if true;
       allow write: if false;
