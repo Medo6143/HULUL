@@ -13,7 +13,8 @@ export function ConsultSection({ whatsappHref }: { whatsappHref: string | null }
   const t = useTranslations("home.consult");
 
   return (
-    <Section id="consult" tone="dark" labelledBy="consult-title">
+    <div data-track-location="consult">
+<Section id="consult" tone="dark" labelledBy="consult-title">
       <div className="grid items-center gap-12 lg:grid-cols-2">
         <div>
           <h2 id="consult-title" className="text-[28px] font-bold leading-[1.3] md:text-[40px]">
@@ -21,7 +22,7 @@ export function ConsultSection({ whatsappHref }: { whatsappHref: string | null }
           </h2>
           <p className="mt-4 text-[17px] leading-[1.8] text-surface/75">{t("intro")}</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/start" className={buttonClassName("primary", "min-h-14")}>
+            <Link href="/start" data-track="cta_click" className={buttonClassName("primary", "min-h-14")}>
               {t("formCta")}
               <ArrowRight className="size-5 rtl:-scale-x-100" aria-hidden="true" />
             </Link>
@@ -59,5 +60,6 @@ export function ConsultSection({ whatsappHref }: { whatsappHref: string | null }
         </div>
       </div>
     </Section>
+    </div>
   );
 }

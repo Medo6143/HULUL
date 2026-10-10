@@ -7,6 +7,7 @@ import { Button, buttonClassName } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { track } from "@/features/analytics";
 import { cn } from "@/lib/cn";
 import { normalizePhone, type LeadService, type LeadType } from "../domain/lead";
 import { WhatsAppIcon } from "@/components/ui/whatsapp-icon";
@@ -140,6 +141,7 @@ export function LeadForm({
       });
       if (response.ok) {
         setStatus("sent");
+        if (service) track({ name: "generate_lead", params: { form: type, service, locale } });
         requestAnimationFrame(() => successRef.current?.focus());
         return;
       }
@@ -179,7 +181,7 @@ export function LeadForm({
   }
 
   return (
-    <form onSubmit={submit} noValidate className="grid gap-7">
+    <form onSubmit={submit} noValidate data-form={type} className="grid gap-7">
       <fieldset className="grid gap-3" aria-describedby={errors.service ? "service-error" : undefined}>
         <legend className="mb-1 text-[15px] font-semibold">{t("serviceLabel")}</legend>
         <div className="grid grid-cols-2 gap-3">

@@ -4,7 +4,14 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { buttonClassName } from "@/components/ui/button";
-import { CONSENT_STORAGE_KEY, parseConsent, serializeConsent, type ConsentState } from "@/lib/consent";
+import {
+  CONSENT_CHANGED_EVENT,
+  CONSENT_OPEN_EVENT,
+  CONSENT_STORAGE_KEY,
+  parseConsent,
+  serializeConsent,
+  type ConsentState,
+} from "@/lib/consent";
 
 export function CookieBanner() {
   const t = useTranslations("cookie");
@@ -19,6 +26,17 @@ export function CookieBanner() {
     setVisible(stored === null);
   }, []);
 
+  useEffect(() => {
+    const reopen = () => {
+      const stored = parseConsent(window.localStorage.getItem(CONSENT_STORAGE_KEY));
+      setAnalytics(stored?.analytics ?? false);
+      setMarketing(stored?.marketing ?? false);
+      setVisible(true);
+    };
+    window.addEventListener(CONSENT_OPEN_EVENT, reopen);
+    return () => window.removeEventListener(CONSENT_OPEN_EVENT, reopen);
+  }, []);
+
   function save(next: Pick<ConsentState, "analytics" | "marketing">) {
     const state: ConsentState = {
       necessary: true,
@@ -27,6 +45,7 @@ export function CookieBanner() {
       updatedAt: new Date().toISOString(),
     };
     window.localStorage.setItem(CONSENT_STORAGE_KEY, serializeConsent(state));
+    window.dispatchEvent(new CustomEvent(CONSENT_CHANGED_EVENT, { detail: state }));
     setVisible(false);
   }
 

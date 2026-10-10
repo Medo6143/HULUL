@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { segments } from "@/config/segments";
 import { services } from "@/config/services";
+import { ConsentReopen } from "@/components/layout/consent-reopen";
 import { Link } from "@/i18n/navigation";
 
 export async function Footer() {
@@ -77,6 +78,9 @@ export async function Footer() {
               <Link href="/cookies" className={link}>
                 {t("cookies")}
               </Link>
+            </li>
+            <li>
+              <ConsentReopen className={`${link} text-start`} />
             </li>
           </ul>
         </div>

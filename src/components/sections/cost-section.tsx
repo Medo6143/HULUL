@@ -15,7 +15,8 @@ export function CostSection() {
   const t = useTranslations("home.cost");
 
   return (
-    <Section tone="muted" labelledBy="cost-title">
+    <div data-track-view="cost_section_view" data-track-location="cost">
+<Section tone="muted" labelledBy="cost-title">
       <SectionHeading id="cost-title" eyebrow={t("eyebrow")} title={t("title")} intro={t("intro")} />
       <div className="grid gap-6 md:grid-cols-3">
         {FACTORS.map(({ key, Icon }, index) => (
@@ -34,11 +35,12 @@ export function CostSection() {
       </div>
       <p className="ms-auto me-auto mt-10 max-w-2xl text-center text-[17px] text-text-muted">{t("note")}</p>
       <p className="mt-6 text-center">
-        <Link href="/start" className={buttonClassName("primary", "min-h-14")}>
+        <Link href="/start" data-track="cta_click" className={buttonClassName("primary", "min-h-14")}>
           {t("cta")}
           <ArrowRight className="size-5 rtl:-scale-x-100" aria-hidden="true" />
         </Link>
       </p>
     </Section>
+    </div>
   );
 }

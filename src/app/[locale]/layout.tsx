@@ -42,7 +42,15 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const messages = await getMessages();
   const phone = container.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
-  const documentProps = { locale, messages, phone, children };
+  const env = container.env;
+  const analyticsIds = {
+    ga4: env.NEXT_PUBLIC_GA4_ID,
+    clarity: env.NEXT_PUBLIC_CLARITY_ID,
+    meta: env.NEXT_PUBLIC_META_PIXEL_ID,
+    snap: env.NEXT_PUBLIC_SNAP_PIXEL_ID,
+    tiktok: env.NEXT_PUBLIC_TIKTOK_PIXEL_ID,
+  };
+  const documentProps = { locale, messages, phone, analyticsIds, children };
 
   if (locale === "ar") return <ArabicDocument {...documentProps} />;
   return <LatinDocument {...documentProps} />;

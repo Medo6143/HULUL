@@ -9,7 +9,7 @@ export function Hero({ whatsappHref }: { whatsappHref: string | null }) {
   const t = useTranslations("hero");
 
   return (
-    <header className="relative isolate overflow-hidden bg-ink-950 pb-16 pt-14 text-surface md:pb-24 md:pt-20">
+    <header data-track-location="hero" className="relative isolate overflow-hidden bg-ink-950 pb-16 pt-14 text-surface md:pb-24 md:pt-20">
       <div aria-hidden="true" className="bg-aurora absolute inset-0 -z-10" />
       <div
         aria-hidden="true"
@@ -32,7 +32,7 @@ export function Hero({ whatsappHref }: { whatsappHref: string | null }) {
             {t("subtitle")}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/start" className={buttonClassName("primary", "min-h-14 text-[17px]")}>
+            <Link href="/start" data-track="cta_click" className={buttonClassName("primary", "min-h-14 text-[17px]")}>
               {t("ctaPrimary")}
               <ArrowRight className="size-5 rtl:-scale-x-100" aria-hidden="true" />
             </Link>

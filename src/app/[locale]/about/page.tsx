@@ -8,6 +8,7 @@ import { JourneySection } from "@/components/sections/journey-section";
 import { Section, SectionHeading } from "@/components/sections/section";
 import { ServicesGrid } from "@/components/sections/services-section";
 import { whatsappHref } from "@/lib/whatsapp-href";
+import { pageMetadata } from "@/lib/page-metadata";
 
 const VALUES: { key: "clarity" | "arabic" | "visibility" | "support"; Icon: LucideIcon }[] = [
   { key: "clarity", Icon: FileText },
@@ -19,7 +20,7 @@ const VALUES: { key: "clarity" | "arabic" | "visibility" | "support"; Icon: Luci
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "about" });
-  return { title: t("title") };
+  return pageMetadata({ locale, path: "/about", title: t("title"), description: t("body") });
 }
 
 export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {

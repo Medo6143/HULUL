@@ -10,8 +10,12 @@ import { JourneySection } from "@/components/sections/journey-section";
 import { Section, SectionHeading } from "@/components/sections/section";
 import { isServiceSlug, services } from "@/config/services";
 import { Link } from "@/i18n/navigation";
+import { JsonLd } from "@/components/seo/json-ld";
+import { publicEnv } from "@/lib/env.public";
+import { serviceSchema } from "@/lib/structured-data";
 import { whatsappHref } from "@/lib/whatsapp-href";
 import { WhatsAppIcon } from "@/components/ui/whatsapp-icon";
+import { pageMetadata } from "@/lib/page-metadata";
 
 const POINTS = ["p1", "p2", "p3"] as const;
 
@@ -27,7 +31,12 @@ export async function generateMetadata({
   const { locale, slug } = await params;
   if (!isServiceSlug(slug)) return {};
   const t = await getTranslations({ locale, namespace: "services" });
-  return { title: t(`${slug}.title`) };
+  return pageMetadata({
+    locale,
+    path: `/services/${slug}`,
+    title: t(`${slug}.title`),
+    description: t(`${slug}.summary`),
+  });
 }
 
 export default async function ServicePage({
@@ -43,16 +52,27 @@ export default async function ServicePage({
   const d = await getTranslations("serviceDetail");
   const nav = await getTranslations("nav");
   const href = whatsappHref(locale, slug);
+  const brand = await getTranslations("brand");
 
   return (
     <main id="main">
+      <JsonLd
+        data={serviceSchema({
+          base: publicEnv.NEXT_PUBLIC_SITE_URL,
+          locale: locale === "en" ? "en" : "ar",
+          path: `/services/${slug}`,
+          name: t(`${slug}.title`),
+          description: t(`${slug}.summary`),
+          providerName: brand("name"),
+        })}
+      />
       <PageHero
         eyebrow={nav("services")}
         title={t(`${slug}.title`)}
         intro={t(`${slug}.summary`)}
         actions={
           <>
-            <Link href="/start" className={buttonClassName("primary", "min-h-14")}>
+            <Link href="/start" data-track="cta_click" data-track-location="service_hero" className={buttonClassName("primary", "min-h-14")}>
               {d("cta")}
               <ArrowRight className="size-5 rtl:-scale-x-100" aria-hidden="true" />
             </Link>

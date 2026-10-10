@@ -4,11 +4,12 @@ import { FinalCta } from "@/components/sections/final-cta";
 import { Section } from "@/components/sections/section";
 import { ServicesGrid } from "@/components/sections/services-section";
 import { whatsappHref } from "@/lib/whatsapp-href";
+import { pageMetadata } from "@/lib/page-metadata";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "services" });
-  return { title: t("title") };
+  return pageMetadata({ locale, path: "/services", title: t("title"), description: t("intro") });
 }
 
 export default async function ServicesPage({ params }: { params: Promise<{ locale: string }> }) {

@@ -92,7 +92,8 @@ export function ContactSection({
   });
 
   return (
-    <Section id="contact" tone="muted" labelledBy="contact-title">
+    <div data-track-location="contact">
+<Section id="contact" tone="muted" labelledBy="contact-title">
       <SectionHeading
         id="contact-title"
         eyebrow={t("eyebrow")}
@@ -161,5 +162,6 @@ export function ContactSection({
         <div className="rounded-panel border border-surface-line bg-surface p-6 shadow-card md:p-9">{form}</div>
       </div>
     </Section>
+    </div>
   );
 }

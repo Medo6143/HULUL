@@ -1,4 +1,8 @@
 export const CONSENT_STORAGE_KEY = "hulol.consent.v1";
+/** Fired on window after the visitor saves a choice (detail: ConsentState). */
+export const CONSENT_CHANGED_EVENT = "hulol:consent";
+/** Fire on window to reopen the cookie choices, so consent can be changed or withdrawn. */
+export const CONSENT_OPEN_EVENT = "hulol:open-consent";
 
 export type ConsentState = {
   necessary: true;

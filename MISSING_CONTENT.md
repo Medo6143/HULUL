@@ -29,6 +29,12 @@ These items are not published. Do not invent them. The blocks stay empty until y
 
 - Market figures on the home page (`src/config/market-data.ts`) are copied from the master plan with their sources. Re-check them against DataReportal and Qoyod before launch.
 
+## Needed to switch on SEO and analytics
+
+- The real domain in `NEXT_PUBLIC_SITE_URL`. Until then `robots.txt` blocks all crawling and the canonical and sitemap URLs point to example.com.
+- `NEXT_PUBLIC_GA4_ID`, `NEXT_PUBLIC_CLARITY_ID`, `NEXT_PUBLIC_META_PIXEL_ID`, `NEXT_PUBLIC_SNAP_PIXEL_ID`, `NEXT_PUBLIC_TIKTOK_PIXEL_ID`. Empty or malformed ids are ignored.
+- A designed Open Graph image (1200x630).
+
 ## Logo color check
 
 The file `public/icons/nav-logo.png` is the original 500x500 PNG from https://hulol-tech.vercel.app/icons/nav-logo.png (SHA-256 `B144463B17BC54AEDBDCB3BA994CAAF0788BCE781B15B20882734611955505E1`). It was not redrawn.

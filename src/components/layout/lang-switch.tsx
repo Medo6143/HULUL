@@ -15,6 +15,9 @@ export function LangSwitch() {
       locale={nextLocale}
       hrefLang={nextLocale}
       aria-label={t("label")}
+      data-track="language_toggle"
+      data-from={locale}
+      data-to={nextLocale}
       className="inline-flex min-h-12 items-center rounded-control border border-surface/30 ps-4 pe-4 text-[15px] font-semibold text-surface"
     >
       {t("switch")}

@@ -21,6 +21,7 @@ export function WhatsAppFloat({ phone }: { phone: string }) {
   return (
     <a
       href={href}
+      data-track-location="float"
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-6 start-6 z-40 inline-flex min-h-12 items-center gap-2 rounded-full bg-whatsapp ps-4 pe-4 font-bold text-ink-950 shadow-card"

@@ -5,17 +5,21 @@ import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
 import { SkipLink } from "@/components/layout/skip-link";
 import { WhatsAppFloat } from "@/components/layout/whatsapp-float";
+import { AnalyticsProvider } from "@/features/analytics";
+import type { ProviderIds } from "@/lib/analytics/ids";
 import { latinFont } from "@/fonts/latin";
 
 export function LatinDocument({
   locale,
   messages,
   phone,
+  analyticsIds,
   children,
 }: {
   locale: string;
   messages: Record<string, unknown>;
   phone: string;
+  analyticsIds: ProviderIds;
   children: ReactNode;
 }) {
   return (
@@ -28,6 +32,7 @@ export function LatinDocument({
           <Footer />
           <WhatsAppFloat phone={phone} />
           <CookieBanner />
+          <AnalyticsProvider ids={analyticsIds} />
         </NextIntlClientProvider>
       </body>
     </html>

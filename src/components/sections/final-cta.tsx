@@ -9,7 +9,7 @@ export function FinalCta({ whatsappHref }: { whatsappHref: string | null }) {
   const t = useTranslations("home.final");
 
   return (
-    <section aria-labelledby="final-title" className="bg-surface py-16 md:py-24">
+    <section data-track-location="final_cta" aria-labelledby="final-title" className="bg-surface py-16 md:py-24">
       <div className="ms-auto me-auto max-w-page ps-4 pe-4 md:ps-6 md:pe-6">
         <div className="relative isolate overflow-hidden rounded-panel bg-gradient-to-br from-ink-900 via-ink-900 to-[#0b5566] px-6 py-14 text-surface md:px-14 md:py-16">
           <div aria-hidden="true" className="bg-aurora absolute inset-0 -z-10 opacity-50" />
@@ -23,7 +23,7 @@ export function FinalCta({ whatsappHref }: { whatsappHref: string | null }) {
             </h2>
             <p className="mt-4 text-[17px] leading-[1.8] text-surface/80">{t("text")}</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/start" className={buttonClassName("primary", "min-h-14")}>
+              <Link href="/start" data-track="cta_click" className={buttonClassName("primary", "min-h-14")}>
                 {t("cta")}
                 <ArrowRight className="size-5 rtl:-scale-x-100" aria-hidden="true" />
               </Link>

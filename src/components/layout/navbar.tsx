@@ -21,7 +21,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-surface/10 bg-ink-950/75 text-surface backdrop-blur-xl">
+    <header data-track-location="navbar" className="sticky top-0 z-30 border-b border-surface/10 bg-ink-950/75 text-surface backdrop-blur-xl">
       <div className="ms-auto me-auto flex h-16 max-w-page items-center justify-between gap-4 ps-4 pe-4 md:ps-6 md:pe-6">
         <Link href="/" className="inline-flex items-center gap-4" aria-label={brand("name")}>
           <Image
@@ -51,7 +51,7 @@ export function Navbar() {
 
         <div className="hidden items-center gap-3 md:flex">
           <LangSwitch />
-          <Link href="/start" className={buttonClassName("primary", "min-h-11 text-[15px]")}>
+          <Link href="/start" data-track="cta_click" className={buttonClassName("primary", "min-h-11 text-[15px]")}>
             {t("consultation")}
           </Link>
         </div>

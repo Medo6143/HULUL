@@ -11,6 +11,7 @@ import { ServicesSection } from "@/components/sections/services-section";
 import { isSegmentSlug, segments } from "@/config/segments";
 import { Link } from "@/i18n/navigation";
 import { whatsappHref } from "@/lib/whatsapp-href";
+import { pageMetadata } from "@/lib/page-metadata";
 
 export function generateStaticParams() {
   return segments.map((segment) => ({ segment: segment.slug }));
@@ -24,7 +25,12 @@ export async function generateMetadata({
   const { locale, segment } = await params;
   if (!isSegmentSlug(segment)) return {};
   const t = await getTranslations({ locale, namespace: "segments" });
-  return { title: t(`${segment}.name`) };
+  return pageMetadata({
+    locale,
+    path: `/for/${segment}`,
+    title: t(`${segment}.name`),
+    description: t(`${segment}.promise`),
+  });
 }
 
 export default async function SegmentPage({
@@ -46,7 +52,7 @@ export default async function SegmentPage({
         intro={t(`${segment}.promise`)}
         aside={<SceneCard variant={segment} />}
         actions={
-          <Link href="/start" className={buttonClassName("primary", "min-h-14")}>
+          <Link href="/start" data-track="cta_click" data-track-location="segment_hero" className={buttonClassName("primary", "min-h-14")}>
             {t("cta")}
             <ArrowRight className="size-5 rtl:-scale-x-100" aria-hidden="true" />
           </Link>

@@ -7,11 +7,12 @@ import { Section } from "@/components/sections/section";
 import { WorkSection } from "@/components/sections/work-section";
 import { caseStudies } from "@/config/case-studies";
 import { whatsappHref } from "@/lib/whatsapp-href";
+import { pageMetadata } from "@/lib/page-metadata";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "work" });
-  return { title: t("title") };
+  return pageMetadata({ locale, path: "/work", title: t("title"), description: t("heading") });
 }
 
 export default async function WorkPage({ params }: { params: Promise<{ locale: string }> }) {
