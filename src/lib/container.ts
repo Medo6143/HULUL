@@ -2,9 +2,11 @@ import "server-only";
 import { FirestoreLeadRepository } from "@/features/leads/infrastructure/firestore-lead.repository";
 import { makeSendContactMessage } from "@/features/contact";
 import { FirestoreContactRepository } from "@/features/contact/infrastructure/firestore-contact.repository";
-import { makeChangeLeadStatus, makeCreateLead } from "@/features/leads";
+import { makeAddLeadNote, makeChangeLeadStatus, makeCreateLead, makeGetLeadDetail, makeListLeads } from "@/features/leads";
 import { serverEnv } from "./env.server";
 import { getAdminApp } from "./firebase/admin";
+import { createAdminAuth } from "./firebase/auth-admin";
+import { signInWithPassword } from "./firebase/auth-rest";
 
 export interface Clock {
   now(): Date;
@@ -48,6 +50,26 @@ export const container = {
   async changeLeadStatus() {
     const repo = await leadRepository();
     return makeChangeLeadStatus({ reader: repo, writer: repo, clock });
+  },
+  async listLeads() {
+    return makeListLeads({ reader: await leadRepository() });
+  },
+  async getLeadDetail() {
+    const repo = await leadRepository();
+    return makeGetLeadDetail({ reader: repo, history: repo, notes: repo });
+  },
+  async addLeadNote() {
+    const repo = await leadRepository();
+    return makeAddLeadNote({ reader: repo, notes: repo, clock, ids });
+  },
+  /** Staff authentication: password sign-in goes through Firebase Auth REST, sessions through the Admin SDK. */
+  async staffAuth() {
+    const admin = createAdminAuth(await getAdminApp());
+    return {
+      ...admin,
+      signIn: (email: string, password: string) =>
+        signInWithPassword(email, password, serverEnv.NEXT_PUBLIC_FIREBASE_API_KEY),
+    };
   },
 };
 

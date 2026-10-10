@@ -1,5 +1,7 @@
-import { LeadsView, demoLeads } from "@/features/admin";
+import { loadLeads } from "@/app/admin/_lib/data";
+import { LeadsView } from "@/features/admin";
 
-export default function AdminLeadsPage() {
-  return <LeadsView leads={demoLeads} />;
+export default async function AdminLeadsPage() {
+  const { leads, demo } = await loadLeads();
+  return <LeadsView leads={leads} demo={demo} />;
 }

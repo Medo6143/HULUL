@@ -1,10 +1,10 @@
 // DESIGN-ONLY sample data. Not real customers. Replace with Firestore reads when the admin is wired.
-import type { LeadStatus } from "@/features/leads";
+import type { AdminLeadDetail, LeadStatusKey as LeadStatus } from "../model/admin-lead";
 
-export type DemoService = "web" | "mobile" | "design" | "unsure";
-export type DemoSource = "google" | "direct" | "linkedin" | "snapchat" | "referral" | "whatsapp";
+type DemoService = "web" | "mobile" | "design" | "unsure";
+type DemoSource = "google" | "direct" | "linkedin" | "snapchat" | "referral" | "whatsapp";
 
-export interface DemoLead {
+interface RawDemoLead {
   id: string;
   name: string;
   business: string;
@@ -28,7 +28,7 @@ export interface DemoLead {
 
 const staff = "مدير تجريبي";
 
-export const demoLeads: DemoLead[] = [
+const raw: RawDemoLead[] = [
   {
     id: "demo-01",
     name: "عميل تجريبي A",
@@ -265,5 +265,33 @@ export const demoLeads: DemoLead[] = [
     notes: [],
   },
 ];
+
+const normalize = (lead: RawDemoLead): AdminLeadDetail => {
+  const firstReply = lead.history.find((entry) => entry.from === "new");
+  return {
+    id: lead.id,
+    name: lead.name,
+    business: lead.business,
+    service: lead.service,
+    phone: lead.phone,
+    email: lead.email,
+    preferred: lead.preferred,
+    status: lead.status,
+    source: lead.source,
+    campaign: lead.campaign,
+    landing: lead.landing,
+    timeline: lead.timeline,
+    description: lead.description,
+    createdAt: lead.createdAt,
+    firstResponseAt: firstReply ? firstReply.at : null,
+    assigned: lead.assigned,
+    isNew: lead.isNew,
+    lostReason: lead.lostReason ?? "",
+    history: lead.history.map((entry) => ({ ...entry, reason: entry.reason ?? "" })),
+    notes: lead.notes.map((note, index) => ({ id: `${lead.id}-n${index}`, ...note })),
+  };
+};
+
+export const demoLeads: AdminLeadDetail[] = raw.map(normalize);
 
 export const findDemoLead = (id: string) => demoLeads.find((lead) => lead.id === id);

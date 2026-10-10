@@ -34,6 +34,8 @@ export interface Lead {
   lostReason: string;
   assignedTo: string;
   source: LeadSource;
+  /** Set the first time a lead leaves `new`; drives the reply-time analytics. */
+  firstResponseAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -118,6 +120,7 @@ export function createLead(
     lostReason: "",
     assignedTo: "",
     source: input.source,
+    firstResponseAt: null,
     createdAt: ctx.now,
     updatedAt: ctx.now,
   });
@@ -140,6 +143,7 @@ export function changeStatus(
       ...lead,
       status: to,
       lostReason: to === "lost" ? reason : lead.lostReason,
+      firstResponseAt: lead.firstResponseAt ?? (lead.status === "new" ? ctx.now : null),
       updatedAt: ctx.now,
     },
     history: {

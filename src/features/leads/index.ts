@@ -8,3 +8,10 @@ export { leadInputSchema, toNewLeadInput } from "./application/lead-input.schema
 export type { LeadInputPayload } from "./application/lead-input.schema";
 export type { LeadReader, LeadWriter } from "./application/ports";
 export { LeadForm } from "./ui/lead-form";
+export { makeAddLeadNote } from "./application/add-lead-note.usecase";
+export { makeGetLeadDetail } from "./application/get-lead-detail.usecase";
+export type { LeadDetail } from "./application/get-lead-detail.usecase";
+export type { LeadNote } from "./domain/note";
+export type { StatusHistoryEntry } from "./domain/lead";
+export type { LeadNoteStore, LeadHistoryReader } from "./application/ports";
+export { makeListLeads } from "./application/list-leads.usecase";

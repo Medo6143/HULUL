@@ -5,4 +5,5 @@ export type LeadError =
   | { code: "consent_required" }
   | { code: "transition_not_allowed"; from: string; to: string }
   | { code: "reason_required" }
+  | { code: "invalid_note" }
   | { code: "not_found" };

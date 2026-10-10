@@ -4,3 +4,8 @@ export { LeadDetail } from "./ui/lead-detail";
 export { AnalyticsView } from "./ui/analytics-view";
 export { LoginCard } from "./ui/login-card";
 export { demoLeads, findDemoLead } from "./demo/demo-leads";
+export { toAdminLead, toAdminDetail } from "./model/to-admin-lead";
+export { computeAnalytics } from "./model/analytics";
+export type { AdminLead, AdminLeadDetail } from "./model/admin-lead";
+export type { AnalyticsData } from "./model/analytics";
+export { leadsToCsv } from "./model/csv";

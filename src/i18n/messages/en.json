@@ -452,7 +452,9 @@
     },
     "user": {
       "name": "Demo admin",
-      "role": "Owner"
+      "role": "Owner",
+      "owner": "Owner",
+      "agent": "Agent"
     },
     "status": {
       "new": "New",
@@ -526,7 +528,10 @@
       "unassigned": "Unassigned",
       "whatsapp": "Open WhatsApp",
       "whatsappDemo": "Works with real data.",
-      "by": "By"
+      "by": "By",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "demoActions": "Actions are disabled in demo mode."
     },
     "lostReasons": {
       "price": "Price",
@@ -556,13 +561,16 @@
       "leadsCol": "Leads",
       "dealsCol": "Deals",
       "services": "Services",
-      "channels": "Form vs WhatsApp",
       "form": "Form",
       "whatsapp": "WhatsApp",
       "sla": "Reply and SLA",
       "slaMedian": "Median first reply",
       "slaOver": "Leads past the reply limit",
-      "losses": "Loss reasons"
+      "losses": "Loss reasons",
+      "noData": "Not enough data yet",
+      "approxNote": "Stage counts use each lead's current status, so they are approximations, not an event log.",
+      "contactTitle": "Preferred contact",
+      "slaLimitUnset": "The reply limit is not set yet, so leads past it are not shown."
     },
     "login": {
       "title": "Team sign in",
@@ -570,8 +578,24 @@
       "email": "Email",
       "password": "Password",
       "submit": "Sign in",
-      "pending": "Sign in is enabled once Firebase Auth is connected. This page is design only.",
-      "back": "Back to the site"
+      "back": "Back to the site",
+      "signingIn": "Signing in",
+      "invalid": "Sign in failed. Check the email and password.",
+      "forbidden": "This account does not have access to the dashboard.",
+      "notConfigured": "Sign in is not configured yet. Set the Firebase settings.",
+      "tooMany": "Too many attempts. Try again shortly."
+    },
+    "errors": {
+      "unauthorized": "Your session expired. Sign in again",
+      "forbidden": "You do not have permission for this action",
+      "invalid_input": "The data is invalid",
+      "transition_not_allowed": "This transition is not allowed from the current status",
+      "reason_required": "Choose a lost reason",
+      "invalid_note": "Write a valid note (up to 2000 characters)",
+      "not_found": "We could not find this lead",
+      "rate_limited": "Too many requests. Try again shortly",
+      "internal_error": "Something went wrong on our side. Try again",
+      "retry": "Try again"
     }
   }
 }

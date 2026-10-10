@@ -3,24 +3,35 @@
 import { Download, LayoutGrid, Search, Table2 } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { LEAD_STATUSES, type LeadStatus } from "@/features/leads";
 import { cn } from "@/lib/cn";
-import type { DemoLead } from "../demo/demo-leads";
+import type { AdminLead } from "../model/admin-lead";
 import { formatDateTime } from "./format";
 import { StatusBadge, statusDot } from "./status-badge";
 
 type View = "table" | "board";
 
-export function LeadsView({ leads }: { leads: DemoLead[] }) {
+export function LeadsView({ leads, demo }: { leads: AdminLead[]; demo: boolean }) {
   const t = useTranslations("admin.leads");
   const s = useTranslations("admin.status");
   const src = useTranslations("admin.sources");
   const svc = useTranslations("start.services");
 
+  const router = useRouter();
   const [view, setView] = useState<View>("table");
   const [filter, setFilter] = useState<LeadStatus | "all">("all");
   const [query, setQuery] = useState("");
+
+  // New leads appear without a manual reload: re-fetch the server data every 30 seconds while the tab is visible.
+  useEffect(() => {
+    if (demo) return;
+    const timer = setInterval(() => {
+      if (document.visibilityState === "visible") router.refresh();
+    }, 30_000);
+    return () => clearInterval(timer);
+  }, [demo, router]);
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -71,13 +82,21 @@ export function LeadsView({ leads }: { leads: DemoLead[] }) {
               </button>
             ))}
           </div>
-          <button
-            type="button"
-            className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-surface-line bg-surface ps-4 pe-4 text-[15px] font-semibold hover:border-text-muted/40"
-          >
-            <Download className="size-4" aria-hidden="true" />
-            {t("export")}
-          </button>
+          {demo ? (
+            <span className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-surface-line bg-surface ps-4 pe-4 text-[15px] font-semibold opacity-50">
+              <Download className="size-4" aria-hidden="true" />
+              {t("export")}
+            </span>
+          ) : (
+            // eslint-disable-next-line @next/next/no-html-link-for-pages -- file download from an API route, not a page
+            <a
+              href="/api/admin/leads/export"
+              className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-surface-line bg-surface ps-4 pe-4 text-[15px] font-semibold hover:border-text-muted/40"
+            >
+              <Download className="size-4" aria-hidden="true" />
+              {t("export")}
+            </a>
+          )}
         </div>
       </div>
 

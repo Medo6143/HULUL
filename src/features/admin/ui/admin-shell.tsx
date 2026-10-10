@@ -1,12 +1,21 @@
-import { ExternalLink, FlaskConical, LogOut } from "lucide-react";
+import { ExternalLink, FlaskConical } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { AdminNav } from "./admin-nav";
+import { SignOutButton } from "./sign-out-button";
 
 /** Sidebar on desktop, top bar on mobile. Auth is not wired yet: this is the visual shell only. */
-export function AdminShell({ children }: { children: ReactNode }) {
+export function AdminShell({
+  children,
+  user,
+  demo,
+}: {
+  children: ReactNode;
+  user: { name: string; role: string };
+  demo: boolean;
+}) {
   const t = useTranslations("admin");
   const brand = useTranslations("brand");
 
@@ -31,19 +40,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </Link>
           <div className="flex items-center gap-3 rounded-2xl border border-surface/10 bg-surface/5 p-3">
             <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand font-bold text-ink-950">
-              {t("user.name").slice(0, 1)}
+              {user.name.slice(0, 1)}
             </span>
             <span className="min-w-0 flex-1">
-              <b className="block truncate text-[15px]">{t("user.name")}</b>
-              <span className="text-[13px] text-surface/60">{t("user.role")}</span>
+              <b className="block truncate text-[15px]">{user.name}</b>
+              <span className="text-[13px] text-surface/60">{user.role === "owner" ? t("user.owner") : t("user.agent")}</span>
             </span>
-            <Link
-              href="/admin/login"
-              aria-label={t("nav.signOut")}
-              className="grid size-10 place-items-center rounded-xl text-surface/70 hover:bg-surface/10 hover:text-surface"
-            >
-              <LogOut className="size-5 rtl:-scale-x-100" aria-hidden="true" />
-            </Link>
+            <SignOutButton label={t("nav.signOut")} />
           </div>
         </div>
       </aside>
@@ -56,13 +59,15 @@ export function AdminShell({ children }: { children: ReactNode }) {
           </Link>
           <AdminNav orientation="horizontal" />
         </div>
-        <div
-          role="note"
-          className="flex items-center gap-2 border-b border-warning/30 bg-warning/10 ps-4 pe-4 py-2 text-[14px] text-warning"
-        >
-          <FlaskConical className="size-4 shrink-0" aria-hidden="true" />
-          {t("demoBanner")}
-        </div>
+        {demo ? (
+          <div
+            role="note"
+            className="flex items-center gap-2 border-b border-warning/30 bg-warning/10 ps-4 pe-4 py-2 text-[14px] text-warning"
+          >
+            <FlaskConical className="size-4 shrink-0" aria-hidden="true" />
+            {t("demoBanner")}
+          </div>
+        ) : null}
         <main id="main" className="ms-auto me-auto max-w-[1200px] p-4 md:p-8">
           {children}
         </main>

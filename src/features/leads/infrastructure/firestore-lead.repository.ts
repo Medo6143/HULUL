@@ -1,24 +1,31 @@
 import { getFirestore, Timestamp, type Firestore } from "firebase-admin/firestore";
-import type { LeadReader, LeadWriter } from "../application/ports";
+import type { LeadHistoryReader, LeadNoteStore, LeadReader, LeadWriter } from "../application/ports";
 import type { Consent, Lead, StatusHistoryEntry } from "../domain/lead";
+import type { LeadNote } from "../domain/note";
 
 type App = Parameters<typeof getFirestore>[0];
 
 const toDoc = (lead: Lead) => {
   const { id, createdAt, updatedAt, ...rest } = lead;
   void id;
-  return { ...rest, createdAt: Timestamp.fromDate(createdAt), updatedAt: Timestamp.fromDate(updatedAt) };
+  return {
+    ...rest,
+    firstResponseAt: rest.firstResponseAt ? Timestamp.fromDate(rest.firstResponseAt) : null,
+    createdAt: Timestamp.fromDate(createdAt),
+    updatedAt: Timestamp.fromDate(updatedAt),
+  };
 };
 
 const fromDoc = (id: string, data: FirebaseFirestore.DocumentData): Lead =>
   ({
     ...data,
     id,
+    firstResponseAt: data.firstResponseAt ? (data.firstResponseAt as Timestamp).toDate() : null,
     createdAt: (data.createdAt as Timestamp).toDate(),
     updatedAt: (data.updatedAt as Timestamp).toDate(),
   }) as Lead;
 
-export class FirestoreLeadRepository implements LeadReader, LeadWriter {
+export class FirestoreLeadRepository implements LeadReader, LeadWriter, LeadNoteStore, LeadHistoryReader {
   private readonly db: Firestore;
 
   constructor(app: App) {
@@ -64,5 +71,59 @@ export class FirestoreLeadRepository implements LeadReader, LeadWriter {
     if (filter?.status) q = q.where("status", "==", filter.status);
     const snap = await q.orderBy("createdAt", "desc").limit(200).get();
     return snap.docs.map((d) => fromDoc(d.id, d.data()));
+  }
+
+  async history(leadId: string): Promise<StatusHistoryEntry[]> {
+    const snap = await this.db
+      .collection("leads")
+      .doc(leadId)
+      .collection("statusHistory")
+      .orderBy("changedAt", "asc")
+      .get();
+    return snap.docs.map((d) => {
+      const data = d.data();
+      return {
+        leadId,
+        from: data.from,
+        to: data.to,
+        changedBy: data.changedBy,
+        reason: data.reason ?? "",
+        changedAt: (data.changedAt as Timestamp).toDate(),
+      } as StatusHistoryEntry;
+    });
+  }
+
+  async addNote(note: LeadNote): Promise<void> {
+    await this.db
+      .collection("leads")
+      .doc(note.leadId)
+      .collection("notes")
+      .doc(note.id)
+      .set({
+        authorUid: note.authorUid,
+        authorName: note.authorName,
+        text: note.text,
+        createdAt: Timestamp.fromDate(note.createdAt),
+      });
+  }
+
+  async listNotes(leadId: string): Promise<LeadNote[]> {
+    const snap = await this.db
+      .collection("leads")
+      .doc(leadId)
+      .collection("notes")
+      .orderBy("createdAt", "asc")
+      .get();
+    return snap.docs.map((d) => {
+      const data = d.data();
+      return {
+        id: d.id,
+        leadId,
+        authorUid: data.authorUid,
+        authorName: data.authorName,
+        text: data.text,
+        createdAt: (data.createdAt as Timestamp).toDate(),
+      };
+    });
   }
 }
