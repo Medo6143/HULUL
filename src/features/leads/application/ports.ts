@@ -28,3 +28,21 @@ export interface LeadNoteStore {
 export interface LeadHistoryReader {
   history(leadId: string): Promise<StatusHistoryEntry[]>;
 }
+
+/** What other parts of the system learn when a lead is created. Notification failures never fail the request. */
+export interface LeadCreatedPayload {
+  kind: "lead.created";
+  leadId: string;
+  type: "project" | "consultation";
+  name: string;
+  phone: string;
+  email: string;
+  service: string;
+  description: string;
+  locale: "ar" | "en";
+  landingPage: string;
+}
+
+export interface LeadEvents {
+  leadCreated(event: LeadCreatedPayload): Promise<void>;
+}

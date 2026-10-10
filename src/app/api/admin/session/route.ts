@@ -3,12 +3,11 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { SESSION_COOKIE, SESSION_MAX_AGE_SECONDS } from "@/app/admin/_lib/staff";
 import { container } from "@/lib/container";
-import { makeRateLimiter } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
-const byIp = makeRateLimiter({ limit: 10, windowMs: 10 * 60_000 });
-const byEmail = makeRateLimiter({ limit: 5, windowMs: 10 * 60_000 });
+const byIp = container.rateLimit("staff-ip", { limit: 10, windowMs: 10 * 60_000 });
+const byEmail = container.rateLimit("staff-email", { limit: 5, windowMs: 10 * 60_000 });
 
 const bodySchema = z.object({
   email: z.string().trim().email().max(200),
@@ -28,7 +27,7 @@ export async function POST(request: NextRequest) {
   if (raw.length > 2_000) return fail(413, "invalid_input");
 
   const ip = clientIp(request);
-  if (!byIp(ip)) return fail(429, "too_many_attempts");
+  if (!(await byIp(ip))) return fail(429, "too_many_attempts");
 
   let json: unknown;
   try {
@@ -40,7 +39,7 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) return fail(400, "invalid_input");
 
   const { email, password } = parsed.data;
-  if (!byEmail(createHash("sha256").update(email.toLowerCase()).digest("hex"))) {
+  if (!(await byEmail(createHash("sha256").update(email.toLowerCase()).digest("hex")))) {
     return fail(429, "too_many_attempts");
   }
 

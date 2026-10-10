@@ -1,12 +1,18 @@
 import "server-only";
 import { FirestoreLeadRepository } from "@/features/leads/infrastructure/firestore-lead.repository";
 import { makeSendContactMessage } from "@/features/contact";
+import { makeNotificationService } from "@/features/notifications";
+import { FirestoreNotificationLog } from "@/features/notifications/infrastructure/firestore-notification.log";
+import { ResendEmailSender } from "@/features/notifications/infrastructure/resend-email.sender";
+import { TelegramChatAlerter } from "@/features/notifications/infrastructure/telegram-chat.alerter";
 import { FirestoreContactRepository } from "@/features/contact/infrastructure/firestore-contact.repository";
 import { makeAddLeadNote, makeChangeLeadStatus, makeCreateLead, makeGetLeadDetail, makeListLeads } from "@/features/leads";
 import { serverEnv } from "./env.server";
 import { getAdminApp } from "./firebase/admin";
 import { createAdminAuth } from "./firebase/auth-admin";
 import { signInWithPassword } from "./firebase/auth-rest";
+import { createFirestoreRateLimiter } from "./firebase/rate-limit-store";
+import { makeRateLimiter } from "./rate-limit";
 
 export interface Clock {
   now(): Date;
@@ -27,6 +33,16 @@ const ids: IdGenerator = {
 /** Bump when the privacy policy text changes; stored with every consent record. */
 const PDPL_POLICY_VERSION = "draft-1";
 
+async function notifications() {
+  return makeNotificationService({
+    email: new ResendEmailSender(serverEnv.RESEND_API_KEY, serverEnv.EMAIL_FROM),
+    chat: new TelegramChatAlerter(serverEnv.TELEGRAM_BOT_TOKEN, serverEnv.TELEGRAM_CHAT_ID),
+    log: new FirestoreNotificationLog(await getAdminApp()),
+    teamEmail: serverEnv.TEAM_ALERT_EMAIL,
+    clock,
+  });
+}
+
 async function leadRepository() {
   return new FirestoreLeadRepository(await getAdminApp());
 }
@@ -35,17 +51,41 @@ async function leadRepository() {
  * Composition root. This module is the only place that may know both ports and adapters.
  * Use-cases are built on demand so a missing Firebase config only fails the request that needs it.
  */
+/**
+ * Rate limiter shared across serverless instances through Firestore. If Firestore is not configured or
+ * unreachable it falls back to a per-instance memory limiter, so protection never disappears entirely.
+ */
+function rateLimit(name: string, opts: { limit: number; windowMs: number }) {
+  const memory = makeRateLimiter(opts);
+  let remote: ((key: string) => Promise<boolean>) | undefined;
+  return async (key: string): Promise<boolean> => {
+    try {
+      remote ??= createFirestoreRateLimiter(await getAdminApp(), { name, ...opts });
+      return await remote(key);
+    } catch {
+      return memory(key);
+    }
+  };
+}
+
 export const container = {
+  rateLimit,
   env: serverEnv,
   clock,
   ids,
   async createLead() {
     const repo = await leadRepository();
-    return makeCreateLead({ writer: repo, clock, ids, policyVersion: PDPL_POLICY_VERSION });
+    return makeCreateLead({ writer: repo, clock, ids, policyVersion: PDPL_POLICY_VERSION, events: await notifications() });
   },
   async sendContactMessage() {
     const repo = new FirestoreContactRepository(await getAdminApp());
-    return makeSendContactMessage({ writer: repo, clock, ids, policyVersion: PDPL_POLICY_VERSION });
+    return makeSendContactMessage({
+      writer: repo,
+      clock,
+      ids,
+      policyVersion: PDPL_POLICY_VERSION,
+      events: await notifications(),
+    });
   },
   async changeLeadStatus() {
     const repo = await leadRepository();

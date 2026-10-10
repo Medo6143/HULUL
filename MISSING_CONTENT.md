@@ -35,6 +35,12 @@ These items are not published. Do not invent them. The blocks stay empty until y
 - `NEXT_PUBLIC_GA4_ID`, `NEXT_PUBLIC_CLARITY_ID`, `NEXT_PUBLIC_META_PIXEL_ID`, `NEXT_PUBLIC_SNAP_PIXEL_ID`, `NEXT_PUBLIC_TIKTOK_PIXEL_ID`. Empty or malformed ids are ignored.
 - A designed Open Graph image (1200x630).
 
+## Decisions and values still needed from management
+
+- The first-reply limit in hours (`src/config/sla.ts`). Until then the dashboard does not count leads past a limit.
+- Which emails and which team chat receive new-lead alerts (`TEAM_ALERT_EMAIL`, optional Telegram).
+- The privacy policy must mention reCAPTCHA, analytics providers, and email processing before launch.
+
 ## Logo color check
 
 The file `public/icons/nav-logo.png` is the original 500x500 PNG from https://hulol-tech.vercel.app/icons/nav-logo.png (SHA-256 `B144463B17BC54AEDBDCB3BA994CAAF0788BCE781B15B20882734611955505E1`). It was not redrawn.

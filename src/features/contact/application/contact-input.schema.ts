@@ -10,6 +10,7 @@ export const contactInputSchema = z.object({
   consent: z.literal(true),
   /** Honeypot: real users never fill this. */
   website: z.string().max(200).optional(),
+  captcha: z.string().max(4000).optional(),
 });
 
 export type ContactInputPayload = z.infer<typeof contactInputSchema>;

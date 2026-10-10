@@ -12,3 +12,16 @@ export interface Clock {
 export interface IdGenerator {
   next(): string;
 }
+
+export interface ContactReceivedPayload {
+  kind: "contact.received";
+  messageId: string;
+  name: string;
+  email: string;
+  message: string;
+  locale: "ar" | "en";
+}
+
+export interface ContactEvents {
+  contactReceived(event: ContactReceivedPayload): Promise<void>;
+}

@@ -4,13 +4,14 @@ import {
   type NewContactMessage,
   type Result,
 } from "../domain/contact-message";
-import type { Clock, ContactWriter, IdGenerator } from "./ports";
+import type { Clock, ContactEvents, ContactWriter, IdGenerator } from "./ports";
 
 export interface SendContactMessageDeps {
   writer: ContactWriter;
   clock: Clock;
   ids: IdGenerator;
   policyVersion: string;
+  events?: ContactEvents;
 }
 
 export function makeSendContactMessage(deps: SendContactMessageDeps) {
@@ -29,6 +30,19 @@ export function makeSendContactMessage(deps: SendContactMessageDeps) {
       ipHash: req.ipHash,
       grantedAt: now,
     });
-    return { ok: true, value: { id: created.value.id } };
+    const message = created.value;
+    try {
+      await deps.events?.contactReceived({
+        kind: "contact.received",
+        messageId: message.id,
+        name: message.name,
+        email: message.email,
+        message: message.message,
+        locale: message.locale,
+      });
+    } catch {
+      // The message is already saved; a notification problem must not turn that into an error.
+    }
+    return { ok: true, value: { id: message.id } };
   };
 }

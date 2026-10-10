@@ -114,8 +114,11 @@ export function AnalyticsProvider({ ids }: { ids: ProviderIds }) {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
           observer.unobserve(entry.target);
-          if (entry.target.getAttribute("data-track-view") === "cost_section_view") {
+          const view = entry.target.getAttribute("data-track-view");
+          if (view === "cost_section_view") {
             track({ name: "cost_section_view", params: { page: pathname } });
+          } else if (view === "case_study_view") {
+            track({ name: "case_study_view", params: { slug: entry.target.getAttribute("data-slug") ?? "" } });
           }
         }
       },

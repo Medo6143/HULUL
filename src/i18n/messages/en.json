@@ -86,7 +86,12 @@
     "title": "Our work",
     "heading": "Real projects, measurable results",
     "emptyTitle": "Our work is published here with the owners' approval",
-    "emptyBody": "We add each project with its real result once the client signs off."
+    "emptyBody": "We add each project with its real result once the client signs off.",
+    "readCase": "Read the details",
+    "allWork": "All work",
+    "problem": "The challenge",
+    "solution": "The solution",
+    "result": "The result"
   },
   "about": {
     "title": "About",
@@ -196,7 +201,8 @@
       "invalid_name": "Enter your name",
       "invalid_email": "Enter a valid email address",
       "consent_required": "We need your consent to the privacy policy to send the request",
-      "internal_error": "Something went wrong on our side. Try again or message us on WhatsApp"
+      "internal_error": "Something went wrong on our side. Try again or message us on WhatsApp",
+      "bot_suspected": "We could not confirm you are a real person. Try again or message us on WhatsApp"
     },
     "contact": {
       "invalid_json": "We could not read the message. Please try again",
@@ -207,7 +213,8 @@
       "invalid_email": "Enter a valid email address",
       "invalid_message": "Write your message",
       "consent_required": "We need your consent to the privacy policy to send the message",
-      "internal_error": "Something went wrong on our side. Try again or message us on WhatsApp"
+      "internal_error": "Something went wrong on our side. Try again or message us on WhatsApp",
+      "bot_suspected": "We could not confirm you are a real person. Try again or message us on WhatsApp"
     }
   },
   "start": {
@@ -257,7 +264,8 @@
       "invalid_name": "Enter your name",
       "invalid_email": "Enter a valid email address",
       "consent_required": "We need your consent to the privacy policy to send the request",
-      "internal_error": "Something went wrong on our side. Try again or message us on WhatsApp"
+      "internal_error": "Something went wrong on our side. Try again or message us on WhatsApp",
+      "bot_suspected": "We could not confirm you are a real person. Try again or message us on WhatsApp"
     }
   },
   "home": {
@@ -437,7 +445,8 @@
       "invalid_email": "Enter a valid email address",
       "invalid_message": "Write your message",
       "consent_required": "We need your consent to the privacy policy to send the message",
-      "internal_error": "Something went wrong on our side. Try again or message us on WhatsApp"
+      "internal_error": "Something went wrong on our side. Try again or message us on WhatsApp",
+      "bot_suspected": "We could not confirm you are a real person. Try again or message us on WhatsApp"
     }
   },
   "admin": {

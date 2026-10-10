@@ -9,6 +9,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { track } from "@/features/analytics";
 import { cn } from "@/lib/cn";
+import { getCaptchaToken } from "@/lib/recaptcha-client";
 import { normalizePhone, type LeadService, type LeadType } from "../domain/lead";
 import { WhatsAppIcon } from "@/components/ui/whatsapp-icon";
 
@@ -24,6 +25,7 @@ const SERVER_ERRORS = [
   "invalid_name",
   "invalid_email",
   "consent_required",
+  "bot_suspected",
 ] as const;
 
 type Status = "editing" | "sending" | "sent" | "failed";
@@ -112,6 +114,7 @@ export function LeadForm({
     setStatus("sending");
     setServerError("");
     const params = new URLSearchParams(window.location.search);
+    const captcha = await getCaptchaToken("lead");
     try {
       const response = await fetch("/api/leads", {
         method: "POST",
@@ -129,6 +132,7 @@ export function LeadForm({
           locale,
           consent: true,
           website,
+          captcha,
           source: {
             utmSource: params.get("utm_source") ?? "",
             utmMedium: params.get("utm_medium") ?? "",

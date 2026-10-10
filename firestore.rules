@@ -76,6 +76,10 @@ service cloud.firestore {
       allow read: if isStaff();
       allow write: if false;
     }
+    // Counters written only by the server for rate limiting. Nobody reads them from the browser.
+    match /rateLimits/{id} {
+      allow read, write: if false;
+    }
     match /stats/{id} {
       allow read: if isStaff();
       allow write: if false;

@@ -6,6 +6,7 @@ import { useRef, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { getCaptchaToken } from "@/lib/recaptcha-client";
 import { MESSAGE_MIN } from "../domain/contact-message";
 
 const SERVER_ERRORS = [
@@ -17,6 +18,7 @@ const SERVER_ERRORS = [
   "invalid_email",
   "invalid_message",
   "consent_required",
+  "bot_suspected",
 ] as const;
 
 type Status = "editing" | "sending" | "sent" | "failed";
@@ -54,11 +56,12 @@ export function ContactForm() {
 
     setStatus("sending");
     setServerError("");
+    const captcha = await getCaptchaToken("contact");
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, message, locale, consent: true, website }),
+        body: JSON.stringify({ name, email, message, locale, consent: true, website, captcha }),
       });
       if (response.ok) {
         setStatus("sent");

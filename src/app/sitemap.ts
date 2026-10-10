@@ -1,11 +1,14 @@
 import type { MetadataRoute } from "next";
+import { caseStudies } from "@/config/case-studies";
 import { SEO_LOCALES, SITEMAP_PATHS, buildAlternates, localizedUrl } from "@/lib/seo";
 import { publicEnv } from "@/lib/env.public";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = publicEnv.NEXT_PUBLIC_SITE_URL;
 
-  return SITEMAP_PATHS.flatMap((path) =>
+  const paths = [...SITEMAP_PATHS, ...caseStudies.map((study) => `/work/${study.slug}`)];
+
+  return paths.flatMap((path) =>
     SEO_LOCALES.map((locale) => ({
       url: localizedUrl(base, locale, path),
       changeFrequency: path === "/" ? ("weekly" as const) : ("monthly" as const),

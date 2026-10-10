@@ -19,7 +19,8 @@
     "check:i18n": "node scripts/check-i18n.mjs",
     "check:direction": "node scripts/check-no-physical-direction.mjs",
     "check:boundaries": "node scripts/check-boundaries.mjs",
-    "check": "npm run lint && npm run typecheck && npm run test && npm run check:emoji && npm run check:i18n && npm run check:direction && npm run check:boundaries && npm run build"
+    "check": "npm run lint && npm run typecheck && npm run test && npm run check:emoji && npm run check:i18n && npm run check:direction && npm run check:boundaries && npm run build",
+    "test:rules": "npx --yes firebase-tools emulators:exec --only firestore --project hulol-rules-test \"vitest run --config vitest.integration.config.ts\""
   },
   "dependencies": {
     "@fontsource/ibm-plex-sans-arabic": "^5.3.0",
@@ -36,6 +37,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
+    "@firebase/rules-unit-testing": "^5.0.2",
     "@playwright/test": "^1.56.1",
     "@types/node": "^24.5.2",
     "@types/react": "^19.2.2",

@@ -1,6 +1,6 @@
 # HULOL TECH
 
-Arabic-first marketing site for حلول تك. The specification lives in `pack/` and is the source of truth.
+Arabic-first marketing site and lead management for حلول تك. Architecture decisions are in `docs/adr/`, deployment steps in `docs/DEPLOYMENT.md`.
 
 ## Run
 
@@ -27,3 +27,17 @@ That runs lint, types, unit tests, emoji scan, i18n key parity, the logical-dire
 - API: `POST /api/leads`. Success is `201 {"ok":true}`. Failure is `{"ok":false,"error":{"code","message_key"}}`.
 - Writes go through Firebase Admin only. `FIREBASE_ADMIN_*` must be set for the route to succeed; without them it answers `500 internal_error`.
 - Design notes and open gaps: `docs/adr/0007-lead-intake.md`.
+
+## Admin
+
+- `/admin` is for staff only: sign in with a Firebase Auth user that has the `owner` or `agent` role (`scripts/set-admin-claim.mjs`).
+- For a local look with sample data, put `ADMIN_DEMO=1` in `.env.local`. It is ignored in production.
+- Leads, notes, status changes, CSV export, and the analytics page use real Firestore data once Firebase is configured.
+
+## Tests
+
+```bash
+npm run test         # unit tests
+npm run test:e2e     # Playwright (journey, consent, security headers, axe)
+npm run test:rules   # Firestore rules against the emulator (needs Java)
+```

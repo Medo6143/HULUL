@@ -37,12 +37,15 @@ export const leadInputSchema = z.object({
     }),
   /** Honeypot: real users never fill this. */
   website: z.string().max(200).optional(),
+  /** reCAPTCHA v3 token, checked on the server when a secret is configured. */
+  captcha: z.string().max(4000).optional(),
 });
 
 export type LeadInputPayload = z.infer<typeof leadInputSchema>;
 
 export function toNewLeadInput(payload: LeadInputPayload): NewLeadInput {
-  const { consent, website, ...rest } = payload;
+  const { consent, website, captcha, ...rest } = payload;
   void website;
+  void captcha;
   return { ...rest, consentGranted: consent };
 }
