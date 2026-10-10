@@ -13,6 +13,7 @@ import { ServicesSection } from "@/components/sections/services-section";
 import { TestimonialsSection } from "@/components/sections/testimonials-section";
 import { TrustBar } from "@/components/sections/trust-bar";
 import { WorkSection } from "@/components/sections/work-section";
+import { loadCaseStudies, loadTestimonials } from "@/app/_lib/public-content";
 import { ContactForm } from "@/features/contact";
 import { publicEnv } from "@/lib/env.public";
 import { buildWaLink } from "@/lib/whatsapp";
@@ -31,6 +32,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const brand = await getTranslations("brand");
   const base = publicEnv.NEXT_PUBLIC_SITE_URL;
   const seoLocale = locale === "en" ? "en" : "ar";
+  const [work, reviews] = await Promise.all([loadCaseStudies(), loadTestimonials()]);
 
   const whatsappHref = buildWaLink({
     phone: publicEnv.NEXT_PUBLIC_WHATSAPP_NUMBER,
@@ -51,8 +53,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <TrustBar />
       <ServicesSection />
       <MarketSection />
-      <WorkSection />
-      <TestimonialsSection />
+      <WorkSection items={work} />
+      <TestimonialsSection items={reviews} />
       <JourneySection />
       <CostSection />
       <ConsultSection whatsappHref={whatsappHref} />

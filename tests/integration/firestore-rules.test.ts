@@ -31,8 +31,9 @@ describe.skipIf(!emulator)("firestore rules", () => {
       await db.doc("settings/notifications").set({ recipients: ["a@example.com"] });
       await db.doc("admins/agent1").set({ role: "agent" });
       await db.doc("admins/owner1").set({ role: "owner" });
-      await db.doc("caseStudies/published").set({ published: true });
+      await db.doc("caseStudies/published").set({ published: true, consentToPublish: true });
       await db.doc("caseStudies/draft").set({ published: false });
+      await db.doc("caseStudies/no-consent").set({ published: true, consentToPublish: false });
       await db.doc("testimonials/ok").set({ published: true, consentToPublish: true });
       await db.doc("testimonials/no-consent").set({ published: true, consentToPublish: false });
       await db.doc("settings/site").set({ name: "site" });
@@ -74,6 +75,7 @@ describe.skipIf(!emulator)("firestore rules", () => {
     it("can read published content and site settings only", async () => {
       await assertSucceeds(anon().doc("caseStudies/published").get());
       await assertFails(anon().doc("caseStudies/draft").get());
+      await assertFails(anon().doc("caseStudies/no-consent").get());
       await assertSucceeds(anon().doc("testimonials/ok").get());
       await assertFails(anon().doc("testimonials/no-consent").get());
       await assertSucceeds(anon().doc("settings/site").get());

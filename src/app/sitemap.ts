@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
-import { caseStudies } from "@/config/case-studies";
+import { loadCaseStudies } from "@/app/_lib/public-content";
 import { SEO_LOCALES, SITEMAP_PATHS, buildAlternates, localizedUrl } from "@/lib/seo";
 import { publicEnv } from "@/lib/env.public";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const caseStudies = await loadCaseStudies();
   const base = publicEnv.NEXT_PUBLIC_SITE_URL;
 
   const paths = [...SITEMAP_PATHS, ...caseStudies.map((study) => `/work/${study.slug}`)];

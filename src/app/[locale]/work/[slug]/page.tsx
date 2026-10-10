@@ -5,18 +5,21 @@ import { PageHero } from "@/components/layout/page-hero";
 import { buttonClassName } from "@/components/ui/button";
 import { FinalCta } from "@/components/sections/final-cta";
 import { Section } from "@/components/sections/section";
-import { caseStudies, findCaseStudy } from "@/config/case-studies";
+import { loadCaseStudy } from "@/app/_lib/public-content";
 import { Link } from "@/i18n/navigation";
 import { pageMetadata } from "@/lib/page-metadata";
 import { whatsappHref } from "@/lib/whatsapp-href";
 
+// Case studies come from the admin, so pages are rendered on demand and cached; there is nothing to prebuild.
+export const dynamicParams = true;
+
 export function generateStaticParams() {
-  return caseStudies.map((study) => ({ slug: study.slug }));
+  return [];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;
-  const study = findCaseStudy(slug);
+  const study = await loadCaseStudy(slug);
   if (!study) return {};
   const key = locale === "en" ? "en" : "ar";
   return pageMetadata({ locale, path: `/work/${slug}`, title: study.title[key], description: study.result[key] });
@@ -24,7 +27,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function CaseStudyPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;
-  const study = findCaseStudy(slug);
+  const study = await loadCaseStudy(slug);
   if (!study) notFound();
   setRequestLocale(locale);
   const t = await getTranslations("work");

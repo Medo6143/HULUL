@@ -12,6 +12,22 @@ import {
   type InviteSender,
 } from "@/features/team";
 import { FirebaseStaffDirectory } from "@/features/team/infrastructure/firebase-staff.directory";
+import {
+  makeDeleteCaseStudy,
+  makeDeleteTestimonial,
+  makeGetPublishedCaseStudies,
+  makeGetPublishedTestimonials,
+  makeListCaseStudies,
+  makeListTestimonials,
+  makeSaveCaseStudy,
+  makeSaveTestimonial,
+  makeSetCaseStudyPublished,
+  makeSetTestimonialPublished,
+} from "@/features/showcase";
+import {
+  FirestoreCaseStudyStore,
+  FirestoreTestimonialStore,
+} from "@/features/showcase/infrastructure/firestore-showcase.store";
 import { FirestoreNotificationLog } from "@/features/notifications/infrastructure/firestore-notification.log";
 import { FirestoreRecipientStore } from "@/features/notifications/infrastructure/firestore-recipient.store";
 import { ResendEmailSender } from "@/features/notifications/infrastructure/resend-email.sender";
@@ -80,6 +96,14 @@ async function inviteSender(): Promise<InviteSender> {
   };
 }
 
+async function testimonialStore() {
+  return new FirestoreTestimonialStore(await getAdminApp());
+}
+
+async function caseStudyStore() {
+  return new FirestoreCaseStudyStore(await getAdminApp());
+}
+
 async function leadRepository() {
   return new FirestoreLeadRepository(await getAdminApp());
 }
@@ -145,6 +169,36 @@ export const container = {
   },
   async saveRecipients() {
     return makeSaveRecipients({ store: await recipientStore() });
+  },
+  async listTestimonials() {
+    return makeListTestimonials({ store: await testimonialStore() });
+  },
+  async saveTestimonial() {
+    return makeSaveTestimonial({ store: await testimonialStore(), ids, clock });
+  },
+  async setTestimonialPublished() {
+    return makeSetTestimonialPublished({ store: await testimonialStore(), clock });
+  },
+  async deleteTestimonial() {
+    return makeDeleteTestimonial({ store: await testimonialStore() });
+  },
+  async publishedTestimonials() {
+    return makeGetPublishedTestimonials({ store: await testimonialStore() });
+  },
+  async listCaseStudies() {
+    return makeListCaseStudies({ store: await caseStudyStore() });
+  },
+  async saveCaseStudy() {
+    return makeSaveCaseStudy({ store: await caseStudyStore(), clock });
+  },
+  async setCaseStudyPublished() {
+    return makeSetCaseStudyPublished({ store: await caseStudyStore(), clock });
+  },
+  async deleteCaseStudy() {
+    return makeDeleteCaseStudy({ store: await caseStudyStore() });
+  },
+  async publishedCaseStudies() {
+    return makeGetPublishedCaseStudies({ store: await caseStudyStore() });
   },
   async changeLeadStatus() {
     const repo = await leadRepository();

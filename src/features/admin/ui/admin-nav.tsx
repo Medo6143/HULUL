@@ -1,17 +1,19 @@
 "use client";
 
-import { BarChart3, Settings, Users, UsersRound, type LucideIcon } from "lucide-react";
+import { BarChart3, BriefcaseBusiness, MessageSquareQuote, Settings, Users, UsersRound, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
 
-export type NavKey = "leads" | "analytics" | "team" | "settings";
+export type NavKey = "leads" | "analytics" | "testimonials" | "caseStudies" | "team" | "settings";
 
 // Later phases add entries here; `ownerOnly` ones are hidden from agents.
 const items: { href: string; key: NavKey; Icon: LucideIcon; ownerOnly?: boolean }[] = [
   { href: "/admin/leads", key: "leads", Icon: Users },
   { href: "/admin/analytics", key: "analytics", Icon: BarChart3 },
+  { href: "/admin/testimonials", key: "testimonials", Icon: MessageSquareQuote },
+  { href: "/admin/case-studies", key: "caseStudies", Icon: BriefcaseBusiness },
   { href: "/admin/team", key: "team", Icon: UsersRound, ownerOnly: true },
   { href: "/admin/settings", key: "settings", Icon: Settings, ownerOnly: true },
 ];

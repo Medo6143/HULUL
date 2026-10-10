@@ -27,7 +27,7 @@ service cloud.firestore {
 
     // ---------- public content ----------
     match /caseStudies/{slug} {
-      allow read: if resource.data.published == true || isStaff();
+      allow read: if (resource.data.published == true && resource.data.consentToPublish == true) || isStaff();
       allow write: if false;
     }
     match /testimonials/{id} {

@@ -3,7 +3,7 @@ import { computeAnalytics, demoLeads, findDemoLead, toAdminDetail, toAdminLead }
 import type { AdminLead, AdminLeadDetail, AnalyticsData } from "@/features/admin";
 import { FIRST_REPLY_LIMIT_HOURS } from "@/config/sla";
 import { container } from "@/lib/container";
-import type { TeamRow } from "@/features/admin";
+import type { CaseStudyRow, TeamRow, TestimonialRow } from "@/features/admin";
 import { isAdminDemo } from "./staff";
 
 export async function loadLeads(): Promise<{ leads: AdminLead[]; demo: boolean }> {
@@ -64,4 +64,56 @@ export async function loadRecipients(): Promise<{ recipients: string[]; demo: bo
   if (isAdminDemo()) return { recipients: ["team@example.test"], demo: true };
   const store = await container.recipientStore();
   return { recipients: await store.list(), demo: false };
+}
+
+const demoPair = { ar: "نموذج تجريبي", en: "Demo sample" };
+
+export async function loadTestimonials(): Promise<{ items: TestimonialRow[]; demo: boolean }> {
+  if (isAdminDemo()) {
+    return {
+      demo: true,
+      items: [
+        {
+          id: "demo",
+          quote: { ar: "نص رأي تجريبي للتصميم فقط.", en: "Sample quote for design only." },
+          name: demoPair,
+          role: demoPair,
+          company: "",
+          city: "",
+          consentToPublish: false,
+          consentNote: "",
+          published: false,
+          order: 0,
+        },
+      ],
+    };
+  }
+  const list = await container.listTestimonials();
+  return { items: await list(), demo: false };
+}
+
+export async function loadCaseStudies(): Promise<{ items: CaseStudyRow[]; demo: boolean }> {
+  if (isAdminDemo()) {
+    return {
+      demo: true,
+      items: [
+        {
+          slug: "demo-case",
+          category: "web",
+          title: demoPair,
+          result: demoPair,
+          problem: demoPair,
+          solution: demoPair,
+          clientName: "",
+          clientNameConsent: false,
+          consentToPublish: false,
+          consentNote: "",
+          published: false,
+          order: 0,
+        },
+      ],
+    };
+  }
+  const list = await container.listCaseStudies();
+  return { items: await list(), demo: false };
 }

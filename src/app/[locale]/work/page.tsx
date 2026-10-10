@@ -5,7 +5,7 @@ import { PageHero } from "@/components/layout/page-hero";
 import { FinalCta } from "@/components/sections/final-cta";
 import { Section } from "@/components/sections/section";
 import { WorkSection } from "@/components/sections/work-section";
-import { caseStudies } from "@/config/case-studies";
+import { loadCaseStudies } from "@/app/_lib/public-content";
 import { whatsappHref } from "@/lib/whatsapp-href";
 import { pageMetadata } from "@/lib/page-metadata";
 
@@ -19,12 +19,13 @@ export default async function WorkPage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations("work");
+  const caseStudies = await loadCaseStudies();
 
   return (
     <main id="main">
       <PageHero eyebrow={t("title")} title={t("heading")} aside={<SceneCard variant="work" />} />
       {caseStudies.length > 0 ? (
-        <WorkSection />
+        <WorkSection items={caseStudies} />
       ) : (
         <Section tone="muted">
           <div className="ms-auto me-auto grid max-w-2xl justify-items-center gap-4 rounded-panel border border-dashed border-text-muted/30 bg-surface p-10 text-center md:p-14">

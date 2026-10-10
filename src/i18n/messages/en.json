@@ -459,7 +459,9 @@
       "signOut": "Sign out",
       "menu": "Menu",
       "team": "Team",
-      "settings": "Settings"
+      "settings": "Settings",
+      "testimonials": "Testimonials",
+      "caseStudies": "Case studies"
     },
     "user": {
       "name": "Demo admin",
@@ -672,6 +674,81 @@
         "invalid_input": "The data is invalid",
         "internal_error": "Something went wrong on our side. Try again"
       }
+    },
+    "showcase": {
+      "arabic": "Arabic",
+      "english": "English",
+      "order": "Order",
+      "orderHint": "Lower shows first",
+      "save": "Save",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "publish": "Publish",
+      "unpublish": "Hide",
+      "delete": "Delete",
+      "confirmDelete": "Delete this item? This cannot be undone.",
+      "demoNote": "Actions are disabled in demo mode.",
+      "consentTitle": "Client consent",
+      "consentLabel": "I have the client's written consent to publish",
+      "consentHint": "Nothing is published without a recorded consent. Revoking consent removes it from the site.",
+      "consentNote": "How and when was consent given?",
+      "consentNoteHint": "For example: WhatsApp message on a given date. Internal record only, never shown on the site.",
+      "publishLabel": "Publish on the site",
+      "needsConsent": "Turn on consent first to be able to publish.",
+      "status": {
+        "published": "Published",
+        "draft": "Draft",
+        "noConsent": "No consent"
+      },
+      "errors": {
+        "invalid_input": "Check that the required Arabic fields are filled in",
+        "invalid_slug": "The link allows lowercase English letters, numbers, and dashes only",
+        "slug_exists": "This link is already used",
+        "consent_required": "We cannot publish without the client's consent",
+        "consent_note_required": "Write how and when the client gave consent",
+        "not_found": "We could not find this item",
+        "unauthorized": "Your session expired. Sign in again",
+        "forbidden": "This action is not allowed",
+        "internal_error": "Something went wrong on our side. Try again"
+      }
+    },
+    "testimonials": {
+      "title": "Testimonials",
+      "subtitle": "Add a client quote after their written consent. Only consented quotes are published, on the home page.",
+      "add": "Add testimonial",
+      "newTitle": "New testimonial",
+      "editTitle": "Edit testimonial",
+      "quote": "Quote",
+      "name": "Name",
+      "role": "Job title",
+      "company": "Company",
+      "city": "City",
+      "empty": "No testimonials yet. Add the first one once you have the client's consent."
+    },
+    "caseStudies": {
+      "title": "Case studies",
+      "subtitle": "Show real work with the client's consent. Only approved ones appear on the work page.",
+      "add": "Add case study",
+      "newTitle": "New case study",
+      "editTitle": "Edit case study",
+      "slug": "Link (English)",
+      "slugHint": "Appears in the page address and cannot change after saving.",
+      "slugLocked": "Cannot change after saving.",
+      "category": "Category",
+      "categories": {
+        "web": "Websites",
+        "mobile": "Apps",
+        "design": "Design"
+      },
+      "titleField": "Title",
+      "result": "Result",
+      "resultWarning": "Write a real, documented result only. Do not write unconfirmed numbers or percentages.",
+      "problem": "Challenge",
+      "solution": "Solution",
+      "clientName": "Client name (optional)",
+      "clientNameConsent": "The client agreed to be named",
+      "clientNameConsentHint": "Without this consent the name stays hidden even when publishing is on.",
+      "empty": "No case studies yet. Add the first one after the client's consent."
     }
   }
 }
