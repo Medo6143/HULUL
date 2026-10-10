@@ -35,6 +35,8 @@ export const leadInputSchema = z.object({
       landingPage: "",
       referrer: "",
     }),
+  /** Optional consultation slot (ISO UTC start). Only meaningful for type "consultation". */
+  slotStartUtc: z.string().max(40).optional(),
   /** Honeypot: real users never fill this. */
   website: z.string().max(200).optional(),
   /** reCAPTCHA v3 token, checked on the server when a secret is configured. */
@@ -44,8 +46,9 @@ export const leadInputSchema = z.object({
 export type LeadInputPayload = z.infer<typeof leadInputSchema>;
 
 export function toNewLeadInput(payload: LeadInputPayload): NewLeadInput {
-  const { consent, website, captcha, ...rest } = payload;
+  const { consent, website, captcha, slotStartUtc, ...rest } = payload;
   void website;
   void captcha;
+  void slotStartUtc;
   return { ...rest, consentGranted: consent };
 }

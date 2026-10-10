@@ -29,6 +29,10 @@ describe.skipIf(!emulator)("firestore rules", () => {
       await db.doc("notificationLogs/x1").set({ status: "sent" });
       await db.doc("rateLimits/r1").set({ count: 1 });
       await db.doc("settings/notifications").set({ recipients: ["a@example.com"] });
+      await db.doc("bookings/b1").set({ name: "Customer" });
+      await db.doc("bookingSlots/123").set({ bookingId: "b1" });
+      await db.doc("availabilityExceptions/2026-10-12").set({ closed: true });
+      await db.doc("settings/availability").set({ slotMinutes: 30 });
       await db.doc("admins/agent1").set({ role: "agent" });
       await db.doc("admins/owner1").set({ role: "owner" });
       await db.doc("caseStudies/published").set({ published: true, consentToPublish: true });
@@ -111,6 +115,21 @@ describe.skipIf(!emulator)("firestore rules", () => {
       await assertFails(agent().doc("settings/notifications").get());
       await assertFails(anon().doc("settings/notifications").get());
       await assertFails(owner().doc("settings/notifications").set({ recipients: [] }));
+    });
+    it("staff read bookings and availability, nobody reads slot locks or writes any of it", async () => {
+      for (const db of [agent(), owner()]) {
+        await assertSucceeds(db.doc("bookings/b1").get());
+        await assertSucceeds(db.doc("availabilityExceptions/2026-10-12").get());
+        await assertSucceeds(db.doc("settings/availability").get());
+        await assertFails(db.doc("bookingSlots/123").get());
+        await assertFails(db.doc("bookings/b1").update({ status: "cancelled" }));
+        await assertFails(db.doc("settings/availability").set({ slotMinutes: 5 }));
+      }
+      for (const path of ["bookings/b1", "bookingSlots/123", "availabilityExceptions/2026-10-12", "settings/availability"]) {
+        await assertFails(anon().doc(path).get());
+        await assertFails(client().doc(path).get());
+      }
+      await assertFails(anon().doc("bookingSlots/999").set({ bookingId: "x" }));
     });
     it("an agent reads only their own admin record, the owner reads any", async () => {
       await assertSucceeds(agent().doc("admins/agent1").get());

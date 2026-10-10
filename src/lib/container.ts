@@ -28,12 +28,38 @@ import {
   FirestoreCaseStudyStore,
   FirestoreTestimonialStore,
 } from "@/features/showcase/infrastructure/firestore-showcase.store";
+import {
+  buildIcs,
+  googleCalendarUrl,
+  makeCancelBooking,
+  makeDeleteException,
+  makeGetAvailability,
+  makeGetAvailableSlots,
+  makeListBookings,
+  makeRequestConsultation,
+  makeSaveAvailability,
+  makeSaveException,
+  makeSetBookingStatus,
+  renderBookingCancelledAlert,
+  renderBookingCancellation,
+  renderBookingConfirmation,
+  renderBookingTeamAlert,
+  type BookingEvents,
+  type BookingNotice,
+  type CancelTokens,
+  type LeadCreator,
+} from "@/features/bookings";
+import {
+  FirestoreAvailabilityStore,
+  FirestoreBookingStore,
+} from "@/features/bookings/infrastructure/firestore-booking.store";
 import { FirestoreNotificationLog } from "@/features/notifications/infrastructure/firestore-notification.log";
 import { FirestoreRecipientStore } from "@/features/notifications/infrastructure/firestore-recipient.store";
 import { ResendEmailSender } from "@/features/notifications/infrastructure/resend-email.sender";
 import { TelegramChatAlerter } from "@/features/notifications/infrastructure/telegram-chat.alerter";
 import { FirestoreContactRepository } from "@/features/contact/infrastructure/firestore-contact.repository";
 import { makeAddLeadNote, makeChangeLeadStatus, makeCreateLead, makeGetLeadDetail, makeListLeads } from "@/features/leads";
+import { createHash, randomBytes } from "node:crypto";
 import { serverEnv } from "./env.server";
 import { getAdminApp } from "./firebase/admin";
 import { createAdminAuth } from "./firebase/auth-admin";
@@ -102,6 +128,107 @@ async function testimonialStore() {
 
 async function caseStudyStore() {
   return new FirestoreCaseStudyStore(await getAdminApp());
+}
+
+const cancelTokens: CancelTokens = {
+  create() {
+    const token = randomBytes(24).toString("base64url");
+    return { token, hash: createHash("sha256").update(token).digest("hex") };
+  },
+  hash: (token) => createHash("sha256").update(token).digest("hex"),
+};
+
+async function availabilityStore() {
+  return new FirestoreAvailabilityStore(await getAdminApp());
+}
+
+async function bookingStore() {
+  return new FirestoreBookingStore(await getAdminApp());
+}
+
+/** Booking emails: the customer gets a confirmation (or cancellation) with a calendar file, and the team is alerted. */
+async function bookingEvents(): Promise<BookingEvents> {
+  const service = await notifications();
+  const site = serverEnv.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
+
+  const emailInput = (notice: BookingNotice) => {
+    const { booking } = notice;
+    return {
+      locale: booking.locale,
+      name: booking.name,
+      phone: booking.phone,
+      email: booking.email,
+      startUtc: booking.startUtc,
+      meetingLink: notice.meetingLink,
+      cancelUrl: `${site}/${booking.locale}/booking/cancel?b=${booking.id}&t=${notice.cancelToken ?? ""}`,
+      calendarUrl: googleCalendarUrl({
+        start: booking.startUtc,
+        end: booking.endUtc,
+        title: booking.locale === "ar" ? "استشارة مع حلول تك" : "Consultation with HULOL TECH",
+        details: notice.meetingLink,
+        location: notice.meetingLink,
+      }),
+    };
+  };
+
+  const ics = (notice: BookingNotice, method: "REQUEST" | "CANCEL") => {
+    const { booking } = notice;
+    const content = buildIcs({
+      uid: `${booking.id}@hulol-tech`,
+      method,
+      sequence: method === "CANCEL" ? 1 : 0,
+      start: booking.startUtc,
+      end: booking.endUtc,
+      stamp: clock.now(),
+      summary: booking.locale === "ar" ? "استشارة مع حلول تك" : "Consultation with HULOL TECH",
+      description: notice.meetingLink,
+      location: notice.meetingLink,
+      attendeeEmail: booking.email || undefined,
+      attendeeName: booking.name,
+    });
+    return [
+      {
+        filename: "consultation.ics",
+        content: Buffer.from(content, "utf8").toString("base64"),
+        contentType: `text/calendar; method=${method}; charset=utf-8`,
+      },
+    ];
+  };
+
+  return {
+    async created(notice) {
+      const input = emailInput(notice);
+      const base = { event: "booking.created", subjectId: notice.booking.id } as const;
+      await Promise.all([
+        service.alertTeamWith(base, renderBookingTeamAlert(input)),
+        notice.booking.email
+          ? service.sendEmail({
+              ...base,
+              channel: "email_customer",
+              to: notice.booking.email,
+              message: renderBookingConfirmation(input),
+              attachments: ics(notice, "REQUEST"),
+            })
+          : Promise.resolve(),
+      ]);
+    },
+    async cancelled(notice) {
+      const input = emailInput(notice);
+      const base = { event: "booking.cancelled", subjectId: notice.booking.id } as const;
+      await Promise.all([
+        service.alertTeamWith(base, renderBookingCancelledAlert(input)),
+        notice.booking.email
+          ? service.sendEmail({
+              ...base,
+              channel: "email_customer",
+              to: notice.booking.email,
+              message: renderBookingCancellation(input),
+              attachments: ics(notice, "CANCEL"),
+            })
+          : Promise.resolve(),
+      ]);
+    },
+  };
 }
 
 async function leadRepository() {
@@ -199,6 +326,59 @@ export const container = {
   },
   async publishedCaseStudies() {
     return makeGetPublishedCaseStudies({ store: await caseStudyStore() });
+  },
+  async getAvailableSlots() {
+    return makeGetAvailableSlots({ availability: await availabilityStore(), bookings: await bookingStore(), clock });
+  },
+  async requestConsultation() {
+    const createLead = await container.createLead();
+    const leads: LeadCreator = {
+      async create(request) {
+        const result = await createLead(request as Parameters<typeof createLead>[0]);
+        return result.ok ? { ok: true, leadId: result.value.leadId } : { ok: false, code: result.error.code };
+      },
+    };
+    return makeRequestConsultation({
+      availability: await availabilityStore(),
+      bookings: await bookingStore(),
+      leads,
+      tokens: cancelTokens,
+      clock,
+      ids,
+      events: await bookingEvents(),
+    });
+  },
+  async cancelBooking() {
+    return makeCancelBooking({
+      availability: await availabilityStore(),
+      bookings: await bookingStore(),
+      tokens: cancelTokens,
+      clock,
+      events: await bookingEvents(),
+    });
+  },
+  async listBookings() {
+    return makeListBookings({ bookings: await bookingStore() });
+  },
+  async setBookingStatus() {
+    return makeSetBookingStatus({
+      availability: await availabilityStore(),
+      bookings: await bookingStore(),
+      clock,
+      events: await bookingEvents(),
+    });
+  },
+  async getAvailability() {
+    return makeGetAvailability({ availability: await availabilityStore() });
+  },
+  async saveAvailability() {
+    return makeSaveAvailability({ availability: await availabilityStore() });
+  },
+  async saveException() {
+    return makeSaveException({ availability: await availabilityStore() });
+  },
+  async deleteException() {
+    return makeDeleteException({ availability: await availabilityStore() });
   },
   async changeLeadStatus() {
     const repo = await leadRepository();

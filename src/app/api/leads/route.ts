@@ -10,6 +10,14 @@ const MAX_BODY_BYTES = 20_000;
 const byIp = container.rateLimit("leads-ip", { limit: 5, windowMs: 10 * 60_000 });
 const byPhone = container.rateLimit("leads-phone", { limit: 3, windowMs: 60 * 60_000 });
 
+const BOOKING_STATUS: Record<string, number> = {
+  slot_taken: 409,
+  slot_unavailable: 409,
+  too_many_bookings: 429,
+  invalid_date: 400,
+  lead_failed: 400,
+};
+
 const fail = (status: number, code: string) =>
   NextResponse.json({ ok: false, error: { code, message_key: `errors.lead.${code}` } }, { status });
 
@@ -50,6 +58,26 @@ export async function POST(request: NextRequest) {
   const ipHash = createHash("sha256")
     .update(`${ip}:${container.env.RATE_LIMIT_SALT}`)
     .digest("hex");
+
+  // A consultation with a chosen time is booked together with its lead.
+  if (parsed.data.type === "consultation" && parsed.data.slotStartUtc) {
+    try {
+      const book = await container.requestConsultation();
+      const result = await book({
+        slotStartUtc: parsed.data.slotStartUtc,
+        contact: { name: input.name, phone: input.phone, email: input.email, locale: input.locale },
+        lead: { input, ipHash },
+      });
+      if (!result.ok) return fail(BOOKING_STATUS[result.error.code] ?? 400, result.error.code);
+      return NextResponse.json(
+        { ok: true, booking: { startUtc: result.value.startUtc.toISOString(), endUtc: result.value.endUtc.toISOString() } },
+        { status: 201 },
+      );
+    } catch (error) {
+      console.error("booking_failed", error instanceof Error ? error.message : "unknown");
+      return fail(500, "internal_error");
+    }
+  }
 
   try {
     const createLead = await container.createLead();

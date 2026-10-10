@@ -39,6 +39,22 @@ service cloud.firestore {
       allow read: if isOwner();
       allow write: if false;
     }
+    // Booking: staff read; the server writes. The slot locks are never readable from the browser.
+    match /bookings/{id} {
+      allow read: if isStaff();
+      allow write: if false;
+    }
+    match /bookingSlots/{key} {
+      allow read, write: if false;
+    }
+    match /availabilityExceptions/{date} {
+      allow read: if isStaff();
+      allow write: if false;
+    }
+    match /settings/availability {
+      allow read: if isStaff();
+      allow write: if false;
+    }
     match /settings/site {
       allow read: if true;
       allow write: if false;

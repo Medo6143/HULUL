@@ -7,7 +7,7 @@ import {
   riyadhDateKey,
   riyadhToUtc,
   utcToRiyadh,
-} from "@/lib/riyadh-time";
+} from "@/features/bookings/domain/riyadh-time";
 
 describe("riyadh time", () => {
   it("converts Riyadh wall-clock time to UTC and back", () => {
