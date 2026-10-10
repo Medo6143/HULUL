@@ -1,7 +1,13 @@
 import type { App } from "firebase-admin/app";
 import { FieldPath, FieldValue, Timestamp, getFirestore, type Firestore } from "firebase-admin/firestore";
 import type { AvailabilityStore, BookingStore } from "../application/ports";
-import { EMPTY_AVAILABILITY, type Availability, type AvailabilityException } from "../domain/availability";
+import {
+  EMPTY_AVAILABILITY,
+  weeklyFromDoc,
+  weeklyToDoc,
+  type Availability,
+  type AvailabilityException,
+} from "../domain/availability";
 import { holdsSlot, type Booking, type BookingStatus } from "../domain/booking";
 
 const toDoc = (booking: Booking) => {
@@ -121,14 +127,14 @@ export class FirestoreAvailabilityStore implements AvailabilityStore {
   async get(): Promise<Availability> {
     const snap = await this.db.collection("settings").doc("availability").get();
     if (!snap.exists) return EMPTY_AVAILABILITY;
-    const data = snap.data() as Partial<Availability>;
+    const data = snap.data() as Partial<Omit<Availability, "weekly">> & { weekly?: unknown };
     return {
       slotMinutes: data.slotMinutes ?? EMPTY_AVAILABILITY.slotMinutes,
       bufferMinutes: data.bufferMinutes ?? EMPTY_AVAILABILITY.bufferMinutes,
       minNoticeHours: data.minNoticeHours ?? EMPTY_AVAILABILITY.minNoticeHours,
       maxDaysAhead: data.maxDaysAhead ?? EMPTY_AVAILABILITY.maxDaysAhead,
       meetingLink: data.meetingLink ?? "",
-      weekly: Array.isArray(data.weekly) && data.weekly.length === 7 ? data.weekly : EMPTY_AVAILABILITY.weekly,
+      weekly: weeklyFromDoc(data.weekly),
     };
   }
 
@@ -136,7 +142,7 @@ export class FirestoreAvailabilityStore implements AvailabilityStore {
     await this.db
       .collection("settings")
       .doc("availability")
-      .set({ ...availability, updatedBy, updatedAt: FieldValue.serverTimestamp() });
+      .set({ ...availability, weekly: weeklyToDoc(availability.weekly), updatedBy, updatedAt: FieldValue.serverTimestamp() });
   }
 
   async listExceptions(fromDate: string, toDate: string): Promise<AvailabilityException[]> {

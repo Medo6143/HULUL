@@ -325,3 +325,16 @@ describe("booking emails", () => {
     expect(alert.text).toContain("s@example.com");
   });
 });
+
+describe("weekly schedule storage", () => {
+  it("never stores an array inside an array and round-trips", async () => {
+    const { weeklyFromDoc, weeklyToDoc } = await import("@/features/bookings/domain/availability");
+    const weekly = [[{ start: "09:00", end: "12:00" }], [], [], [{ start: "10:00", end: "11:00" }], [], [], []];
+    const doc = weeklyToDoc(weekly);
+    expect(Array.isArray(doc)).toBe(false);
+    expect(Object.values(doc).every((v) => Array.isArray(v) && v.every((w) => !Array.isArray(w)))).toBe(true);
+    expect(weeklyFromDoc(doc)).toEqual(weekly);
+    expect(weeklyFromDoc(undefined)).toHaveLength(7);
+    expect(weeklyFromDoc({ "2": [{ start: "08:00", end: "09:00" }] })[2]).toEqual([{ start: "08:00", end: "09:00" }]);
+  });
+});

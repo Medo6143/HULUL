@@ -104,3 +104,17 @@ export function normalizeException(input: AvailabilityException): Result<Availab
   if (!windows.ok) return windows;
   return ok({ date: input.date, closed: false, windows: windows.value });
 }
+
+/**
+ * Firestore cannot store an array inside an array, so the weekly schedule is stored as a map keyed by weekday
+ * ("0" = Sunday ... "6" = Saturday) and rebuilt into the 7-element array when read.
+ */
+export function weeklyToDoc(weekly: TimeWindow[][]): Record<string, TimeWindow[]> {
+  return Object.fromEntries(weekly.map((windows, day) => [String(day), windows]));
+}
+
+export function weeklyFromDoc(doc: unknown): TimeWindow[][] {
+  if (Array.isArray(doc) && doc.length === 7) return doc as TimeWindow[][]; // tolerate any older array shape
+  const map = (doc && typeof doc === "object" ? doc : {}) as Record<string, TimeWindow[] | undefined>;
+  return Array.from({ length: 7 }, (_, day) => map[String(day)] ?? []);
+}
