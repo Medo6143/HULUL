@@ -2,7 +2,8 @@
 
 import { Check } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useRef, useState, type FormEvent } from "react";
+import { useRef, useState, useSyncExternalStore, type FormEvent } from "react";
+import { SlotPicker } from "@/components/booking/slot-picker";
 import { Button, buttonClassName } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -26,6 +27,9 @@ const SERVER_ERRORS = [
   "invalid_email",
   "consent_required",
   "bot_suspected",
+  "slot_taken",
+  "slot_unavailable",
+  "too_many_bookings",
 ] as const;
 
 type Status = "editing" | "sending" | "sent" | "failed";
@@ -71,7 +75,7 @@ function Choice({
 }
 
 export function LeadForm({
-  type = "project",
+  type: initialType = "project",
   whatsappHref,
 }: {
   type?: LeadType;
@@ -81,6 +85,15 @@ export function LeadForm({
   const tf = useTranslations("form");
   const locale = useLocale() === "en" ? "en" : "ar";
   const successRef = useRef<HTMLHeadingElement>(null);
+  // Links like /start?type=consultation open the form already set to booking a consultation.
+  const queryType = useSyncExternalStore(
+    () => () => undefined,
+    () => new URLSearchParams(window.location.search).get("type"),
+    () => null,
+  );
+  const [chosen, setChosen] = useState<LeadType | null>(null);
+  const type: LeadType = chosen ?? (queryType === "consultation" ? "consultation" : initialType);
+  const setType = setChosen;
 
   const [service, setService] = useState<LeadService | "">("");
   const [name, setName] = useState("");
@@ -95,6 +108,9 @@ export function LeadForm({
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<Status>("editing");
   const [serverError, setServerError] = useState("");
+  const [slot, setSlot] = useState<string | null>(null);
+  const [slotsKey, setSlotsKey] = useState(0);
+  const [bookedAt, setBookedAt] = useState<string | null>(null);
 
   function validate(): Errors {
     const next: Errors = {};
@@ -133,6 +149,7 @@ export function LeadForm({
           consent: true,
           website,
           captcha,
+          ...(type === "consultation" && slot ? { slotStartUtc: slot } : {}),
           source: {
             utmSource: params.get("utm_source") ?? "",
             utmMedium: params.get("utm_medium") ?? "",
@@ -144,6 +161,8 @@ export function LeadForm({
         }),
       });
       if (response.ok) {
+        const done = (await response.json().catch(() => null)) as { booking?: { startUtc?: string } } | null;
+        setBookedAt(done?.booking?.startUtc ?? null);
         setStatus("sent");
         if (service) track({ name: "generate_lead", params: { form: type, service, locale } });
         requestAnimationFrame(() => successRef.current?.focus());
@@ -151,6 +170,11 @@ export function LeadForm({
       }
       const body = (await response.json().catch(() => null)) as { error?: { code?: string } } | null;
       const code = body?.error?.code as (typeof SERVER_ERRORS)[number] | undefined;
+      if (code === "slot_taken" || code === "slot_unavailable") {
+        // Someone else took that time: clear it and reload the open times, keeping everything the visitor typed.
+        setSlot(null);
+        setSlotsKey((k) => k + 1);
+      }
       setServerError(code && SERVER_ERRORS.includes(code) ? t(`serverErrors.${code}`) : t("failed"));
       setStatus("failed");
     } catch {
@@ -168,6 +192,21 @@ export function LeadForm({
         <h2 ref={successRef} tabIndex={-1} className="text-2xl font-bold text-text outline-none">
           {t("success.title")}
         </h2>
+        {bookedAt ? (
+          <p className="font-semibold">
+            {t("success.booked", {
+              time: new Intl.DateTimeFormat(locale === "ar" ? "ar-SA-u-nu-latn-ca-gregory" : "en-GB", {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+                timeZone: "Asia/Riyadh",
+              }).format(new Date(bookedAt)),
+            })}
+          </p>
+        ) : null}
         <p className="text-text-muted">{t("success.body")}</p>
         {whatsappHref ? (
           <a
@@ -186,6 +225,17 @@ export function LeadForm({
 
   return (
     <form onSubmit={submit} noValidate data-form={type} className="grid gap-7">
+      <fieldset className="grid gap-3">
+        <legend className="mb-1 text-[15px] font-semibold">{t("kind.label")}</legend>
+        <div className="grid grid-cols-2 gap-3">
+          {(["project", "consultation"] as const).map((value) => (
+            <Choice key={value} type="radio" name="kind" value={value} checked={type === value} onChange={() => setType(value)}>
+              {t(`kind.${value}`)}
+            </Choice>
+          ))}
+        </div>
+      </fieldset>
+
       <fieldset className="grid gap-3" aria-describedby={errors.service ? "service-error" : undefined}>
         <legend className="mb-1 text-[15px] font-semibold">{t("serviceLabel")}</legend>
         <div className="grid grid-cols-2 gap-3">
@@ -276,6 +326,8 @@ export function LeadForm({
           ))}
         </Select>
       </div>
+
+      {type === "consultation" ? <SlotPicker value={slot} onChange={setSlot} refreshKey={slotsKey} /> : null}
 
       <Textarea
         label={t("description")}

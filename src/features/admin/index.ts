@@ -16,3 +16,7 @@ export { TestimonialsView } from "./ui/testimonials-view";
 export type { TestimonialRow } from "./ui/testimonials-view";
 export { CaseStudiesView } from "./ui/case-studies-view";
 export type { CaseStudyRow } from "./ui/case-studies-view";
+export { CalendarView } from "./ui/calendar-view";
+export type { BookingRow } from "./ui/calendar-view";
+export { AvailabilityView } from "./ui/availability-view";
+export type { AvailabilityData, ExceptionRow } from "./ui/availability-view";

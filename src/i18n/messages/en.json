@@ -252,7 +252,8 @@
     "success": {
       "title": "We received your request",
       "body": "Thank you. We will review your request and get in touch.",
-      "whatsapp": "Message us on WhatsApp"
+      "whatsapp": "Message us on WhatsApp",
+      "booked": "Your appointment: {time} (Riyadh time)"
     },
     "failed": "We could not send your request right now. Your answers are still on this page. Try again or message us on WhatsApp.",
     "serverErrors": {
@@ -265,7 +266,22 @@
       "invalid_email": "Enter a valid email address",
       "consent_required": "We need your consent to the privacy policy to send the request",
       "internal_error": "Something went wrong on our side. Try again or message us on WhatsApp",
-      "bot_suspected": "We could not confirm you are a real person. Try again or message us on WhatsApp"
+      "bot_suspected": "We could not confirm you are a real person. Try again or message us on WhatsApp",
+      "slot_taken": "That time was just booked. The times are refreshed, pick another.",
+      "slot_unavailable": "That time is no longer available. Pick another.",
+      "too_many_bookings": "You already have upcoming appointments booked. Contact us if you want to change them."
+    },
+    "kind": {
+      "label": "Request type",
+      "project": "Project request",
+      "consultation": "Book a consultation"
+    },
+    "booking": {
+      "title": "Pick a consultation time (optional)",
+      "hint": "If you pick a time we confirm it. If not, we contact you to arrange one.",
+      "days": "Available days",
+      "times": "Available times",
+      "timezone": "All times are Riyadh time."
     }
   },
   "home": {
@@ -461,7 +477,9 @@
       "team": "Team",
       "settings": "Settings",
       "testimonials": "Testimonials",
-      "caseStudies": "Case studies"
+      "caseStudies": "Case studies",
+      "calendar": "Appointments",
+      "availability": "Consultation hours"
     },
     "user": {
       "name": "Demo admin",
@@ -767,6 +785,93 @@
         "failed": "The image upload failed. Try again",
         "notConfigured": "Image upload is not set up yet. Add the Cloudinary keys to the server settings."
       }
+    },
+    "calendar": {
+      "title": "Appointments",
+      "subtitle": "Consultations booked from the site, in Riyadh time.",
+      "manageAvailability": "Set available hours",
+      "tabs": {
+        "upcoming": "Upcoming",
+        "past": "Past"
+      },
+      "emptyUpcoming": "No upcoming appointments.",
+      "emptyPast": "No past appointments.",
+      "status": {
+        "confirmed": "Confirmed",
+        "completed": "Done",
+        "no_show": "No show",
+        "cancelled": "Cancelled"
+      },
+      "actions": {
+        "completed": "Done",
+        "no_show": "No show",
+        "cancelled": "Cancel"
+      },
+      "confirmCancel": "Cancel this appointment? The customer is emailed if they gave an address.",
+      "openLead": "Open lead",
+      "demoNote": "Actions are disabled in demo mode.",
+      "errors": {
+        "not_allowed": "This appointment's status cannot be changed",
+        "generic": "Something went wrong. Try again"
+      }
+    },
+    "availability": {
+      "title": "Consultation hours",
+      "subtitle": "Set when you accept consultations. Visitors see no times until you add working hours and save.",
+      "slotMinutes": "Appointment length (minutes)",
+      "bufferMinutes": "Gap between appointments (minutes)",
+      "minNoticeHours": "Minimum notice (hours)",
+      "minNoticeHint": "The earliest time shown is this far from now",
+      "maxDaysAhead": "Bookable days ahead",
+      "meetingLink": "Meeting link",
+      "meetingLinkHint": "A fixed link (Google Meet or Zoom) sent to the customer in the confirmation. Optional, must start with https.",
+      "weekly": "Weekly working hours",
+      "weeklyHint": "All times are Riyadh time. A day with no windows is closed.",
+      "days": {
+        "0": "Sunday",
+        "1": "Monday",
+        "2": "Tuesday",
+        "3": "Wednesday",
+        "4": "Thursday",
+        "5": "Friday",
+        "6": "Saturday"
+      },
+      "closed": "Closed",
+      "from": "From",
+      "to": "To",
+      "addWindow": "Add window",
+      "removeWindow": "Remove window",
+      "save": "Save",
+      "saved": "Settings saved.",
+      "timezoneNote": "Riyadh time",
+      "exceptions": "Day exceptions",
+      "exceptionsHint": "Close a specific day (a holiday) or change only its hours.",
+      "date": "Date",
+      "closedAllDay": "Closed all day",
+      "addException": "Add exception",
+      "removeException": "Remove exception",
+      "noExceptions": "No exceptions.",
+      "demoNote": "Actions are disabled in demo mode.",
+      "errors": {
+        "invalid_availability": "Check the numbers and times: start before end, no overlapping windows, link starts with https",
+        "invalid_date": "The date is not valid",
+        "invalid_input": "The data is invalid",
+        "unauthorized": "Your session expired. Sign in again",
+        "forbidden": "This action is for the owner only",
+        "generic": "Something went wrong. Try again"
+      }
+    }
+  },
+  "booking": {
+    "cancel": {
+      "eyebrow": "Consultation",
+      "title": "Cancel your consultation",
+      "body": "Confirm that you want to cancel. This cannot be undone, but you can book a new time.",
+      "confirm": "Cancel appointment",
+      "done": "Your appointment was cancelled.",
+      "gone": "This appointment was already cancelled or has passed.",
+      "invalid": "This link is not valid.",
+      "failed": "We could not cancel right now. Try again."
     }
   }
 }

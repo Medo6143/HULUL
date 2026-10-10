@@ -1,16 +1,18 @@
 "use client";
 
-import { BarChart3, BriefcaseBusiness, MessageSquareQuote, Settings, Users, UsersRound, type LucideIcon } from "lucide-react";
+import { BarChart3, BriefcaseBusiness, CalendarClock, CalendarDays, MessageSquareQuote, Settings, Users, UsersRound, type LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
 
-export type NavKey = "leads" | "analytics" | "testimonials" | "caseStudies" | "team" | "settings";
+export type NavKey = "leads" | "calendar" | "availability" | "analytics" | "testimonials" | "caseStudies" | "team" | "settings";
 
 // Later phases add entries here; `ownerOnly` ones are hidden from agents.
 const items: { href: string; key: NavKey; Icon: LucideIcon; ownerOnly?: boolean }[] = [
   { href: "/admin/leads", key: "leads", Icon: Users },
+  { href: "/admin/calendar", key: "calendar", Icon: CalendarDays },
+  { href: "/admin/availability", key: "availability", Icon: CalendarClock, ownerOnly: true },
   { href: "/admin/analytics", key: "analytics", Icon: BarChart3 },
   { href: "/admin/testimonials", key: "testimonials", Icon: MessageSquareQuote },
   { href: "/admin/case-studies", key: "caseStudies", Icon: BriefcaseBusiness },

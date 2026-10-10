@@ -3,7 +3,8 @@ import { computeAnalytics, demoLeads, findDemoLead, toAdminDetail, toAdminLead }
 import type { AdminLead, AdminLeadDetail, AnalyticsData } from "@/features/admin";
 import { FIRST_REPLY_LIMIT_HOURS } from "@/config/sla";
 import { container } from "@/lib/container";
-import type { CaseStudyRow, TeamRow, TestimonialRow } from "@/features/admin";
+import type { AvailabilityData, BookingRow, CaseStudyRow, ExceptionRow, TeamRow, TestimonialRow } from "@/features/admin";
+import { EMPTY_AVAILABILITY, addDaysToKey, riyadhDateKey } from "@/features/bookings";
 import { isAdminDemo } from "./staff";
 
 export async function loadLeads(): Promise<{ leads: AdminLead[]; demo: boolean }> {
@@ -117,4 +118,36 @@ export async function loadCaseStudies(): Promise<{ items: CaseStudyRow[]; demo: 
   }
   const list = await container.listCaseStudies();
   return { items: await list(), demo: false };
+}
+
+export async function loadBookings(): Promise<{ bookings: BookingRow[]; demo: boolean; nowIso: string }> {
+  const now = container.clock.now();
+  if (isAdminDemo()) return { bookings: [], demo: true, nowIso: now.toISOString() };
+  const list = await container.listBookings();
+  const bookings = await list({
+    from: new Date(now.getTime() - 14 * 86_400_000),
+    to: new Date(now.getTime() + 120 * 86_400_000),
+  });
+  return {
+    demo: false,
+    nowIso: now.toISOString(),
+    bookings: bookings.map((b) => ({
+      id: b.id,
+      leadId: b.leadId,
+      name: b.name,
+      phone: b.phone,
+      email: b.email,
+      startUtc: b.startUtc.toISOString(),
+      endUtc: b.endUtc.toISOString(),
+      status: b.status,
+    })),
+  };
+}
+
+export async function loadAvailability(): Promise<{ availability: AvailabilityData; exceptions: ExceptionRow[]; demo: boolean }> {
+  if (isAdminDemo()) return { availability: EMPTY_AVAILABILITY, exceptions: [], demo: true };
+  const today = riyadhDateKey(container.clock.now());
+  const get = await container.getAvailability();
+  const { availability, exceptions } = await get({ exceptionsFrom: today, exceptionsTo: addDaysToKey(today, 365) });
+  return { availability, exceptions, demo: false };
 }
