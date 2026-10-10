@@ -8,6 +8,7 @@ import { EMPTY_AVAILABILITY, addDaysToKey, riyadhDateKey } from "@/features/book
 import { getTranslations } from "next-intl/server";
 import type { InviteCardData } from "@/features/admin";
 import { DEFAULT_TEMPLATES, type InviteTemplates } from "@/features/templates";
+import { bookingsPerDay, leadsPerDay, overviewKpis, statusBreakdown, type OverviewData } from "@/features/admin";
 import { isAdminDemo } from "./staff";
 
 export async function loadLeads(): Promise<{ leads: AdminLead[]; demo: boolean }> {
@@ -194,4 +195,22 @@ export async function loadInviteCard(service: string, demo: boolean): Promise<In
   } catch {
     return null;
   }
+}
+
+export async function loadOverview(): Promise<{ data: OverviewData; demo: boolean }> {
+  const now = container.clock.now();
+  const { leads, demo } = await loadLeads();
+  const { bookings } = await loadBookings().catch(() => ({ bookings: [] as { startUtc: string; status: string }[] }));
+  const sources = new Map<string, number>();
+  for (const lead of leads) sources.set(lead.source, (sources.get(lead.source) ?? 0) + 1);
+  return {
+    demo,
+    data: {
+      kpis: overviewKpis(leads, bookings, now),
+      leads30: leadsPerDay(leads, now, 30),
+      bookings14: bookingsPerDay(bookings, now, 14),
+      statuses: statusBreakdown(leads),
+      sources: [...sources.entries()].map(([source, count]) => ({ source, leads: count })).sort((a, b) => b.leads - a.leads),
+    },
+  };
 }

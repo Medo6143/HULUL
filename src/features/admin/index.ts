@@ -23,3 +23,6 @@ export type { AvailabilityData, ExceptionRow } from "./ui/availability-view";
 export { TemplatesView } from "./ui/templates-view";
 export type { InviteCardData } from "./ui/invite-card";
 export { AccountView } from "./ui/account-view";
+export { OverviewView } from "./ui/overview-view";
+export type { OverviewData } from "./ui/overview-view";
+export { bookingsPerDay, leadsPerDay, overviewKpis, statusBreakdown } from "./model/dashboard";

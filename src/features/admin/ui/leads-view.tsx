@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { LEAD_STATUSES, type LeadStatus } from "@/features/leads";
+import { LEAD_STATUSES, canTransition, type LeadStatus } from "@/features/leads";
 import { cn } from "@/lib/cn";
-import type { AdminLead } from "../model/admin-lead";
+import { LOST_REASON_KEYS, type AdminLead } from "../model/admin-lead";
 import { formatDateTime } from "./format";
 import { StatusBadge, statusDot } from "./status-badge";
 
@@ -23,6 +23,48 @@ export function LeadsView({ leads, demo }: { leads: AdminLead[]; demo: boolean }
   const [view, setView] = useState<View>("table");
   const [filter, setFilter] = useState<LeadStatus | "all">("all");
   const [query, setQuery] = useState("");
+  const e = useTranslations("admin.errors");
+  const lr = useTranslations("admin.lostReasons");
+
+  // Board moves show at once. An override only holds while the server still reports the old status, so when fresh
+  // data arrives it takes over by itself.
+  const [overrides, setOverrides] = useState<Record<string, { from: LeadStatus; to: LeadStatus }>>({});
+  const [dragId, setDragId] = useState<string | null>(null);
+  const [overColumn, setOverColumn] = useState<LeadStatus | null>(null);
+  const [asking, setAsking] = useState<string | null>(null);
+  const [reason, setReason] = useState<string>(LOST_REASON_KEYS[0]);
+  const [boardError, setBoardError] = useState("");
+
+  const live = useMemo(
+    () => leads.map((lead) => (overrides[lead.id] && overrides[lead.id]!.from === lead.status ? { ...lead, status: overrides[lead.id]!.to } : lead)),
+    [leads, overrides],
+  );
+
+  async function move(id: string, to: LeadStatus, why = "") {
+    const lead = live.find((l) => l.id === id);
+    if (!lead || lead.status === to) return;
+    setBoardError("");
+    if (!canTransition(lead.status, to)) return setBoardError(e("transition_not_allowed"));
+    if (to === "lost" && !why) return setAsking(id);
+    const server = leads.find((l) => l.id === id)!;
+    setOverrides((o) => ({ ...o, [id]: { from: server.status, to } }));
+    try {
+      const response = await fetch(`/api/admin/leads/${id}/status`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ to, reason: why }),
+      });
+      if (!response.ok) throw new Error("failed");
+      router.refresh();
+    } catch {
+      setOverrides((o) => {
+        const { [id]: _removed, ...rest } = o;
+        void _removed;
+        return rest;
+      });
+      setBoardError(e("internal_error"));
+    }
+  }
 
   // New leads appear without a manual reload: re-fetch the server data every 30 seconds while the tab is visible.
   useEffect(() => {
@@ -35,18 +77,18 @@ export function LeadsView({ leads, demo }: { leads: AdminLead[]; demo: boolean }
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return leads.filter(
+    return live.filter(
       (lead) =>
         (filter === "all" || lead.status === filter) &&
         (q === "" || lead.name.toLowerCase().includes(q) || lead.business.toLowerCase().includes(q)),
     );
-  }, [leads, filter, query]);
+  }, [live, filter, query]);
 
   const counts = useMemo(() => {
     const map = new Map<LeadStatus, number>();
-    for (const lead of leads) map.set(lead.status, (map.get(lead.status) ?? 0) + 1);
+    for (const lead of live) map.set(lead.status, (map.get(lead.status) ?? 0) + 1);
     return map;
-  }, [leads]);
+  }, [live]);
 
   return (
     <div className="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6">
@@ -117,7 +159,7 @@ export function LeadsView({ leads, demo }: { leads: AdminLead[]; demo: boolean }
         </div>
         <div className="flex flex-wrap gap-2" role="group" aria-label={t("columns.status")}>
           {(["all", ...LEAD_STATUSES] as const).map((key) => {
-            const count = key === "all" ? leads.length : (counts.get(key) ?? 0);
+            const count = key === "all" ? live.length : (counts.get(key) ?? 0);
             return (
               <button
                 key={key}
@@ -215,6 +257,39 @@ export function LeadsView({ leads, demo }: { leads: AdminLead[]; demo: boolean }
       ) : (
         <div className="min-w-0">
           <p className="mb-3 text-[14px] text-text-muted">{t("boardHint")}</p>
+          {boardError ? (
+            <p role="alert" className="mb-3 rounded-xl bg-danger/10 p-3 text-[15px] text-danger">
+              {boardError}
+            </p>
+          ) : null}
+          {asking ? (
+            <div role="dialog" aria-modal="true" aria-label={t("lostTitle")} className="mb-4 grid gap-3 rounded-2xl border border-danger/40 bg-surface p-5">
+              <b>{t("lostTitle")}</b>
+              <select value={reason} onChange={(event) => setReason(event.target.value)} className="min-h-12 rounded-xl border border-surface-line bg-surface ps-4 pe-4 text-base">
+                {LOST_REASON_KEYS.map((key) => (
+                  <option key={key} value={key}>
+                    {lr(key)}
+                  </option>
+                ))}
+              </select>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const id = asking;
+                    setAsking(null);
+                    void move(id, "lost", reason);
+                  }}
+                  className="min-h-11 rounded-xl bg-danger ps-5 pe-5 font-semibold text-surface"
+                >
+                  {t("lostConfirm")}
+                </button>
+                <button type="button" onClick={() => setAsking(null)} className="min-h-11 rounded-xl border border-surface-line ps-5 pe-5 font-semibold">
+                  {t("lostCancel")}
+                </button>
+              </div>
+            </div>
+          ) : null}
           <div className="flex gap-4 overflow-x-auto pb-4">
             {LEAD_STATUSES.map((status) => {
               const column = visible.filter((lead) => lead.status === status);
@@ -222,7 +297,29 @@ export function LeadsView({ leads, demo }: { leads: AdminLead[]; demo: boolean }
                 <section
                   key={status}
                   aria-label={s(status)}
-                  className="w-[280px] shrink-0 rounded-2xl border border-surface-line bg-surface-muted/60 p-3"
+                  onDragOver={(event) => {
+                    const dragged = live.find((l) => l.id === dragId);
+                    if (dragged && !demo && canTransition(dragged.status, status)) {
+                      event.preventDefault();
+                      setOverColumn(status);
+                    }
+                  }}
+                  onDragLeave={() => setOverColumn((c) => (c === status ? null : c))}
+                  onDrop={(event) => {
+                    event.preventDefault();
+                    setOverColumn(null);
+                    const id = event.dataTransfer.getData("text/plain") || dragId;
+                    setDragId(null);
+                    if (id) void move(id, status);
+                  }}
+                  className={cn(
+                    "w-[280px] shrink-0 rounded-2xl border bg-surface-muted/60 p-3 motion-safe:transition-colors",
+                    overColumn === status
+                      ? "border-brand-strong bg-brand-soft/60"
+                      : dragId && canTransition(live.find((l) => l.id === dragId)?.status ?? status, status)
+                        ? "border-dashed border-brand-strong/60"
+                        : "border-surface-line",
+                  )}
                 >
                   <h2 className="mb-3 flex items-center gap-2 ps-1 text-[15px] font-bold">
                     <span aria-hidden="true" className={cn("size-2.5 rounded-full", statusDot[status])} />
@@ -238,10 +335,25 @@ export function LeadsView({ leads, demo }: { leads: AdminLead[]; demo: boolean }
                       </li>
                     ) : (
                       column.map((lead) => (
-                        <li key={lead.id}>
+                        <li
+                          key={lead.id}
+                          draggable={!demo && LEAD_STATUSES.some((to) => canTransition(lead.status, to))}
+                          onDragStart={(event) => {
+                            event.dataTransfer.setData("text/plain", lead.id);
+                            event.dataTransfer.effectAllowed = "move";
+                            setDragId(lead.id);
+                            setBoardError("");
+                          }}
+                          onDragEnd={() => {
+                            setDragId(null);
+                            setOverColumn(null);
+                          }}
+                          className={cn("grid gap-2", dragId === lead.id && "opacity-50")}
+                        >
                           <Link
                             href={`/admin/leads/${lead.id}`}
-                            className="block rounded-xl border border-surface-line bg-surface p-4 motion-safe:transition hover:-translate-y-0.5 hover:shadow-card"
+                            draggable={false}
+                            className="block cursor-grab rounded-xl border border-surface-line bg-surface p-4 motion-safe:transition hover:-translate-y-0.5 hover:shadow-card active:cursor-grabbing"
                           >
                             <span className="flex items-center justify-between gap-2">
                               <b className="text-[15px]">{lead.name}</b>
@@ -257,6 +369,23 @@ export function LeadsView({ leads, demo }: { leads: AdminLead[]; demo: boolean }
                               <span>{formatDateTime(lead.createdAt)}</span>
                             </span>
                           </Link>
+                          {!demo && LEAD_STATUSES.some((to) => canTransition(lead.status, to)) ? (
+                            <select
+                              aria-label={t("moveCard", { name: lead.name })}
+                              value=""
+                              onChange={(event) => {
+                                if (event.target.value) void move(lead.id, event.target.value as LeadStatus);
+                              }}
+                              className="min-h-10 rounded-lg border border-surface-line bg-surface ps-3 pe-3 text-[13px] text-text-muted"
+                            >
+                              <option value="">{t("moveTo")}</option>
+                              {LEAD_STATUSES.filter((to) => canTransition(lead.status, to)).map((to) => (
+                                <option key={to} value={to}>
+                                  {s(to)}
+                                </option>
+                              ))}
+                            </select>
+                          ) : null}
                         </li>
                       ))
                     )}

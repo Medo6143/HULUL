@@ -485,7 +485,8 @@
       "calendar": "Appointments",
       "availability": "Consultation hours",
       "templates": "Invite templates",
-      "account": "My account"
+      "account": "My account",
+      "overview": "Overview"
     },
     "user": {
       "name": "Demo admin",
@@ -531,8 +532,13 @@
       },
       "newBadge": "New",
       "open": "Open",
-      "boardHint": "Drag and drop between columns is enabled once data is connected.",
-      "emptyColumn": "None"
+      "boardHint": "Drag a card onto a column to change the lead's status. Allowed columns get a dashed border, or use the move menu on the card.",
+      "emptyColumn": "None",
+      "moveCard": "Move {name}'s lead",
+      "moveTo": "Move to...",
+      "lostTitle": "Why did we lose this lead?",
+      "lostConfirm": "Confirm",
+      "lostCancel": "Cancel"
     },
     "lead": {
       "back": "Back to leads",
@@ -944,6 +950,29 @@
         "forbidden": "This action is not allowed",
         "generic": "Something went wrong. Try again"
       }
+    },
+    "overview": {
+      "title": "Overview",
+      "subtitle": "Numbers and charts from real leads and bookings. Days are in Riyadh time.",
+      "kpi": {
+        "last7": "Leads in the last 7 days",
+        "vsPrevious": "{diff} vs the week before",
+        "total": "All leads",
+        "bookings": "Upcoming appointments",
+        "won": "Won deals",
+        "winRate": "{percent}% of all leads"
+      },
+      "leadsOverTime": "Leads over 30 days",
+      "leadsOverTimeHint": "New leads per day.",
+      "leadsOverTimeSummary": "{total} leads in the last 30 days",
+      "byStatus": "Leads by status",
+      "byStatusHint": "How many leads sit in each stage now.",
+      "leadsWord": "leads",
+      "upcomingBookings": "Upcoming appointments",
+      "upcomingBookingsHint": "Confirmed consultations in the next 14 days.",
+      "upcomingBookingsSummary": "{total} confirmed appointments in 14 days",
+      "bySource": "Leads by source",
+      "empty": "No data yet."
     }
   },
   "booking": {
