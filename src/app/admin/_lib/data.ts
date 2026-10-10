@@ -106,6 +106,7 @@ export async function loadCaseStudies(): Promise<{ items: CaseStudyRow[]; demo: 
           solution: demoPair,
           clientName: "",
           clientNameConsent: false,
+          images: [],
           consentToPublish: false,
           consentNote: "",
           published: false,

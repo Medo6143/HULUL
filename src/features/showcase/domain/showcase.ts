@@ -16,6 +16,7 @@ export type CaseCategory = (typeof CASE_CATEGORIES)[number];
 export type ShowcaseError =
   | { code: "invalid_input" }
   | { code: "invalid_slug" }
+  | { code: "invalid_image" }
   | { code: "slug_exists" }
   | { code: "consent_required" }
   | { code: "consent_note_required" }
@@ -28,6 +29,16 @@ export interface Consent {
   /** ISO time the consent was first recorded; null while there is no consent. */
   consentDate: string | null;
 }
+
+/** A project image hosted on Cloudinary. Only Cloudinary delivery URLs are accepted. */
+export interface CaseImage {
+  url: string;
+  alt: Localized;
+}
+
+export const MAX_CASE_IMAGES = 8;
+const IMAGE_URL_RE = /^https:\/\/res\.cloudinary\.com\/[A-Za-z0-9_-]+\/image\/upload\/[^\s"'<>]+$/;
+export const isCloudinaryImageUrl = (url: string) => url.length <= 500 && IMAGE_URL_RE.test(url);
 
 export interface Testimonial extends Consent {
   id: string;
@@ -52,6 +63,8 @@ export interface CaseStudy extends Consent {
   clientName: string;
   /** Separate consent: the client's name appears only when this is true as well. */
   clientNameConsent: boolean;
+  /** The first image is the cover. */
+  images: CaseImage[];
   published: boolean;
   order: number;
   updatedAt: string;
@@ -78,6 +91,7 @@ export interface CaseStudyInput {
   solution: Localized;
   clientName: string;
   clientNameConsent: boolean;
+  images: CaseImage[];
   consentToPublish: boolean;
   consentNote: string;
   published: boolean;
@@ -142,6 +156,9 @@ export function buildCaseStudy(
   const problem = localized(input.problem, 3000);
   const solution = localized(input.solution, 3000);
   if (!title.ar || !result.ar || !problem.ar || !solution.ar) return err({ code: "invalid_input" });
+  if (input.images.length > MAX_CASE_IMAGES || !input.images.every((image) => isCloudinaryImageUrl(image.url))) {
+    return err({ code: "invalid_image" });
+  }
   const consent = checkConsent(input, meta.existing, meta.now);
   if (!consent.ok) return consent;
   const clientName = clean(input.clientName, 100);
@@ -153,6 +170,7 @@ export function buildCaseStudy(
     problem,
     solution,
     clientName,
+    images: input.images.map((image) => ({ url: image.url, alt: localized(image.alt, 150) })),
     clientNameConsent: input.clientNameConsent && clientName.length > 0 && consent.value.consentToPublish,
     ...consent.value,
     order: order(input.order),
@@ -186,6 +204,7 @@ export interface PublicCaseStudy {
   result: Localized;
   problem: Localized;
   solution: Localized;
+  images: CaseImage[];
   /** Present only with the separate client-name consent. */
   clientName?: string;
 }
@@ -212,6 +231,7 @@ export function toPublicCaseStudy(item: CaseStudy): PublicCaseStudy | null {
     result: pick(item.result),
     problem: pick(item.problem),
     solution: pick(item.solution),
+    images: (item.images ?? []).map((image) => ({ url: image.url, alt: pick(image.alt) })),
     ...(item.clientNameConsent && item.clientName ? { clientName: item.clientName } : {}),
   };
 }

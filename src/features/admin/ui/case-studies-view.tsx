@@ -1,9 +1,11 @@
 "use client";
 
 import { Eye, EyeOff, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
+import { ImageUploader, type UploadedImage } from "./image-uploader";
 import { AREA, ConsentFields, FIELD, Field, StatusBadge, callApi, useShowcaseErrors } from "./showcase-shared";
 
 type Pair = { ar: string; en: string };
@@ -17,6 +19,7 @@ export interface CaseStudyRow {
   solution: Pair;
   clientName: string;
   clientNameConsent: boolean;
+  images: UploadedImage[];
   consentToPublish: boolean;
   consentNote: string;
   published: boolean;
@@ -32,6 +35,7 @@ const EMPTY: CaseStudyRow = {
   solution: { ar: "", en: "" },
   clientName: "",
   clientNameConsent: false,
+  images: [],
   consentToPublish: false,
   consentNote: "",
   published: false,
@@ -151,6 +155,7 @@ export function CaseStudiesView({ items, demo }: { items: CaseStudyRow[]; demo: 
                 <span className="block text-[13px] text-text-muted">{t("clientNameConsentHint")}</span>
               </span>
             </label>
+            <ImageUploader images={form.images} disabled={busy !== null} onChange={(images) => set("images", images)} />
             <Field label={s("order")} hint={s("orderHint")}>
               <input type="number" min={0} max={9999} value={form.order} onChange={(e) => set("order", Number(e.target.value) || 0)} className={FIELD} />
             </Field>
@@ -195,6 +200,11 @@ export function CaseStudiesView({ items, demo }: { items: CaseStudyRow[]; demo: 
                 </div>
                 <StatusBadge published={item.published} consent={item.consentToPublish} />
               </div>
+              {item.images?.[0] ? (
+                <div className="relative aspect-[16/7] max-w-md overflow-hidden rounded-xl bg-surface-muted">
+                  <Image src={item.images[0].url} alt="" fill sizes="448px" className="object-cover" />
+                </div>
+              ) : null}
               <p className="text-[15px] font-semibold">{item.result.ar}</p>
               <div className="flex flex-wrap gap-2">
                 <button

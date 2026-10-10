@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { PageHero } from "@/components/layout/page-hero";
@@ -53,6 +54,25 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ loca
       />
       <Section tone="muted">
         <div className="ms-auto me-auto grid max-w-3xl gap-6">
+          {study.images.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              {study.images.map((image, index) => (
+                <div
+                  key={image.url}
+                  className={`relative aspect-[16/10] overflow-hidden rounded-card bg-surface-muted ${index === 0 ? "md:col-span-2" : ""}`}
+                >
+                  <Image
+                    src={image.url}
+                    alt={image.alt[key] || study.title[key]}
+                    fill
+                    sizes="(min-width: 768px) 768px, 100vw"
+                    className="object-cover"
+                    priority={index === 0}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : null}
           {blocks.map((block) => (
             <section key={block.id} className="rounded-card border border-surface-line bg-surface p-8">
               <h2 className="text-[22px] font-bold">{block.title}</h2>

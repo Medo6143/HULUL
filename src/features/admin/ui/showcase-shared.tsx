@@ -11,6 +11,7 @@ export const AREA =
 const ERROR_KEYS = [
   "invalid_input",
   "invalid_slug",
+  "invalid_image",
   "slug_exists",
   "consent_required",
   "consent_note_required",

@@ -41,6 +41,7 @@ const study = (over: Partial<CaseStudyInput> = {}): CaseStudyInput => ({
   solution: { ar: "حل", en: "" },
   clientName: "شركة س",
   clientNameConsent: true,
+  images: [],
   consentToPublish: true,
   consentNote: "بريد إلكتروني",
   published: true,
@@ -145,5 +146,25 @@ describe("case studies", () => {
     await save({ create: false, input: study({ consentToPublish: false, published: false }) });
     expect(await publish({ slug: "shop-app", published: true })).toMatchObject({ ok: false, error: { code: "consent_required" } });
     expect(await makeGetPublishedCaseStudies({ store })()).toHaveLength(0);
+  });
+});
+
+describe("case study images", () => {
+  const img = (url: string) => ({ url, alt: { ar: "", en: "" } });
+  const good = "https://res.cloudinary.com/demo/image/upload/v1/hulol/work/a.jpg";
+  it("accepts Cloudinary delivery URLs and rejects anything else", async () => {
+    const save = makeSaveCaseStudy({ store: new InMemoryCaseStudyStore(), clock });
+    expect((await save({ create: true, input: study({ images: [img(good)] }) })).ok).toBe(true);
+    for (const url of ["http://res.cloudinary.com/demo/image/upload/a.jpg", "https://evil.example/a.jpg", "javascript:alert(1)", "https://res.cloudinary.com/demo/video/upload/a.mp4"]) {
+      expect(await save({ create: true, input: study({ slug: "other", images: [img(url)] }) })).toMatchObject({ ok: false, error: { code: "invalid_image" } });
+    }
+  });
+  it("caps the number of images and exposes them publicly with an Arabic fallback for English alt", async () => {
+    const store = new InMemoryCaseStudyStore();
+    const save = makeSaveCaseStudy({ store, clock });
+    expect(await save({ create: true, input: study({ images: Array.from({ length: 9 }, () => img(good)) }) })).toMatchObject({ ok: false, error: { code: "invalid_image" } });
+    await save({ create: true, input: study({ images: [{ url: good, alt: { ar: "واجهة", en: "" } }] }) });
+    const [shown] = await makeGetPublishedCaseStudies({ store })();
+    expect(shown?.images[0]?.alt.en).toBe("واجهة");
   });
 });

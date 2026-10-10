@@ -14,6 +14,7 @@ export interface CaseStudy {
   result: Localized;
   problem: Localized;
   solution: Localized;
+  images: { url: string; alt: Localized }[];
 }
 
 export const caseStudies: readonly CaseStudy[] = [];

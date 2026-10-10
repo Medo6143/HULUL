@@ -713,7 +713,8 @@
         "not_found": "We could not find this item",
         "unauthorized": "Your session expired. Sign in again",
         "forbidden": "This action is not allowed",
-        "internal_error": "Something went wrong on our side. Try again"
+        "internal_error": "Something went wrong on our side. Try again",
+        "invalid_image": "The image link is not valid. Upload images from this page only"
       }
     },
     "testimonials": {
@@ -752,7 +753,20 @@
       "clientName": "Client name (optional)",
       "clientNameConsent": "The client agreed to be named",
       "clientNameConsentHint": "Without this consent the name stays hidden even when publishing is on.",
-      "empty": "No case studies yet. Add the first one after the client's consent."
+      "empty": "No case studies yet. Add the first one after the client's consent.",
+      "images": {
+        "title": "Project images",
+        "hint": "Up to {max} images (JPG, PNG, or WebP, 5 MB each). The first is the cover.",
+        "add": "Upload images",
+        "uploading": "Uploading...",
+        "cover": "Cover",
+        "alt": "Image description (for screen readers)",
+        "remove": "Remove image",
+        "badType": "Unsupported format. Use JPG, PNG, or WebP",
+        "tooLarge": "The image is larger than 5 MB",
+        "failed": "The image upload failed. Try again",
+        "notConfigured": "Image upload is not set up yet. Add the Cloudinary keys to the server settings."
+      }
     }
   }
 }

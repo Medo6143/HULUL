@@ -28,6 +28,7 @@ export const caseStudySchema = z.object({
   solution: localized(3000),
   clientName: z.string().max(100).default(""),
   clientNameConsent: z.boolean().default(false),
+  images: z.array(z.object({ url: z.string().max(500), alt: localized(150) })).max(8).default([]),
   ...consent,
 });
 
@@ -36,6 +37,7 @@ export const publishSchema = z.object({ published: z.boolean() });
 export const SHOWCASE_STATUS: Record<string, number> = {
   invalid_input: 400,
   invalid_slug: 400,
+  invalid_image: 400,
   consent_required: 422,
   consent_note_required: 422,
   not_found: 404,

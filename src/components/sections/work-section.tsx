@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Section, SectionHeading } from "./section";
@@ -8,6 +9,7 @@ export interface WorkItem {
   category: "web" | "mobile" | "design";
   title: { ar: string; en: string };
   result: { ar: string; en: string };
+  images?: { url: string; alt: { ar: string; en: string } }[];
 }
 
 // Hidden until real, permitted case studies exist.
@@ -25,6 +27,17 @@ export function WorkSection({ items }: { items: readonly WorkItem[] }) {
       <div className="grid gap-6 md:grid-cols-3">
         {items.map((study) => (
           <article key={study.slug} className="rounded-card border border-surface-line bg-surface p-7">
+            {study.images?.[0] ? (
+              <div className="relative -mx-2 mb-4 aspect-[16/10] overflow-hidden rounded-xl bg-surface-muted">
+                <Image
+                  src={study.images[0].url}
+                  alt={study.images[0].alt[locale] || study.title[locale]}
+                  fill
+                  sizes="(min-width: 768px) 33vw, 100vw"
+                  className="object-cover"
+                />
+              </div>
+            ) : null}
             <p className="text-[15px] text-text-muted">{s(`${study.category}.title`)}</p>
             <h3 className="mt-1 text-[20px] font-semibold leading-[1.4]">{study.title[locale]}</h3>
             <p className="mt-3 font-bold text-ink-900">{study.result[locale]}</p>
