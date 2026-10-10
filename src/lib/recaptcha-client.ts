@@ -1,7 +1,5 @@
 "use client";
 
-import { publicEnv } from "./env.public";
-
 type Grecaptcha = {
   ready(callback: () => void): void;
   execute(siteKey: string, options: { action: string }): Promise<string>;
@@ -27,7 +25,9 @@ function load(siteKey: string): Promise<void> {
  * The form still sends; the server decides whether a missing token is acceptable.
  */
 export async function getCaptchaToken(action: string): Promise<string | undefined> {
-  const siteKey = publicEnv.NEXT_PUBLIC_APPCHECK_RECAPTCHA_SITE_KEY;
+  // Must be read by this exact name: Next.js inlines it into the browser bundle at build time.
+  // The validated `publicEnv` object cannot be used here because `process.env` is empty in the browser.
+  const siteKey = process.env.NEXT_PUBLIC_APPCHECK_RECAPTCHA_SITE_KEY ?? "";
   if (!siteKey || !/^[\w-]{20,60}$/.test(siteKey)) return undefined;
   try {
     await load(siteKey);
