@@ -6,6 +6,7 @@ import { WhatsAppIcon } from "@/components/ui/whatsapp-icon";
 import { isLostReasonKey, type AdminLeadDetail } from "../model/admin-lead";
 import { formatDateTime } from "./format";
 import { NoteForm, StatusActions } from "./lead-actions";
+import { InviteCard, type InviteCardData } from "./invite-card";
 import { StatusBadge } from "./status-badge";
 
 function Card({ title, icon, children }: { title: string; icon?: ReactNode; children: ReactNode }) {
@@ -37,10 +38,12 @@ export function LeadDetail({
   lead,
   demo,
   whatsappHref,
+  invite,
 }: {
   lead: AdminLeadDetail;
   demo: boolean;
   whatsappHref: string | null;
+  invite: InviteCardData | null;
 }) {
   const t = useTranslations("admin.lead");
   const src = useTranslations("admin.sources");
@@ -124,6 +127,20 @@ export function LeadDetail({
               <Row label={t("description")}>{lead.description || "-"}</Row>
             </dl>
           </Card>
+
+          {invite ? (
+            <Card title={t("inviteTitle")}>
+              <InviteCard
+                leadId={lead.id}
+                leadName={lead.name}
+                phone={lead.phone}
+                email={lead.email}
+                locale={lead.locale ?? "ar"}
+                data={invite}
+                demo={demo}
+              />
+            </Card>
+          ) : null}
 
           <Card title={t("source")}>
             <dl>

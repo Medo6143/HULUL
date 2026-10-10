@@ -479,7 +479,8 @@
       "testimonials": "Testimonials",
       "caseStudies": "Case studies",
       "calendar": "Appointments",
-      "availability": "Consultation hours"
+      "availability": "Consultation hours",
+      "templates": "Invite templates"
     },
     "user": {
       "name": "Demo admin",
@@ -562,7 +563,8 @@
       "by": "By",
       "confirm": "Confirm",
       "cancel": "Cancel",
-      "demoActions": "Actions are disabled in demo mode."
+      "demoActions": "Actions are disabled in demo mode.",
+      "inviteTitle": "Consultation invitation"
     },
     "lostReasons": {
       "price": "Price",
@@ -858,6 +860,51 @@
         "invalid_input": "The data is invalid",
         "unauthorized": "Your session expired. Sign in again",
         "forbidden": "This action is for the owner only",
+        "generic": "Something went wrong. Try again"
+      }
+    },
+    "invite": {
+      "hint": "Pick a time and review the text, then open WhatsApp or send the email. You can edit the text before sending.",
+      "language": "Message language",
+      "ar": "Arabic",
+      "en": "English",
+      "date": "Date",
+      "time": "Time (Riyadh)",
+      "meetingLink": "Meeting link",
+      "whatsappText": "WhatsApp message",
+      "openWhatsapp": "Open WhatsApp with the message",
+      "emailSubject": "Email subject",
+      "emailBody": "Email text",
+      "sendEmail": "Send email",
+      "noEmail": "The customer did not give an email address.",
+      "emailSent": "The email was sent to the customer.",
+      "errors": {
+        "no_email": "The customer has no email address",
+        "not_found": "We could not find the customer",
+        "send_failed": "We could not send the email. Check the Resend settings",
+        "invalid_input": "Write a subject and a text for the email",
+        "generic": "Something went wrong. Try again"
+      }
+    },
+    "templates": {
+      "title": "Invite templates",
+      "subtitle": "Ready-made texts to invite a customer to a consultation by WhatsApp and email, in Arabic and English. They appear on each customer's page.",
+      "variables": "Available variables",
+      "variablesHint": "Write them in double braces and they are replaced with their values. A line whose variables are all empty is removed automatically.",
+      "usingDefaults": "The default texts are in use. Edit and save to make them yours.",
+      "whatsapp": "WhatsApp message",
+      "emailSubject": "Email subject",
+      "emailBody": "Email text",
+      "arabic": "Arabic",
+      "english": "English (optional; Arabic is used when empty)",
+      "preview": "Preview with sample values",
+      "save": "Save",
+      "saved": "The templates were saved.",
+      "reset": "Restore defaults",
+      "confirmReset": "Restore the default texts? Nothing is saved until you press Save.",
+      "demoNote": "Actions are disabled in demo mode.",
+      "errors": {
+        "invalid_input": "Arabic texts are required and must be within the length limits",
         "generic": "Something went wrong. Try again"
       }
     }

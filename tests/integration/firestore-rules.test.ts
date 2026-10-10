@@ -33,6 +33,7 @@ describe.skipIf(!emulator)("firestore rules", () => {
       await db.doc("bookingSlots/123").set({ bookingId: "b1" });
       await db.doc("availabilityExceptions/2026-10-12").set({ closed: true });
       await db.doc("settings/availability").set({ slotMinutes: 30 });
+      await db.doc("settings/templates").set({ updatedBy: "o" });
       await db.doc("admins/agent1").set({ role: "agent" });
       await db.doc("admins/owner1").set({ role: "owner" });
       await db.doc("caseStudies/published").set({ published: true, consentToPublish: true });
@@ -130,6 +131,12 @@ describe.skipIf(!emulator)("firestore rules", () => {
         await assertFails(client().doc(path).get());
       }
       await assertFails(anon().doc("bookingSlots/999").set({ bookingId: "x" }));
+    });
+    it("only the owner reads the invitation templates, and nobody writes them from the browser", async () => {
+      await assertSucceeds(owner().doc("settings/templates").get());
+      await assertFails(agent().doc("settings/templates").get());
+      await assertFails(anon().doc("settings/templates").get());
+      await assertFails(owner().doc("settings/templates").set({ a: 1 }));
     });
     it("an agent reads only their own admin record, the owner reads any", async () => {
       await assertSucceeds(agent().doc("admins/agent1").get());

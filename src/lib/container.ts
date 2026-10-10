@@ -53,6 +53,8 @@ import {
   FirestoreAvailabilityStore,
   FirestoreBookingStore,
 } from "@/features/bookings/infrastructure/firestore-booking.store";
+import { makeGetTemplates, makeSaveTemplates, makeSendInviteEmail } from "@/features/templates";
+import { FirestoreTemplateStore } from "@/features/templates/infrastructure/firestore-template.store";
 import { FirestoreNotificationLog } from "@/features/notifications/infrastructure/firestore-notification.log";
 import { FirestoreRecipientStore } from "@/features/notifications/infrastructure/firestore-recipient.store";
 import { ResendEmailSender } from "@/features/notifications/infrastructure/resend-email.sender";
@@ -231,6 +233,10 @@ async function bookingEvents(): Promise<BookingEvents> {
   };
 }
 
+async function templateStore() {
+  return new FirestoreTemplateStore(await getAdminApp());
+}
+
 async function leadRepository() {
   return new FirestoreLeadRepository(await getAdminApp());
 }
@@ -379,6 +385,37 @@ export const container = {
   },
   async deleteException() {
     return makeDeleteException({ availability: await availabilityStore() });
+  },
+  async getTemplates() {
+    return makeGetTemplates({ store: await templateStore() });
+  },
+  async saveTemplates() {
+    return makeSaveTemplates({ store: await templateStore() });
+  },
+  /** Staff emails a consultation invitation to a lead; the address always comes from the stored lead. */
+  async sendInviteEmail() {
+    const repo = await leadRepository();
+    const service = await notifications();
+    return makeSendInviteEmail({
+      leads: {
+        async find(leadId) {
+          const lead = await repo.findById(leadId);
+          return lead ? { email: lead.email, name: lead.name } : null;
+        },
+      },
+      mailer: {
+        async send({ leadId, to, subject, text, html }) {
+          const outcome = await service.sendEmail({
+            event: "invite.email",
+            subjectId: leadId,
+            channel: "email_customer",
+            to,
+            message: { subject, text, html },
+          });
+          return outcome.ok;
+        },
+      },
+    });
   },
   async changeLeadStatus() {
     const repo = await leadRepository();

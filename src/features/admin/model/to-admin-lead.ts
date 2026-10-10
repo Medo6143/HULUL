@@ -24,6 +24,7 @@ export interface LeadLike {
   status: LeadStatusKey;
   lostReason: string;
   assignedTo: string;
+  locale?: "ar" | "en";
   source: { utmSource: string; utmCampaign: string; landingPage: string; referrer: string };
   firstResponseAt: Date | null;
   createdAt: Date;
@@ -78,6 +79,7 @@ export function toAdminLead(lead: LeadLike): AdminLead {
     createdAt: lead.createdAt.toISOString(),
     firstResponseAt: lead.firstResponseAt ? lead.firstResponseAt.toISOString() : null,
     assigned: lead.assignedTo,
+    locale: lead.locale,
     isNew: lead.status === "new",
     lostReason: lead.lostReason,
   };

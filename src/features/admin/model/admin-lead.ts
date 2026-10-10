@@ -33,6 +33,8 @@ export interface AdminLead {
   assigned: string;
   isNew: boolean;
   lostReason: string;
+  /** Language the lead used on the form; picks the default invitation language. */
+  locale?: "ar" | "en";
 }
 
 export interface AdminHistoryEntry {

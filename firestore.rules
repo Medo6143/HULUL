@@ -51,6 +51,10 @@ service cloud.firestore {
       allow read: if isStaff();
       allow write: if false;
     }
+    match /settings/templates {
+      allow read: if isOwner();
+      allow write: if false;
+    }
     match /settings/availability {
       allow read: if isStaff();
       allow write: if false;
