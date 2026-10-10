@@ -8,11 +8,11 @@ import { FaqSection } from "@/components/sections/faq-section";
 import { FinalCta } from "@/components/sections/final-cta";
 import { JourneySection } from "@/components/sections/journey-section";
 import { Section, SectionHeading } from "@/components/sections/section";
-import { isServiceSlug, services } from "@/config/services";
+import { findService, isServiceSlug, services } from "@/config/services";
 import { Link } from "@/i18n/navigation";
 import { JsonLd } from "@/components/seo/json-ld";
 import { publicEnv } from "@/lib/env.public";
-import { serviceSchema } from "@/lib/structured-data";
+import { faqSchema, serviceSchema } from "@/lib/structured-data";
 import { whatsappHref } from "@/lib/whatsapp-href";
 import { WhatsAppIcon } from "@/components/ui/whatsapp-icon";
 import { pageMetadata } from "@/lib/page-metadata";
@@ -53,6 +53,8 @@ export default async function ServicePage({
   const nav = await getTranslations("nav");
   const href = whatsappHref(locale, slug);
   const brand = await getTranslations("brand");
+  const config = findService(slug)!;
+  const key = locale === "en" ? "en" : "ar";
 
   return (
     <main id="main">
@@ -66,6 +68,9 @@ export default async function ServicePage({
           providerName: brand("name"),
         })}
       />
+      {config.faq.length > 0 ? (
+        <JsonLd data={faqSchema(config.faq.map((item) => ({ question: item.q[key], answer: item.a[key] })))} />
+      ) : null}
       <PageHero
         eyebrow={nav("services")}
         title={t(`${slug}.title`)}
@@ -107,8 +112,35 @@ export default async function ServicePage({
           ))}
         </ul>
       </Section>
+      {config.deliverables.length > 0 ? (
+        <Section tone="muted" labelledBy="deliverables-title">
+          <SectionHeading id="deliverables-title" eyebrow={t(`${slug}.title`)} title={d("deliverablesTitle")} />
+          <ul className="ms-auto me-auto grid max-w-3xl gap-3">
+            {config.deliverables.map((item) => (
+              <li key={item.ar} className="flex items-start gap-3 rounded-card border border-surface-line bg-surface p-5 text-[17px]">
+                <Check className="mt-1 size-5 shrink-0 text-brand-strong" aria-hidden="true" />
+                {item[key]}
+              </li>
+            ))}
+          </ul>
+        </Section>
+      ) : null}
       <JourneySection />
-      <FaqSection />
+      {config.faq.length > 0 ? (
+        <Section labelledBy="service-faq-title">
+          <SectionHeading id="service-faq-title" eyebrow={t(`${slug}.title`)} title={d("faqTitle")} />
+          <div className="ms-auto me-auto grid max-w-3xl gap-4">
+            {config.faq.map((item) => (
+              <details key={item.q.ar} className="rounded-card border border-surface-line bg-surface ps-6 pe-6 py-5">
+                <summary className="min-h-11 cursor-pointer text-[18px] font-semibold">{item.q[key]}</summary>
+                <p className="mt-3 text-[16px] leading-[1.8] text-text-muted">{item.a[key]}</p>
+              </details>
+            ))}
+          </div>
+        </Section>
+      ) : (
+        <FaqSection />
+      )}
       <FinalCta whatsappHref={href} />
     </main>
   );

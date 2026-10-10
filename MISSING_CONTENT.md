@@ -20,6 +20,17 @@ These items are not published. Do not invent them. The blocks stay empty until y
 - Nitaqat, Etimad, and partnership certificates
 - Firebase project ids, App Check, Resend, GA4, Clarity, and ad pixel ids
 
+## Added in the latest phases (content still needed)
+
+- Legal drafts (`src/config/legal/index.ts`): legal name, commercial registration, national address, privacy email, retention period, ownership/payment/liability terms, governing law and jurisdiction. They show as `[يُحدَّد]` / `[To be set]` until supplied. A lawyer must review all three texts.
+- Per-service deliverables and FAQ (`src/config/services.ts`, empty). A service page shows them only when filled; otherwise it shows the general questions.
+- More general FAQ entries (the FAQ page reuses the three questions from the home page).
+- Consultation hours, slot length, and a fixed meeting link: set by the owner in `/admin/availability`. No time is offered until then.
+- Real testimonials and case studies, entered in the admin with a recorded consent (and the client's separate consent to show their name).
+- Cloudinary keys (`CLOUDINARY_*`) to enable image upload for case studies.
+- A verified sending domain in Resend and a real `EMAIL_FROM`, so invitations, booking confirmations, and alerts reach addresses other than the account owner's.
+- A standalone `/thank-you` page was not built: the form shows its success state in place.
+
 ## Pages built with placeholders by design
 
 - Home, about, and request pages use illustrated Saudi characters instead of photos. Real team or project photos are still needed.

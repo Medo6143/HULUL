@@ -16,6 +16,8 @@ export const SITEMAP_PATHS = [
   "/process",
   "/about",
   "/work",
+  "/faq",
+  "/contact",
   "/start",
 ] as const;
 

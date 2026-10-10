@@ -1,5 +1,7 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { LegalDocument } from "@/components/legal/legal-document";
 import { PageShell } from "@/components/layout/page-shell";
+import { legalSections } from "@/config/legal";
 import { pageMetadata } from "@/lib/page-metadata";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -14,7 +16,7 @@ export default async function CookiesPage({ params }: { params: Promise<{ locale
   const t = await getTranslations("legal");
   return (
     <PageShell title={t("cookiesTitle")}>
-      <p>{t("pending")}</p>
+      <LegalDocument banner={t("pending")} sections={legalSections("cookies", locale === "en" ? "en" : "ar")} />
     </PageShell>
   );
 }

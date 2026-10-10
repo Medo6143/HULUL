@@ -41,7 +41,9 @@
     "terms": "Terms",
     "cookies": "Cookies",
     "rights": "HULOL TECH",
-    "segments": "Who we serve"
+    "segments": "Who we serve",
+    "faq": "FAQ",
+    "contact": "Contact us"
   },
   "cookie": {
     "label": "Cookies",
@@ -154,7 +156,7 @@
     "privacyTitle": "Privacy policy",
     "termsTitle": "Terms",
     "cookiesTitle": "Cookies",
-    "pending": "This text is waiting for legal review and will not be published before you approve it."
+    "pending": "Draft pending legal review. Sections in square brackets are not set yet, and this page must not be relied on before a lawyer reviews it."
   },
   "notFound": {
     "title": "Page not found",
@@ -429,7 +431,9 @@
   "serviceDetail": {
     "offerTitle": "What you get",
     "cta": "Start your project",
-    "whatsapp": "Chat on WhatsApp"
+    "whatsapp": "Chat on WhatsApp",
+    "deliverablesTitle": "What you receive",
+    "faqTitle": "Questions about this service"
   },
   "requestSide": {
     "next": "What happens after you send?",
@@ -920,5 +924,15 @@
       "invalid": "This link is not valid.",
       "failed": "We could not cancel right now. Try again."
     }
+  },
+  "faqPage": {
+    "eyebrow": "Help",
+    "title": "Frequently asked questions",
+    "intro": "Answers to what clients ask us most before they start."
+  },
+  "contactPage": {
+    "eyebrow": "Contact us",
+    "title": "Talk to us your way",
+    "intro": "Pick one of the available channels or write us a message."
   }
 }
