@@ -47,6 +47,13 @@ export async function requireStaff(): Promise<Staff> {
   return staff;
 }
 
+/** For owner-only pages (team, availability, templates, settings). Agents are sent back to the leads list. */
+export async function requireOwner(): Promise<Staff> {
+  const staff = await requireStaff();
+  if (staff.role !== "owner") redirect("/admin/leads");
+  return staff;
+}
+
 const fail = (status: number, code: string) =>
   NextResponse.json({ ok: false, error: { code } }, { status });
 
@@ -70,5 +77,13 @@ export async function authorizeStaff(request: NextRequest): Promise<Staff | Next
 
   const staff = await staffFromCookie(request.cookies.get(SESSION_COOKIE)?.value);
   if (!staff) return fail(401, "unauthorized");
+  return staff;
+}
+
+/** Like authorizeStaff, but only the owner passes. Agents get 403. */
+export async function authorizeOwner(request: NextRequest): Promise<Staff | NextResponse> {
+  const staff = await authorizeStaff(request);
+  if (staff instanceof NextResponse) return staff;
+  if (staff.role !== "owner") return fail(403, "forbidden");
   return staff;
 }

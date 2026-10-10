@@ -6,12 +6,15 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
 
-const items: { href: string; key: "leads" | "analytics"; Icon: LucideIcon }[] = [
+export type NavKey = "leads" | "analytics";
+
+// Later phases add entries here; `ownerOnly` ones are hidden from agents.
+const items: { href: string; key: NavKey; Icon: LucideIcon; ownerOnly?: boolean }[] = [
   { href: "/admin/leads", key: "leads", Icon: Users },
   { href: "/admin/analytics", key: "analytics", Icon: BarChart3 },
 ];
 
-export function AdminNav({ orientation }: { orientation: "vertical" | "horizontal" }) {
+export function AdminNav({ orientation, role }: { orientation: "vertical" | "horizontal"; role: string }) {
   const t = useTranslations("admin.nav");
   const pathname = usePathname();
 
@@ -20,7 +23,9 @@ export function AdminNav({ orientation }: { orientation: "vertical" | "horizonta
       aria-label={t("menu")}
       className={cn(orientation === "vertical" ? "grid gap-1" : "flex gap-2 overflow-x-auto")}
     >
-      {items.map(({ href, key, Icon }) => {
+      {items
+        .filter((item) => !item.ownerOnly || role === "owner")
+        .map(({ href, key, Icon }) => {
         const active = pathname === href || pathname.startsWith(`${href}/`);
         return (
           <Link

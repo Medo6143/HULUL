@@ -19,6 +19,15 @@ export class ResendEmailSender implements EmailSender {
         subject: message.subject,
         text: message.text,
         html: message.html,
+        ...(message.attachments?.length
+          ? {
+              attachments: message.attachments.map((a) => ({
+                filename: a.filename,
+                content: a.content,
+                content_type: a.contentType,
+              })),
+            }
+          : {}),
       }),
       signal: AbortSignal.timeout(8_000),
     });

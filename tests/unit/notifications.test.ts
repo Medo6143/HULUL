@@ -51,10 +51,10 @@ class MemoryLog implements NotificationLog {
   }
 }
 const clock = { now: () => new Date("2026-10-10T00:00:00Z") };
-const build = (email: EmailSender) => {
+const build = (email: EmailSender, recipients: string[] = ["team@example.com"]) => {
   const chat = new FakeChat();
   const log = new MemoryLog();
-  return { chat, log, service: makeNotificationService({ email, chat, log, teamEmail: "team@example.com", clock }) };
+  return { chat, log, service: makeNotificationService({ email, chat, log, teamEmails: async () => recipients, clock }) };
 };
 
 describe("templates", () => {
@@ -102,6 +102,38 @@ describe("notification service", () => {
     const unconfigured = build(new FakeEmail({ ok: false, skipped: true }));
     await unconfigured.service.leadCreated(lead);
     expect(unconfigured.log.entries.filter((e) => e.status === "skipped").length).toBeGreaterThan(0);
+  });
+});
+
+describe("alert recipients", () => {
+  it("sends one alert to every configured recipient", async () => {
+    const email = new FakeEmail();
+    const { service, log } = build(email, ["a@example.com", "b@example.com", "c@example.com"]);
+    await service.leadCreated({ ...lead, email: "" });
+    expect(email.sent.map((m) => m.to).sort()).toEqual(["a@example.com", "b@example.com", "c@example.com"]);
+    expect(log.entries.filter((e) => e.channel === "email_team")).toHaveLength(3);
+  });
+  it("logs one skipped entry when no recipient is configured", async () => {
+    const email = new FakeEmail();
+    const { service, log } = build(email, []);
+    await service.leadCreated({ ...lead, email: "" });
+    expect(email.sent).toHaveLength(0);
+    expect(log.entries.filter((e) => e.channel === "email_team")).toEqual([expect.objectContaining({ status: "skipped" })]);
+  });
+  it("passes attachments through sendEmail and returns the outcome", async () => {
+    const email = new FakeEmail();
+    const { service, log } = build(email);
+    const outcome = await service.sendEmail({
+      event: "booking.created",
+      subjectId: "b1",
+      channel: "email_customer",
+      to: "client@example.com",
+      message: { subject: "s", text: "t", html: "<p>t</p>" },
+      attachments: [{ filename: "a.ics", content: "QQ==", contentType: "text/calendar" }],
+    });
+    expect(outcome.ok).toBe(true);
+    expect(email.sent[0]?.attachments?.[0]?.filename).toBe("a.ics");
+    expect(log.entries[0]).toMatchObject({ event: "booking.created", status: "sent" });
   });
 });
 

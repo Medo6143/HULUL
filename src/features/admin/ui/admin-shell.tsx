@@ -29,7 +29,7 @@ export function AdminShell({
             <span className="text-[13px] text-surface/60">{t("brand")}</span>
           </span>
         </Link>
-        <AdminNav orientation="vertical" />
+        <AdminNav orientation="vertical" role={user.role} />
         <div className="mt-auto grid gap-3">
           <Link
             href="/ar"
@@ -57,7 +57,7 @@ export function AdminShell({
             <Image src="/icons/nav-logo.png" alt="" width={28} height={28} className="size-7 object-contain" />
             <b>{brand("name")}</b>
           </Link>
-          <AdminNav orientation="horizontal" />
+          <AdminNav orientation="horizontal" role={user.role} />
         </div>
         {demo ? (
           <div

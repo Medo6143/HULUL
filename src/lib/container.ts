@@ -3,6 +3,7 @@ import { FirestoreLeadRepository } from "@/features/leads/infrastructure/firesto
 import { makeSendContactMessage } from "@/features/contact";
 import { makeNotificationService } from "@/features/notifications";
 import { FirestoreNotificationLog } from "@/features/notifications/infrastructure/firestore-notification.log";
+import { FirestoreRecipientStore } from "@/features/notifications/infrastructure/firestore-recipient.store";
 import { ResendEmailSender } from "@/features/notifications/infrastructure/resend-email.sender";
 import { TelegramChatAlerter } from "@/features/notifications/infrastructure/telegram-chat.alerter";
 import { FirestoreContactRepository } from "@/features/contact/infrastructure/firestore-contact.repository";
@@ -33,12 +34,17 @@ const ids: IdGenerator = {
 /** Bump when the privacy policy text changes; stored with every consent record. */
 const PDPL_POLICY_VERSION = "draft-1";
 
+async function recipientStore() {
+  return new FirestoreRecipientStore(await getAdminApp(), [serverEnv.TEAM_ALERT_EMAIL]);
+}
+
 async function notifications() {
+  const recipients = await recipientStore();
   return makeNotificationService({
     email: new ResendEmailSender(serverEnv.RESEND_API_KEY, serverEnv.EMAIL_FROM),
     chat: new TelegramChatAlerter(serverEnv.TELEGRAM_BOT_TOKEN, serverEnv.TELEGRAM_CHAT_ID),
     log: new FirestoreNotificationLog(await getAdminApp()),
-    teamEmail: serverEnv.TEAM_ALERT_EMAIL,
+    teamEmails: () => recipients.list(),
     clock,
   });
 }
@@ -70,6 +76,10 @@ function rateLimit(name: string, opts: { limit: number; windowMs: number }) {
 
 export const container = {
   rateLimit,
+  /** Alert recipients (settings page). */
+  recipientStore,
+  /** Full notification service, for routes that send their own transactional emails. */
+  notifications,
   env: serverEnv,
   clock,
   ids,
