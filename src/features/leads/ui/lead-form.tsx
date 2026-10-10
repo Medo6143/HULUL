@@ -168,14 +168,16 @@ export function LeadForm({
         requestAnimationFrame(() => successRef.current?.focus());
         return;
       }
-      const body = (await response.json().catch(() => null)) as { error?: { code?: string } } | null;
+      const body = (await response.json().catch(() => null)) as { error?: { code?: string; detail?: string } } | null;
       const code = body?.error?.code as (typeof SERVER_ERRORS)[number] | undefined;
       if (code === "slot_taken" || code === "slot_unavailable") {
         // Someone else took that time: clear it and reload the open times, keeping everything the visitor typed.
         setSlot(null);
         setSlotsKey((k) => k + 1);
       }
-      setServerError(code && SERVER_ERRORS.includes(code) ? t(`serverErrors.${code}`) : t("failed"));
+      setServerError(
+        `${code && SERVER_ERRORS.includes(code) ? t(`serverErrors.${code}`) : t("failed")}${body?.error?.detail ? ` [${body.error.detail}]` : ""}`,
+      );
       setStatus("failed");
     } catch {
       setServerError(t("failed"));

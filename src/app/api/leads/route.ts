@@ -50,7 +50,14 @@ export async function POST(request: NextRequest) {
     token: parsed.data.captcha,
     action: "lead",
   });
-  if (!captcha.ok) return fail(403, "bot_suspected");
+  if (!captcha.ok) {
+    // The reason is logged on the server and sent back as a short code so a failing setup can be diagnosed.
+    console.error("captcha_rejected", captcha.reason, captcha.detail);
+    return NextResponse.json(
+      { ok: false, error: { code: "bot_suspected", message_key: "errors.lead.bot_suspected", detail: captcha.detail } },
+      { status: 403 },
+    );
+  }
 
   const input = toNewLeadInput(parsed.data);
   if (!(await byPhone(input.phone.replace(/\D/g, "")))) return fail(429, "rate_limited");

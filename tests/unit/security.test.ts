@@ -38,7 +38,7 @@ describe("verifyCaptcha", () => {
     expect(await verifyCaptcha({ ...base, secret: "", token: undefined })).toEqual({ ok: true });
   });
   it("requires a token once a secret is configured", async () => {
-    expect(await verifyCaptcha({ ...base, token: undefined })).toEqual({ ok: false, reason: "missing_token" });
+    expect(await verifyCaptcha({ ...base, token: undefined })).toMatchObject({ ok: false, reason: "missing_token" });
   });
   it("accepts a good score for the right action", async () => {
     expect(await verifyCaptcha({ ...base, token: "t", fetchImpl: reply({ success: true, score: 0.9, action: "lead" }) })).toEqual({ ok: true });
@@ -51,5 +51,17 @@ describe("verifyCaptcha", () => {
       throw new Error("network");
     }) as unknown as typeof fetch;
     expect(await verifyCaptcha({ ...base, token: "t", fetchImpl: broken })).toMatchObject({ ok: false, reason: "unreachable" });
+  });
+});
+
+describe("verifyCaptcha diagnostics", () => {
+  const reply = (body: unknown) => (async () => new Response(JSON.stringify(body))) as unknown as typeof fetch;
+  const run = (body: unknown) => verifyCaptcha({ secret: "s", token: "t", action: "lead", fetchImpl: reply(body) });
+  it("explains why a token was rejected without leaking the token or secret", async () => {
+    expect(await run({ success: false, "error-codes": ["invalid-input-secret"] })).toMatchObject({ ok: false, detail: "google:invalid-input-secret" });
+    expect(await run({ success: false, "error-codes": ["browser-error"], hostname: "a.vercel.app" })).toMatchObject({ detail: "google:browser-error host=a.vercel.app" });
+    expect(await run({ success: true, score: 0.9, action: "contact" })).toMatchObject({ detail: "action_mismatch:contact" });
+    expect(await run({ success: true, score: 0.2, action: "lead" })).toMatchObject({ detail: "low_score:0.2" });
+    expect(await run({ success: true, score: 0.9, action: "lead" })).toEqual({ ok: true });
   });
 });

@@ -42,7 +42,10 @@ export async function POST(request: NextRequest) {
     token: parsed.data.captcha,
     action: "contact",
   });
-  if (!captcha.ok) return fail(403, "bot_suspected");
+  if (!captcha.ok) {
+    console.error("captcha_rejected", captcha.reason, captcha.detail);
+    return NextResponse.json({ ok: false, error: { code: "bot_suspected", detail: captcha.detail } }, { status: 403 });
+  }
 
   const input = toNewContactMessage(parsed.data);
   if (!(await byEmail(input.email.toLowerCase()))) return fail(429, "rate_limited");
