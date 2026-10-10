@@ -53,12 +53,12 @@ export class FirebaseStaffDirectory implements StaffDirectory {
     }
   }
 
-  async create(input: { email: string; name: string; role: StaffRole }): Promise<StaffMember> {
-    // A random password nobody sees: the person sets their own through the emailed link.
+  async create(input: { email: string; name: string; role: StaffRole; password?: string }): Promise<StaffMember> {
+    // Default: a random password nobody sees, replaced through the emailed link. An owner may pass a temporary one.
     const user = await this.auth.createUser({
       email: input.email,
       displayName: input.name,
-      password: randomBytes(24).toString("base64url"),
+      password: input.password ?? randomBytes(24).toString("base64url"),
       emailVerified: false,
     });
     await this.auth.setCustomUserClaims(user.uid, { role: input.role });

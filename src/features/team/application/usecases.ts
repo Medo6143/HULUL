@@ -28,17 +28,24 @@ export function makeInviteStaff(deps: { directory: StaffDirectory; invites: Invi
     email: string;
     name: string;
     role: string;
-  }): Promise<Result<{ uid: string; emailed: boolean }, TeamError>> {
+    /** Optional temporary password, handed over by the owner instead of an email (no email is sent). */
+    password?: string;
+  }): Promise<Result<{ uid: string; emailed: boolean; passwordSet: boolean }, TeamError>> {
     const email = normalizeEmail(req.email);
     if (!email.ok) return teamErr(email.error);
     if (!isStaffRole(req.role)) return teamErr({ code: "invalid_role" });
+    if (req.password !== undefined && req.password.length < 10) return teamErr({ code: "weak_password" });
     if (await deps.directory.findByEmail(email.value)) return teamErr({ code: "email_exists" });
 
     const name = req.name.trim().slice(0, 100) || email.value;
+    if (req.password) {
+      const created = await deps.directory.create({ email: email.value, name, role: req.role, password: req.password });
+      return teamOk({ uid: created.uid, emailed: false, passwordSet: true });
+    }
     const member = await deps.directory.create({ email: email.value, name, role: req.role });
     const link = await deps.directory.createPasswordSetupLink(email.value);
     const emailed = await deps.invites.send({ uid: member.uid, to: email.value, name, role: req.role, link });
-    return teamOk({ uid: member.uid, emailed });
+    return teamOk({ uid: member.uid, emailed, passwordSet: false });
   };
 }
 

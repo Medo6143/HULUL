@@ -3,8 +3,8 @@ import type { StaffMember, StaffRole } from "../domain/staff";
 export interface StaffDirectory {
   list(): Promise<StaffMember[]>;
   findByEmail(email: string): Promise<StaffMember | null>;
-  /** Creates the account with a random password nobody sees, and gives it the role. */
-  create(input: { email: string; name: string; role: StaffRole }): Promise<StaffMember>;
+  /** Creates the account and gives it the role. Without `password` a random one nobody sees is used. */
+  create(input: { email: string; name: string; role: StaffRole; password?: string }): Promise<StaffMember>;
   setRole(uid: string, role: StaffRole): Promise<void>;
   /** Disabling also revokes the member's sessions. */
   setDisabled(uid: string, disabled: boolean): Promise<void>;

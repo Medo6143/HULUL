@@ -20,6 +20,7 @@ export interface StaffMember {
 export type TeamError =
   | { code: "invalid_email" }
   | { code: "invalid_role" }
+  | { code: "weak_password" }
   | { code: "email_exists" }
   | { code: "last_owner" }
   | { code: "self_change" }

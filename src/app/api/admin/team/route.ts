@@ -11,9 +11,10 @@ const bodySchema = z.object({
   email: z.string().trim().max(200),
   name: z.string().trim().max(100).default(""),
   role: z.enum(STAFF_ROLES),
+  password: z.string().max(128).optional(),
 });
 
-const STATUS: Record<string, number> = { invalid_email: 400, invalid_role: 400, email_exists: 409 };
+const STATUS: Record<string, number> = { invalid_email: 400, invalid_role: 400, weak_password: 400, email_exists: 409 };
 
 /** Owner invites a staff member. The invitee sets their own password through the emailed link. */
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -27,9 +28,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     const invite = await container.inviteStaff();
-    const result = await invite(parsed.data);
+    const result = await invite({ ...parsed.data, password: parsed.data.password || undefined });
     if (!result.ok) return fail(STATUS[result.error.code] ?? 400, result.error.code);
-    return success({ emailed: result.value.emailed }, 201);
+    return success({ emailed: result.value.emailed, passwordSet: result.value.passwordSet }, 201);
   } catch (error) {
     logError("staff_invite_failed", error);
     return fail(500, "internal_error");

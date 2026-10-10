@@ -650,8 +650,12 @@
         "unauthorized": "Your session expired. Sign in again",
         "forbidden": "This action is for the owner only",
         "invalid_input": "The data is invalid",
-        "internal_error": "Something went wrong on our side. Try again"
-      }
+        "internal_error": "Something went wrong on our side. Try again",
+        "weak_password": "The password must be at least 10 characters"
+      },
+      "tempPassword": "Temporary password (optional)",
+      "tempPasswordHint": "If you do not want an invite email, enter a password of at least 10 characters and give it to the member yourself. No email is sent.",
+      "passwordCreated": "The account is ready. Hand the temporary password to the member securely."
     },
     "settings": {
       "title": "Settings",

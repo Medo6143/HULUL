@@ -19,6 +19,7 @@ export interface TeamRow {
 const ERROR_KEYS = [
   "invalid_email",
   "invalid_role",
+  "weak_password",
   "email_exists",
   "last_owner",
   "self_change",
@@ -28,7 +29,7 @@ const ERROR_KEYS = [
   "invalid_input",
 ] as const;
 
-async function call(url: string, method: string, body?: unknown): Promise<{ ok: boolean; code?: string; emailed?: boolean }> {
+async function call(url: string, method: string, body?: unknown): Promise<{ ok: boolean; code?: string; emailed?: boolean; passwordSet?: boolean }> {
   try {
     const response = await fetch(url, {
       method,
@@ -36,9 +37,9 @@ async function call(url: string, method: string, body?: unknown): Promise<{ ok: 
       body: body === undefined ? undefined : JSON.stringify(body),
     });
     const data = (await response.json().catch(() => null)) as
-      | { ok?: boolean; emailed?: boolean; error?: { code?: string } }
+      | { ok?: boolean; emailed?: boolean; passwordSet?: boolean; error?: { code?: string } }
       | null;
-    if (response.ok) return { ok: true, emailed: data?.emailed };
+    if (response.ok) return { ok: true, emailed: data?.emailed, passwordSet: data?.passwordSet };
     return { ok: false, code: data?.error?.code ?? "internal_error" };
   } catch {
     return { ok: false, code: "internal_error" };
@@ -51,6 +52,7 @@ export function TeamView({ members, currentUid, demo }: { members: TeamRow[]; cu
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [role, setRole] = useState<"agent" | "owner">("agent");
+  const [password, setPassword] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState<{ kind: "ok" | "warn" | "error"; text: string } | null>(null);
 
@@ -61,13 +63,18 @@ export function TeamView({ members, currentUid, demo }: { members: TeamRow[]; cu
     event.preventDefault();
     setBusy("invite");
     setMessage(null);
-    const result = await call("/api/admin/team", "POST", { email, name, role });
+    const result = await call("/api/admin/team", "POST", { email, name, role, password });
     setBusy(null);
     if (!result.ok) return setMessage({ kind: "error", text: errorText(result.code) });
     setEmail("");
     setName("");
+    setPassword("");
     setMessage(
-      result.emailed ? { kind: "ok", text: t("inviteSent") } : { kind: "warn", text: t("inviteNotEmailed") },
+      result.passwordSet
+        ? { kind: "ok", text: t("passwordCreated") }
+        : result.emailed
+          ? { kind: "ok", text: t("inviteSent") }
+          : { kind: "warn", text: t("inviteNotEmailed") },
     );
     router.refresh();
   }
@@ -143,6 +150,20 @@ export function TeamView({ members, currentUid, demo }: { members: TeamRow[]; cu
             {t("send")}
           </button>
         </div>
+        <label className="grid max-w-md gap-2 text-[15px] font-semibold">
+          {t("tempPassword")}
+          <input
+            type="text"
+            dir="ltr"
+            autoComplete="off"
+            minLength={10}
+            value={password}
+            disabled={demo}
+            onChange={(e) => setPassword(e.target.value)}
+            className={field}
+          />
+          <span className="text-[13px] font-normal text-text-muted">{t("tempPasswordHint")}</span>
+        </label>
         <p className="text-[14px] text-text-muted">{t("inviteHint")}</p>
         {message ? (
           <p

@@ -25,9 +25,9 @@ export class InMemoryStaffDirectory implements StaffDirectory {
     return [...this.members.values()].find((m) => m.email === email) ?? null;
   }
 
-  async create(input: { email: string; name: string; role: StaffRole }): Promise<StaffMember> {
+  async create(input: { email: string; name: string; role: StaffRole; password?: string }): Promise<StaffMember> {
     const uid = `u${++this.counter}`;
-    const member: StaffMember = { uid, ...input, disabled: false, createdAt: new Date(0), lastSignInAt: null };
+    const member: StaffMember = { uid, email: input.email, name: input.name, role: input.role, disabled: false, createdAt: new Date(0), lastSignInAt: null };
     this.members.set(uid, member);
     return member;
   }
