@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",
-    "@firebase/rules-unit-testing": "^5.0.2",
+    "@firebase/rules-unit-testing": "^6.0.0",
     "@playwright/test": "^1.56.1",
     "@types/node": "^24.5.2",
     "@types/react": "^19.2.2",
