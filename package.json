@@ -42,7 +42,7 @@
     "@axe-core/playwright": "^4.10.2",
     "@firebase/rules-unit-testing": "^5.0.2",
     "@playwright/test": "^1.56.1",
-    "@types/node": "^24.5.2",
+    "@types/node": "^26.6.5",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "autoprefixer": "^10.4.21",
