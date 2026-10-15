@@ -17,3 +17,6 @@ functions/node_modules
 
 # Internal planning pack: kept locally, never published
 pack/
+
+.vercel
+.env*
