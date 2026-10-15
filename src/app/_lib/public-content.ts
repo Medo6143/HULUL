@@ -5,6 +5,11 @@ import { testimonials as configTestimonials } from "@/config/testimonials";
 import { container } from "@/lib/container";
 import type { PublicCaseStudy, PublicTestimonial } from "@/features/showcase";
 
+export interface TestimonialView extends PublicTestimonial {
+  /** The related project, only when it is published. */
+  project?: { slug: string; title: { ar: string; en: string } };
+}
+
 export const TESTIMONIALS_TAG = "testimonials";
 export const CASE_STUDIES_TAG = "case-studies";
 
@@ -24,12 +29,18 @@ const cachedCaseStudies = unstable_cache(
  * Published, consented testimonials. If Firestore is not configured or unreachable we fall back to the static
  * config (empty until content arrives) instead of failing the page; failures are not cached.
  */
-export async function loadTestimonials(): Promise<readonly PublicTestimonial[]> {
+export async function loadTestimonials(): Promise<readonly TestimonialView[]> {
+  let items: readonly PublicTestimonial[];
   try {
-    return await cachedTestimonials();
+    items = await cachedTestimonials();
   } catch {
-    return configTestimonials;
+    items = configTestimonials;
   }
+  const projects = await loadCaseStudies();
+  return items.map((item) => {
+    const project = item.projectSlug ? projects.find((p) => p.slug === item.projectSlug) : undefined;
+    return project ? { ...item, project: { slug: project.slug, title: project.title } } : item;
+  });
 }
 
 export async function loadCaseStudies(): Promise<readonly PublicCaseStudy[]> {

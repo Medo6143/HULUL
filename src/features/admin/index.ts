@@ -13,7 +13,7 @@ export { TeamView } from "./ui/team-view";
 export type { TeamRow } from "./ui/team-view";
 export { SettingsView } from "./ui/settings-view";
 export { TestimonialsView } from "./ui/testimonials-view";
-export type { TestimonialRow } from "./ui/testimonials-view";
+export type { ProjectOption, TestimonialRow } from "./ui/testimonials-view";
 export { CaseStudiesView } from "./ui/case-studies-view";
 export type { CaseStudyRow } from "./ui/case-studies-view";
 export { CalendarView } from "./ui/calendar-view";

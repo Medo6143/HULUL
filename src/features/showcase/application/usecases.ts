@@ -40,6 +40,7 @@ export function makeSetTestimonialPublished(deps: { store: TestimonialStore; clo
   return async function setPublished(req: { id: string; published: boolean }): Promise<Result<Testimonial, ShowcaseError>> {
     const item = await deps.store.get(req.id);
     if (!item) return fail("not_found");
+    if (req.published && item.isSample) return fail("sample_not_publishable");
     const published = checkPublish(item, req.published);
     if (!published.ok) return published;
     const next = { ...item, published: published.value, updatedAt: deps.clock.now().toISOString() };

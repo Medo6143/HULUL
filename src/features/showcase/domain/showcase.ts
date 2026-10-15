@@ -18,6 +18,8 @@ export type ShowcaseError =
   | { code: "invalid_slug" }
   | { code: "invalid_image" }
   | { code: "invalid_url" }
+  | { code: "invalid_rating" }
+  | { code: "sample_not_publishable" }
   | { code: "slug_exists" }
   | { code: "consent_required" }
   | { code: "consent_note_required" }
@@ -48,6 +50,14 @@ export interface Testimonial extends Consent {
   role: Localized;
   company: string;
   city: string;
+  /** Stars, 1 to 5. */
+  rating: number;
+  /** Cloudinary photo of the person, or empty. */
+  photoUrl: string;
+  /** Slug of the related project (case study), or empty. */
+  projectSlug: string;
+  /** Design samples: never public and can never be published. */
+  isSample: boolean;
   published: boolean;
   order: number;
   updatedAt: string;
@@ -83,6 +93,9 @@ export interface TestimonialInput {
   role: Localized;
   company: string;
   city: string;
+  rating: number;
+  photoUrl: string;
+  projectSlug: string;
   consentToPublish: boolean;
   consentNote: string;
   published: boolean;
@@ -144,6 +157,13 @@ export function buildTestimonial(
   const quote = localized(input.quote, 600);
   const name = localized(input.name, 100);
   if (!quote.ar || !name.ar) return err({ code: "invalid_input" });
+  if (!Number.isInteger(input.rating) || input.rating < 1 || input.rating > 5) return err({ code: "invalid_rating" });
+  const photoUrl = input.photoUrl.trim();
+  if (photoUrl !== "" && !isCloudinaryImageUrl(photoUrl)) return err({ code: "invalid_image" });
+  const projectSlug = input.projectSlug.trim().toLowerCase();
+  if (projectSlug !== "" && !isValidSlug(projectSlug)) return err({ code: "invalid_slug" });
+  const isSample = meta.existing?.isSample ?? false;
+  if (isSample && input.published) return err({ code: "sample_not_publishable" });
   const consent = checkConsent(input, meta.existing, meta.now);
   if (!consent.ok) return consent;
   return ok({
@@ -153,6 +173,10 @@ export function buildTestimonial(
     role: localized(input.role, 100),
     company: clean(input.company, 100),
     city: clean(input.city, 60),
+    rating: input.rating,
+    photoUrl,
+    projectSlug,
+    isSample,
     ...consent.value,
     order: order(input.order),
     updatedAt: meta.now.toISOString(),
@@ -220,6 +244,9 @@ export interface PublicTestimonial {
   quote: Localized;
   name: Localized;
   role: Localized;
+  rating: number;
+  photoUrl: string;
+  projectSlug: string;
 }
 
 export interface PublicCaseStudy {
@@ -239,7 +266,7 @@ export interface PublicCaseStudy {
 }
 
 export function toPublicTestimonial(item: Testimonial): PublicTestimonial | null {
-  if (!isPublic(item)) return null;
+  if (!isPublic(item) || item.isSample) return null;
   const role = pick(item.role);
   const company = item.company;
   const withCompany = (r: string) => [r, company].filter(Boolean).join(" - ");
@@ -248,6 +275,9 @@ export function toPublicTestimonial(item: Testimonial): PublicTestimonial | null
     quote: pick(item.quote),
     name: pick(item.name),
     role: { ar: withCompany(role.ar), en: withCompany(role.en) },
+    rating: item.rating ?? 0,
+    photoUrl: item.photoUrl ?? "",
+    projectSlug: item.projectSlug ?? "",
   };
 }
 

@@ -5,6 +5,9 @@ export interface Testimonial {
   quote: { ar: string; en: string };
   name: { ar: string; en: string };
   role: { ar: string; en: string };
+  rating: number;
+  photoUrl: string;
+  projectSlug: string;
 }
 
 export const testimonials: readonly Testimonial[] = [];

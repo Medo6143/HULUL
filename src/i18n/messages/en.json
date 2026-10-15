@@ -325,7 +325,12 @@
     },
     "testimonials": {
       "eyebrow": "Testimonials",
-      "title": "Their words say it best"
+      "title": "Their words say it best",
+      "rating": "Rated {value} out of 5",
+      "average": "Average rating {value} out of 5",
+      "count": "from {count} reviews",
+      "project": "Project: {name}",
+      "sample": "Sample"
     },
     "journey": {
       "eyebrow": "Your journey with us",
@@ -792,7 +797,9 @@
         "forbidden": "This action is not allowed",
         "internal_error": "Something went wrong on our side. Try again",
         "invalid_image": "The image link is not valid. Upload images from this page only",
-        "invalid_url": "The link must start with https and be at most 300 characters"
+        "invalid_url": "The link must start with https and be at most 300 characters",
+        "invalid_rating": "Pick a rating from 1 to 5",
+        "sample_not_publishable": "This is a design sample and cannot be published. Add a real review instead"
       }
     },
     "testimonials": {
@@ -806,7 +813,21 @@
       "role": "Job title",
       "company": "Company",
       "city": "City",
-      "empty": "No testimonials yet. Add the first one once you have the client's consent."
+      "empty": "No testimonials yet. Add the first one once you have the client's consent.",
+      "rating": "Rating",
+      "ratingValue": "{n} of 5",
+      "photo": "Client photo",
+      "photoHint": "Optional. A clear face photo (JPG, PNG, or WebP, up to 5 MB).",
+      "photoUpload": "Upload photo",
+      "photoRemove": "Remove photo",
+      "photoFailed": "The photo upload failed. Try again",
+      "photoNotConfigured": "Image upload is not set up yet (Cloudinary keys)",
+      "project": "Related project",
+      "projectNone": "No project",
+      "sampleBadge": "Design sample",
+      "sampleNote": "Samples only show the design. They are never published to visitors; delete them and add real reviews.",
+      "previewTitle": "Preview of the section on the site",
+      "previewHint": "Every review shows in this preview (including drafts and samples), but visitors only see published ones with consent."
     },
     "caseStudies": {
       "title": "Case studies",

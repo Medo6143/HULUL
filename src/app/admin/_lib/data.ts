@@ -85,6 +85,10 @@ export async function loadTestimonials(): Promise<{ items: TestimonialRow[]; dem
           role: demoPair,
           company: "",
           city: "",
+          rating: 5,
+          photoUrl: "",
+          projectSlug: "",
+          isSample: true,
           consentToPublish: false,
           consentNote: "",
           published: false,
@@ -94,7 +98,15 @@ export async function loadTestimonials(): Promise<{ items: TestimonialRow[]; dem
     };
   }
   const list = await container.listTestimonials();
-  return { items: await list(), demo: false };
+  // Documents saved before ratings, photos, and projects existed get safe defaults.
+  const items = (await list()).map((item) => ({
+    ...item,
+    rating: item.rating ?? 5,
+    photoUrl: item.photoUrl ?? "",
+    projectSlug: item.projectSlug ?? "",
+    isSample: item.isSample ?? false,
+  }));
+  return { items, demo: false };
 }
 
 export async function loadCaseStudies(): Promise<{ items: CaseStudyRow[]; demo: boolean }> {

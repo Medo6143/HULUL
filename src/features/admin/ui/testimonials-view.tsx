@@ -1,9 +1,13 @@
 "use client";
 
-import { Eye, EyeOff, Loader2, Pencil, Plus, Trash2 } from "lucide-react";
+import { Eye, EyeOff, ImagePlus, Loader2, Pencil, Plus, Star, Trash2, X } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
+import { TestimonialsSection } from "@/components/sections/testimonials-section";
+import { cn } from "@/lib/cn";
+import { uploadImage } from "./image-uploader";
 import { AREA, ConsentFields, FIELD, Field, StatusBadge, callApi, useShowcaseErrors } from "./showcase-shared";
 
 export interface TestimonialRow {
@@ -13,10 +17,19 @@ export interface TestimonialRow {
   role: { ar: string; en: string };
   company: string;
   city: string;
+  rating: number;
+  photoUrl: string;
+  projectSlug: string;
+  isSample: boolean;
   consentToPublish: boolean;
   consentNote: string;
   published: boolean;
   order: number;
+}
+
+export interface ProjectOption {
+  slug: string;
+  title: string;
 }
 
 const EMPTY: TestimonialRow = {
@@ -26,13 +39,96 @@ const EMPTY: TestimonialRow = {
   role: { ar: "", en: "" },
   company: "",
   city: "",
+  rating: 5,
+  photoUrl: "",
+  projectSlug: "",
+  isSample: false,
   consentToPublish: false,
   consentNote: "",
   published: false,
   order: 0,
 };
 
-export function TestimonialsView({ items, demo }: { items: TestimonialRow[]; demo: boolean }) {
+const MAX_BYTES = 5 * 1024 * 1024;
+const TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif"];
+const avatar = (url: string) => url.replace("/upload/", "/upload/c_fill,g_face,w_160,h_160,f_auto,q_auto/");
+
+function RatingInput({ value, onChange, disabled }: { value: number; onChange: (n: number) => void; disabled: boolean }) {
+  const t = useTranslations("admin.testimonials");
+  return (
+    <div role="radiogroup" aria-label={t("rating")} className="flex items-center gap-1" dir="ltr">
+      {[1, 2, 3, 4, 5].map((n) => (
+        <button
+          key={n}
+          type="button"
+          role="radio"
+          aria-checked={value === n}
+          aria-label={t("ratingValue", { n })}
+          disabled={disabled}
+          onClick={() => onChange(n)}
+          className="grid size-10 place-items-center rounded-lg hover:bg-surface-muted disabled:opacity-50"
+        >
+          <Star className={cn("size-7", n <= value ? "fill-warning text-warning" : "text-surface-line")} aria-hidden="true" />
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function PhotoField({ url, onChange, disabled }: { url: string; onChange: (url: string) => void; disabled: boolean }) {
+  const t = useTranslations("admin.testimonials");
+  const input = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function pick(files: FileList | null) {
+    const file = files?.[0];
+    if (!file) return;
+    setError(null);
+    if (!TYPES.includes(file.type) || file.size > MAX_BYTES) return setError(t("photoHint"));
+    setBusy(true);
+    const result = await uploadImage(file).catch(() => ({ error: "failed" as const }));
+    setBusy(false);
+    if (input.current) input.current.value = "";
+    if ("url" in result && result.url) return onChange(result.url);
+    setError("error" in result && result.error === "not_configured" ? t("photoNotConfigured") : t("photoFailed"));
+  }
+
+  return (
+    <div className="grid gap-2">
+      <span className="text-[15px] font-semibold">{t("photo")}</span>
+      <div className="flex items-center gap-4">
+        <span className="relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-full bg-surface-muted">
+          {url ? <Image src={avatar(url)} alt="" fill sizes="64px" className="object-cover" /> : <ImagePlus className="size-6 text-text-muted" aria-hidden="true" />}
+        </span>
+        <div className="flex flex-wrap gap-2">
+          <input ref={input} id="testimonial-photo" type="file" accept={TYPES.join(",")} className="sr-only" disabled={disabled || busy} onChange={(e) => pick(e.target.files)} />
+          <label
+            htmlFor="testimonial-photo"
+            className="inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-lg border border-surface-line ps-4 pe-4 text-[14px] font-semibold hover:border-ink-900 has-[:disabled]:opacity-50"
+          >
+            {busy ? <Loader2 className="size-4 motion-safe:animate-spin" aria-hidden="true" /> : <ImagePlus className="size-4" aria-hidden="true" />}
+            {t("photoUpload")}
+          </label>
+          {url ? (
+            <button type="button" disabled={disabled} onClick={() => onChange("")} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-surface-line ps-4 pe-4 text-[14px] font-semibold hover:border-danger hover:text-danger">
+              <X className="size-4" aria-hidden="true" />
+              {t("photoRemove")}
+            </button>
+          ) : null}
+        </div>
+      </div>
+      <p className="text-[13px] text-text-muted">{t("photoHint")}</p>
+      {error ? (
+        <p role="alert" className="text-[14px] text-danger">
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+export function TestimonialsView({ items, projects, demo }: { items: TestimonialRow[]; projects: ProjectOption[]; demo: boolean }) {
   const t = useTranslations("admin.testimonials");
   const s = useTranslations("admin.showcase");
   const errorText = useShowcaseErrors();
@@ -59,12 +155,27 @@ export function TestimonialsView({ items, demo }: { items: TestimonialRow[]; dem
   async function save(event: FormEvent) {
     event.preventDefault();
     if (!form) return;
-    const { id, ...body } = form;
+    const { id, isSample, ...body } = form;
+    void isSample;
     const done = await run("form", () =>
       id ? callApi(`/api/admin/testimonials/${id}`, "PUT", body) : callApi("/api/admin/testimonials", "POST", body),
     );
     if (done) setForm(null);
   }
+
+  const previewItems = items.map((item) => ({
+    id: item.id,
+    quote: item.quote,
+    name: item.name,
+    role: { ar: [item.role.ar, item.company].filter(Boolean).join(" - "), en: [item.role.en || item.role.ar, item.company].filter(Boolean).join(" - ") },
+    rating: item.rating,
+    photoUrl: item.photoUrl,
+    sample: item.isSample,
+    project: (() => {
+      const project = projects.find((p) => p.slug === item.projectSlug);
+      return project ? { slug: project.slug, title: { ar: project.title, en: project.title } } : undefined;
+    })(),
+  }));
 
   return (
     <div className="grid min-w-0 gap-6">
@@ -118,6 +229,23 @@ export function TestimonialsView({ items, demo }: { items: TestimonialRow[]; dem
             <Field label={t("city")}>
               <input maxLength={60} value={form.city} onChange={(e) => set("city", e.target.value)} className={FIELD} />
             </Field>
+            <div className="grid gap-2">
+              <span className="text-[15px] font-semibold">{t("rating")}</span>
+              <RatingInput value={form.rating} onChange={(n) => set("rating", n)} disabled={busy !== null} />
+            </div>
+            <Field label={t("project")}>
+              <select value={form.projectSlug} onChange={(e) => set("projectSlug", e.target.value)} className={FIELD}>
+                <option value="">{t("projectNone")}</option>
+                {projects.map((project) => (
+                  <option key={project.slug} value={project.slug}>
+                    {project.title}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <div className="md:col-span-2">
+              <PhotoField url={form.photoUrl} onChange={(url) => set("photoUrl", url)} disabled={busy !== null} />
+            </div>
             <Field label={s("order")} hint={s("orderHint")}>
               <input type="number" min={0} max={9999} value={form.order} onChange={(e) => set("order", Number(e.target.value) || 0)} className={FIELD} />
             </Field>
@@ -126,7 +254,7 @@ export function TestimonialsView({ items, demo }: { items: TestimonialRow[]; dem
             consent={form.consentToPublish}
             note={form.consentNote}
             published={form.published}
-            disabled={busy !== null}
+            disabled={busy !== null || form.isSample}
             onConsent={(v) => setForm((f) => (f ? { ...f, consentToPublish: v, published: v ? f.published : false } : f))}
             onNote={(v) => set("consentNote", v)}
             onPublished={(v) => set("published", v)}
@@ -154,13 +282,27 @@ export function TestimonialsView({ items, demo }: { items: TestimonialRow[]; dem
           {items.map((item) => (
             <li key={item.id} className="grid gap-3 rounded-2xl border border-surface-line bg-surface p-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <b>{item.name.ar}</b>
-                  <span className="ms-2 text-[14px] text-text-muted">{[item.role.ar, item.company].filter(Boolean).join(" - ")}</span>
+                <div className="flex items-center gap-3">
+                  <span className="relative grid size-12 shrink-0 place-items-center overflow-hidden rounded-full bg-brand-soft font-bold text-ink-900">
+                    {item.photoUrl ? <Image src={avatar(item.photoUrl)} alt="" fill sizes="48px" className="object-cover" /> : item.name.ar.slice(0, 1)}
+                  </span>
+                  <div>
+                    <b>{item.name.ar}</b>
+                    <span className="ms-2 text-[14px] text-text-muted">{[item.role.ar, item.company].filter(Boolean).join(" - ")}</span>
+                    <span className="mt-0.5 flex items-center gap-1" dir="ltr" aria-label={t("ratingValue", { n: item.rating })}>
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <Star key={n} className={cn("size-4", n <= item.rating ? "fill-warning text-warning" : "text-surface-line")} aria-hidden="true" />
+                      ))}
+                    </span>
+                  </div>
                 </div>
-                <StatusBadge published={item.published} consent={item.consentToPublish} />
+                <div className="flex items-center gap-2">
+                  {item.isSample ? <span className="rounded-full bg-warning/15 ps-3 pe-3 py-1 text-[13px] font-bold text-warning">{t("sampleBadge")}</span> : null}
+                  <StatusBadge published={item.published} consent={item.consentToPublish} />
+                </div>
               </div>
               <p className="text-[15px] leading-[1.8] text-text-muted">{item.quote.ar}</p>
+              {item.isSample ? <p className="text-[13px] text-warning">{t("sampleNote")}</p> : null}
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
@@ -171,15 +313,17 @@ export function TestimonialsView({ items, demo }: { items: TestimonialRow[]; dem
                   <Pencil className="size-4" aria-hidden="true" />
                   {s("edit")}
                 </button>
-                <button
-                  type="button"
-                  disabled={demo || busy !== null}
-                  onClick={() => run(item.id, () => callApi(`/api/admin/testimonials/${item.id}`, "PATCH", { published: !item.published }))}
-                  className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-surface-line ps-3 pe-3 text-[14px] font-semibold hover:border-ink-900 disabled:opacity-50"
-                >
-                  {item.published ? <EyeOff className="size-4" aria-hidden="true" /> : <Eye className="size-4" aria-hidden="true" />}
-                  {item.published ? s("unpublish") : s("publish")}
-                </button>
+                {!item.isSample ? (
+                  <button
+                    type="button"
+                    disabled={demo || busy !== null}
+                    onClick={() => run(item.id, () => callApi(`/api/admin/testimonials/${item.id}`, "PATCH", { published: !item.published }))}
+                    className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-surface-line ps-3 pe-3 text-[14px] font-semibold hover:border-ink-900 disabled:opacity-50"
+                  >
+                    {item.published ? <EyeOff className="size-4" aria-hidden="true" /> : <Eye className="size-4" aria-hidden="true" />}
+                    {item.published ? s("unpublish") : s("publish")}
+                  </button>
+                ) : null}
                 <button
                   type="button"
                   disabled={demo || busy !== null}
@@ -196,6 +340,18 @@ export function TestimonialsView({ items, demo }: { items: TestimonialRow[]; dem
           ))}
         </ul>
       )}
+
+      {items.length > 0 ? (
+        <section className="grid gap-3">
+          <div>
+            <h2 className="text-[18px] font-bold">{t("previewTitle")}</h2>
+            <p className="text-[14px] text-text-muted">{t("previewHint")}</p>
+          </div>
+          <div className="overflow-hidden rounded-2xl border border-surface-line">
+            <TestimonialsSection items={previewItems} preview />
+          </div>
+        </section>
+      ) : null}
       {demo ? <p className="text-[14px] text-text-muted">{s("demoNote")}</p> : null}
     </div>
   );

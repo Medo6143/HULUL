@@ -16,6 +16,9 @@ export const testimonialSchema = z.object({
   role: localized(100),
   company: z.string().max(100).default(""),
   city: z.string().max(60).default(""),
+  rating: z.number().int().min(1).max(5),
+  photoUrl: z.string().max(500).default(""),
+  projectSlug: z.string().max(60).default(""),
   ...consent,
 });
 
@@ -43,6 +46,8 @@ export const SHOWCASE_STATUS: Record<string, number> = {
   invalid_slug: 400,
   invalid_image: 400,
   invalid_url: 400,
+  invalid_rating: 400,
+  sample_not_publishable: 422,
   consent_required: 422,
   consent_note_required: 422,
   not_found: 404,

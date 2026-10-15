@@ -27,9 +27,10 @@ interface SignResponse {
 }
 
 /** Uploads straight from the browser to Cloudinary with a signature from our server; the secret never reaches the page. */
-type UploadResult = { url?: string; error?: "not_configured" | "failed" };
+export type UploadResult = { url?: string; error?: "not_configured" | "failed" };
 
-async function uploadOne(file: File): Promise<UploadResult> {
+/** Uploads one image straight to Cloudinary with a server-made signature. */
+export async function uploadImage(file: File): Promise<UploadResult> {
   const signResponse = await fetch("/api/admin/uploads/sign", { method: "POST" });
   const sign = (await signResponse.json().catch(() => null)) as SignResponse | null;
   if (!signResponse.ok || !sign?.signature) {
@@ -76,7 +77,7 @@ export function ImageUploader({
         setError(t("tooLarge"));
         continue;
       }
-      const result: UploadResult = await uploadOne(file).catch((): UploadResult => ({ error: "failed" }));
+      const result: UploadResult = await uploadImage(file).catch((): UploadResult => ({ error: "failed" }));
       if (result.url) next.push({ url: result.url, alt: { ar: "", en: "" } });
       else setError(result.error === "not_configured" ? t("notConfigured") : t("failed"));
     }

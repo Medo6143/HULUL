@@ -25,6 +25,9 @@ const testimonial = (over: Partial<TestimonialInput> = {}): TestimonialInput => 
   role: { ar: "مدير", en: "" },
   company: "شركة",
   city: "",
+  rating: 5,
+  photoUrl: "",
+  projectSlug: "",
   consentToPublish: true,
   consentNote: "رسالة واتساب",
   published: true,
@@ -207,5 +210,33 @@ describe("portfolio projects without a case-study story", () => {
     const saved = await store.get("shop-app");
     expect(saved?.stack).toHaveLength(12);
     expect(saved?.stack[0]?.length).toBe(30);
+  });
+});
+
+describe("testimonial rating, photo, project and samples", () => {
+  const photo = "https://res.cloudinary.com/demo/image/upload/v1/hulol/work/p.jpg";
+  it("needs a rating from 1 to 5, a Cloudinary photo, and a valid project slug", async () => {
+    const save = makeSaveTestimonial({ store: new InMemoryTestimonialStore(), ids: counter(), clock });
+    for (const rating of [0, 6, 3.5]) expect(await save({ input: testimonial({ rating }) })).toMatchObject({ ok: false, error: { code: "invalid_rating" } });
+    expect(await save({ input: testimonial({ photoUrl: "https://evil.example/p.jpg" }) })).toMatchObject({ ok: false, error: { code: "invalid_image" } });
+    expect(await save({ input: testimonial({ projectSlug: "Bad Slug" }) })).toMatchObject({ ok: false, error: { code: "invalid_slug" } });
+    expect((await save({ input: testimonial({ rating: 4, photoUrl: photo, projectSlug: "Smart-Clinic" }) })).ok).toBe(true);
+  });
+  it("exposes rating, photo and project slug publicly", async () => {
+    const store = new InMemoryTestimonialStore();
+    await makeSaveTestimonial({ store, ids: counter(), clock })({ input: testimonial({ rating: 4, photoUrl: photo, projectSlug: "smart-clinic" }) });
+    const [shown] = await makeGetPublishedTestimonials({ store })();
+    expect(shown).toMatchObject({ rating: 4, photoUrl: photo, projectSlug: "smart-clinic" });
+    expect(shown).not.toHaveProperty("consentNote");
+  });
+  it("never publishes or shows a design sample, even if its flags say published", async () => {
+    const store = new InMemoryTestimonialStore();
+    const created = await makeSaveTestimonial({ store, ids: counter(), clock })({ input: testimonial({ published: false }) });
+    const id = created.ok ? created.value.id : "";
+    await store.save({ ...(await store.get(id))!, isSample: true });
+    expect(await makeSetTestimonialPublished({ store, clock })({ id, published: true })).toMatchObject({ ok: false, error: { code: "sample_not_publishable" } });
+    expect(await makeSaveTestimonial({ store, ids: counter(), clock })({ id, input: testimonial() })).toMatchObject({ ok: false, error: { code: "sample_not_publishable" } });
+    await store.save({ ...(await store.get(id))!, published: true, consentToPublish: true });
+    expect(await makeGetPublishedTestimonials({ store })()).toEqual([]);
   });
 });
