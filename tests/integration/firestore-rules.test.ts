@@ -33,6 +33,7 @@ describe.skipIf(!emulator)("firestore rules", () => {
       await db.doc("bookingSlots/123").set({ bookingId: "b1" });
       await db.doc("availabilityExceptions/2026-10-12").set({ closed: true });
       await db.doc("settings/availability").set({ slotMinutes: 30 });
+      await db.doc("surveys/s1").set({ token: "secret" });
       await db.doc("settings/templates").set({ updatedBy: "o" });
       await db.doc("admins/agent1").set({ role: "agent" });
       await db.doc("admins/owner1").set({ role: "owner" });
@@ -137,6 +138,15 @@ describe.skipIf(!emulator)("firestore rules", () => {
       await assertFails(agent().doc("settings/templates").get());
       await assertFails(anon().doc("settings/templates").get());
       await assertFails(owner().doc("settings/templates").set({ a: 1 }));
+    });
+    it("staff read surveys; visitors and clients cannot read or write them", async () => {
+      for (const db of [agent(), owner()]) {
+        await assertSucceeds(db.doc("surveys/s1").get());
+        await assertFails(db.doc("surveys/s1").update({ status: "answered" }));
+      }
+      await assertFails(anon().doc("surveys/s1").get());
+      await assertFails(client().doc("surveys/s1").get());
+      await assertFails(anon().doc("surveys/s2").set({ token: "x" }));
     });
     it("an agent reads only their own admin record, the owner reads any", async () => {
       await assertSucceeds(agent().doc("admins/agent1").get());

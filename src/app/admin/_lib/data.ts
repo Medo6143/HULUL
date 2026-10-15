@@ -9,7 +9,7 @@ import { getTranslations } from "next-intl/server";
 import type { InviteCardData } from "@/features/admin";
 import { DEFAULT_TEMPLATES, type InviteTemplates } from "@/features/templates";
 import { bookingsPerDay, leadsPerDay, overviewKpis, statusBreakdown, type OverviewData } from "@/features/admin";
-import type { SiteSettingsData } from "@/features/admin";
+import type { SiteSettingsData, SurveyProject, SurveyRow } from "@/features/admin";
 import { isAdminDemo } from "./staff";
 
 export async function loadLeads(): Promise<{ leads: AdminLead[]; demo: boolean }> {
@@ -236,4 +236,33 @@ export async function loadSiteSettings(): Promise<{ settings: SiteSettingsData; 
   if (isAdminDemo()) return { settings: { whatsappNumber: "", phoneDisplay: "", email: "", socials: {} }, demo: true };
   const get = await container.getSiteSettings();
   return { settings: await get(), demo: false };
+}
+
+export async function loadSurveys(): Promise<{
+  surveys: SurveyRow[];
+  projects: SurveyProject[];
+  siteUrl: string;
+  company: { ar: string; en: string };
+  demo: boolean;
+}> {
+  const siteUrl = container.env.NEXT_PUBLIC_SITE_URL;
+  const [brandAr, brandEn] = await Promise.all([getTranslations({ locale: "ar", namespace: "brand" }), getTranslations({ locale: "en", namespace: "brand" })]);
+  const company = { ar: brandAr("name"), en: brandEn("name") };
+  if (isAdminDemo()) return { surveys: [], projects: [], siteUrl, company, demo: true };
+  const [list, studies] = await Promise.all([container.listSurveys(), container.listCaseStudies()]);
+  const surveys = (await list()).map((s) => ({
+    id: s.id,
+    token: s.token,
+    projectTitle: s.projectTitle,
+    clientName: s.clientName,
+    clientPhone: s.clientPhone,
+    clientEmail: s.clientEmail,
+    locale: s.locale,
+    status: s.status,
+    createdAt: s.createdAt.toISOString(),
+    response: s.response ? { ...s.response, answeredAt: s.response.answeredAt.toISOString() } : null,
+    testimonialId: s.testimonialId,
+  }));
+  const projects = (await studies()).map((c) => ({ slug: c.slug, title: c.title }));
+  return { surveys, projects, siteUrl, company, demo: false };
 }

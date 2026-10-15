@@ -506,7 +506,8 @@
       "availability": "Consultation hours",
       "templates": "Invite templates",
       "account": "My account",
-      "overview": "Overview"
+      "overview": "Overview",
+      "surveys": "Surveys"
     },
     "user": {
       "name": "Demo admin",
@@ -1091,6 +1092,68 @@
         "forbidden": "This action is for the owner only",
         "generic": "Something went wrong. Try again"
       }
+    },
+    "surveys": {
+      "title": "Client surveys",
+      "subtitle": "Create a survey link for a client about a specific project and send it by WhatsApp or email. The client rates and comments, and you can turn their answer into a published testimonial with their consent.",
+      "kpi": {
+        "sent": "Surveys sent",
+        "answered": "Answers received",
+        "average": "Average rating"
+      },
+      "ratingOf": "{n} of 5",
+      "newTitle": "New survey",
+      "project": "Project",
+      "projectOther": "Another project (type its name)",
+      "projectName": "Project name",
+      "clientName": "Client name",
+      "language": "Survey language",
+      "ar": "Arabic",
+      "en": "English",
+      "clientPhone": "Client phone (for WhatsApp)",
+      "contactHint": "Enter a phone, an email, or both. You can also copy the link and send it any way you like.",
+      "clientEmail": "Client email",
+      "create": "Create survey",
+      "created": "The survey was created. Press Send to prepare the message.",
+      "empty": "No surveys yet. Create the first one for a client.",
+      "status": {
+        "sent": "Waiting for an answer",
+        "answered": "Answered"
+      },
+      "allowPublish": "Agreed to publish",
+      "noPublish": "Did not agree to publish",
+      "sendPanel": "Send",
+      "copyLink": "Copy link",
+      "copied": "The link was copied.",
+      "convert": "Turn into a testimonial",
+      "converted": "Turned into a testimonial draft. Publish it from the testimonials page.",
+      "openTestimonials": "Open testimonials",
+      "delete": "Delete",
+      "confirmDelete": "Delete this survey with the client's answer? A testimonial already made from it stays.",
+      "deleted": "The survey was deleted.",
+      "whatsappText": "WhatsApp message",
+      "openWhatsapp": "Open WhatsApp with the message",
+      "noPhone": "No phone is saved for this client; copy the link and send it yourself.",
+      "emailSubject": "Email subject",
+      "emailBody": "Email text",
+      "sendEmail": "Send email",
+      "emailSent": "The email was sent to the client.",
+      "noEmail": "No email is saved for this client.",
+      "demoNote": "Actions are disabled in demo mode.",
+      "errors": {
+        "invalid_input": "Check the client and project names",
+        "invalid_email": "The email address is not valid",
+        "invalid_phone": "The phone number is not valid",
+        "no_email": "No email is saved for this client",
+        "send_failed": "We could not send the email. Check the Resend settings",
+        "consent_missing": "The client did not agree to publish, so it cannot become a testimonial",
+        "not_answered": "The client has not answered yet",
+        "already_converted": "This answer was already turned into a testimonial",
+        "not_found": "We could not find the survey",
+        "unauthorized": "Your session expired. Sign in again",
+        "forbidden": "This action is for the owner only",
+        "generic": "Something went wrong. Try again"
+      }
     }
   },
   "booking": {
@@ -1114,5 +1177,45 @@
     "eyebrow": "Contact us",
     "title": "Talk to us your way",
     "intro": "Pick one of the available channels or write us a message."
+  },
+  "survey": {
+    "title": "Rate the project",
+    "eyebrow": "We value your opinion",
+    "heading": "Rate the {project} project",
+    "intro": "Hello {name}. It takes about a minute, and your opinion helps us improve.",
+    "ratingLabel": "How would you rate your experience?",
+    "starLabel": "{n} out of 5",
+    "rating": {
+      "1": "Poor",
+      "2": "Fair",
+      "3": "Good",
+      "4": "Great",
+      "5": "Excellent"
+    },
+    "comment": "Your comment",
+    "commentHint": "Tell us what you liked and what we could improve.",
+    "name": "Your name",
+    "role": "Job title (optional)",
+    "roleHint": "For example: marketing manager, restaurant owner",
+    "publishLabel": "I agree to publish my comment and name",
+    "publishHint": "Optional. If you agree we may show your rating, comment, and name on the HULOL TECH website. Nothing is published without your consent.",
+    "submit": "Send my rating",
+    "thanksTitle": "Thank you",
+    "thanksBody": "We received your rating and appreciate your time.",
+    "alreadyTitle": "We already have your answer",
+    "alreadyBody": "Thank you, nothing more is needed from you.",
+    "failed": "We could not send your rating right now. Try again.",
+    "errors": {
+      "rating": "Pick a rating from 1 to 5",
+      "comment": "Write a comment of at least 5 characters"
+    },
+    "serverErrors": {
+      "invalid_rating": "Pick a rating from 1 to 5",
+      "comment_invalid": "Write a comment of at least 5 characters",
+      "already_answered": "We already have your answer. Thank you",
+      "not_found": "This link is not valid",
+      "rate_limited": "Too many attempts. Try again shortly",
+      "invalid_input": "The data is invalid"
+    }
   }
 }

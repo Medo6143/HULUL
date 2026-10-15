@@ -29,6 +29,7 @@ export type NotificationEventName =
   | "booking.created"
   | "booking.cancelled"
   | "invite.email"
+  | "survey.sent"
   | "team.invite";
 
 export interface NotificationLogEntry {

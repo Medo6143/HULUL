@@ -57,6 +57,19 @@ import {
   FirestoreAvailabilityStore,
   FirestoreBookingStore,
 } from "@/features/bookings/infrastructure/firestore-booking.store";
+import {
+  makeConvertSurvey,
+  makeCreateSurvey,
+  makeDeleteSurvey,
+  makeGetSurveyForPage,
+  makeListSurveys,
+  makeSendSurveyEmail,
+  makeSubmitSurvey,
+  type ProjectLookup,
+  type SurveyMailer,
+  type TestimonialCreator,
+} from "@/features/surveys";
+import { FirestoreSurveyStore } from "@/features/surveys/infrastructure/firestore-survey.store";
 import { makeGetSiteSettings, makeSaveSiteSettings } from "@/features/site-settings";
 import { FirestoreSiteSettingsStore } from "@/features/site-settings/infrastructure/firestore-site-settings.store";
 import { makeGetTemplates, makeSaveTemplates, makeSendInviteEmail } from "@/features/templates";
@@ -250,6 +263,58 @@ async function bookingEvents(): Promise<BookingEvents> {
   };
 }
 
+async function surveyStore() {
+  return new FirestoreSurveyStore(await getAdminApp());
+}
+
+/** Survey links carry a long random token; it is the only credential the client needs to answer once. */
+const newSurveyToken = () => randomBytes(24).toString("base64url");
+
+async function surveyProjects(): Promise<ProjectLookup> {
+  const store = await caseStudyStore();
+  return {
+    async titleOf(slug) {
+      const study = await store.get(slug);
+      return study ? study.title : null;
+    },
+  };
+}
+
+async function surveyTestimonials(): Promise<TestimonialCreator> {
+  const save = makeSaveTestimonial({ store: await testimonialStore(), ids, clock });
+  return {
+    async create(draft) {
+      const result = await save({
+        input: {
+          quote: draft.quote,
+          name: draft.name,
+          role: draft.role,
+          company: "",
+          city: "",
+          rating: draft.rating,
+          photoUrl: "",
+          projectSlug: draft.projectSlug,
+          consentToPublish: true,
+          consentNote: draft.consentNote,
+          published: false,
+          order: 0,
+        },
+      });
+      return result.ok ? { ok: true, id: result.value.id } : { ok: false };
+    },
+  };
+}
+
+async function surveyMailer(): Promise<SurveyMailer> {
+  const service = await notifications();
+  return {
+    async send({ surveyId, to, subject, text, html }) {
+      const outcome = await service.sendEmail({ event: "survey.sent", subjectId: surveyId, channel: "email_customer", to, message: { subject, text, html } });
+      return outcome.ok;
+    },
+  };
+}
+
 async function siteSettingsStore() {
   return new FirestoreSiteSettingsStore(await getAdminApp());
 }
@@ -424,6 +489,27 @@ export const container = {
   },
   async deleteException() {
     return makeDeleteException({ availability: await availabilityStore() });
+  },
+  async listSurveys() {
+    return makeListSurveys({ store: await surveyStore() });
+  },
+  async createSurvey() {
+    return makeCreateSurvey({ store: await surveyStore(), projects: await surveyProjects(), clock, ids, newToken: newSurveyToken });
+  },
+  async getSurveyForPage() {
+    return makeGetSurveyForPage({ store: await surveyStore() });
+  },
+  async submitSurvey() {
+    return makeSubmitSurvey({ store: await surveyStore(), clock });
+  },
+  async convertSurvey() {
+    return makeConvertSurvey({ store: await surveyStore(), testimonials: await surveyTestimonials() });
+  },
+  async deleteSurvey() {
+    return makeDeleteSurvey({ store: await surveyStore() });
+  },
+  async sendSurveyEmail() {
+    return makeSendSurveyEmail({ store: await surveyStore(), mailer: await surveyMailer() });
   },
   async getSiteSettings() {
     return makeGetSiteSettings({ store: await siteSettingsStore() });

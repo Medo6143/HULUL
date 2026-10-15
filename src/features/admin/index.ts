@@ -28,3 +28,5 @@ export type { OverviewData } from "./ui/overview-view";
 export { bookingsPerDay, leadsPerDay, overviewKpis, statusBreakdown } from "./model/dashboard";
 export { SiteSettingsView } from "./ui/site-settings-view";
 export type { SiteSettingsData } from "./ui/site-settings-view";
+export { SurveysView } from "./ui/surveys-view";
+export type { SurveyProject, SurveyRow } from "./ui/surveys-view";
