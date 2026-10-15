@@ -1199,6 +1199,12 @@
         "testFailed": "The test message did not arrive. Check that the person pressed Start on the bot and the ID is right",
         "generic": "Something went wrong. Try again"
       }
+    },
+    "feedback": {
+      "title": "Confirm",
+      "confirm": "Confirm",
+      "cancel": "Cancel",
+      "close": "Close"
     }
   },
   "booking": {

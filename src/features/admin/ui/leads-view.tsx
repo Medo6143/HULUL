@@ -12,11 +12,13 @@ import { formatDateTime } from "./format";
 import { Pagination } from "./pagination";
 import { callApi } from "./showcase-shared";
 import { StatusBadge, statusDot } from "./status-badge";
+import { useAdminFeedback } from "./feedback";
 
 type View = "table" | "board";
 
 export function LeadsView({ leads, demo, canDelete = false }: { leads: AdminLead[]; demo: boolean; canDelete?: boolean }) {
   const t = useTranslations("admin.leads");
+  const { confirm } = useAdminFeedback();
   const s = useTranslations("admin.status");
   const src = useTranslations("admin.sources");
   const svc = useTranslations("start.services");
@@ -105,7 +107,8 @@ export function LeadsView({ leads, demo, canDelete = false }: { leads: AdminLead
     });
 
   async function deleteSelected() {
-    if (selectedHere.length === 0 || !window.confirm(t("confirmDeleteMany", { count: selectedHere.length }))) return;
+    if (selectedHere.length === 0) return;
+    if (!(await confirm({ message: t("confirmDeleteMany", { count: selectedHere.length }), confirmLabel: t("deleteSelected"), tone: "danger" }))) return;
     setDeleting(true);
     setBoardError("");
     const result = await callApi("/api/admin/leads/bulk-delete", "POST", { ids: selectedHere });

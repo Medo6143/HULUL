@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { FIELD, callApi } from "./showcase-shared";
+import { useFlash } from "./feedback";
 
 export interface TelegramSettings {
   configured: boolean;
@@ -23,7 +24,7 @@ export function TelegramCard({ telegram, demo }: { telegram: TelegramSettings; d
   const [rows, setRows] = useState<{ id: string; name: string }[]>(telegram.chats.length > 0 ? telegram.chats : []);
   const [found, setFound] = useState<{ id: string; name: string }[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
-  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [message, setMessage] = useFlash();
   const saved = new Set(telegram.chats.map((chat) => chat.id));
 
   const setAt = (index: number, patch: Partial<{ id: string; name: string }>) => setRows((list) => list.map((row, i) => (i === index ? { ...row, ...patch } : row)));

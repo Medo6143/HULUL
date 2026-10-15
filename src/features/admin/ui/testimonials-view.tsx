@@ -9,6 +9,7 @@ import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { cn } from "@/lib/cn";
 import { uploadImage } from "./image-uploader";
 import { AREA, ConsentFields, FIELD, Field, StatusBadge, callApi, useShowcaseErrors } from "./showcase-shared";
+import { useAdminFeedback } from "./feedback";
 
 export interface TestimonialRow {
   id: string;
@@ -131,6 +132,7 @@ function PhotoField({ url, onChange, disabled }: { url: string; onChange: (url: 
 export function TestimonialsView({ items, projects, demo }: { items: TestimonialRow[]; projects: ProjectOption[]; demo: boolean }) {
   const t = useTranslations("admin.testimonials");
   const s = useTranslations("admin.showcase");
+  const { confirm } = useAdminFeedback();
   const errorText = useShowcaseErrors();
   const router = useRouter();
   const [form, setForm] = useState<TestimonialRow | null>(null);
@@ -328,7 +330,9 @@ export function TestimonialsView({ items, projects, demo }: { items: Testimonial
                   type="button"
                   disabled={demo || busy !== null}
                   onClick={() => {
-                    if (window.confirm(s("confirmDelete"))) run(item.id, () => callApi(`/api/admin/testimonials/${item.id}`, "DELETE"));
+                    void confirm({ message: s("confirmDelete"), confirmLabel: s("delete"), tone: "danger" }).then((ok) => {
+                      if (ok) void run(item.id, () => callApi(`/api/admin/testimonials/${item.id}`, "DELETE"));
+                    });
                   }}
                   className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-surface-line ps-3 pe-3 text-[14px] font-semibold text-danger hover:border-danger disabled:opacity-50"
                 >

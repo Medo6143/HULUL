@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import { ImageUploader, type UploadedImage } from "./image-uploader";
 import { AREA, ConsentFields, FIELD, Field, StatusBadge, callApi, useShowcaseErrors } from "./showcase-shared";
+import { useAdminFeedback } from "./feedback";
 
 type Pair = { ar: string; en: string };
 
@@ -54,6 +55,7 @@ type PairKey = "title" | "summary" | "result" | "problem" | "solution";
 
 export function CaseStudiesView({ items, demo }: { items: CaseStudyRow[]; demo: boolean }) {
   const t = useTranslations("admin.caseStudies");
+  const { confirm } = useAdminFeedback();
   const s = useTranslations("admin.showcase");
   const errorText = useShowcaseErrors();
   const router = useRouter();
@@ -252,7 +254,9 @@ export function CaseStudiesView({ items, demo }: { items: CaseStudyRow[]; demo: 
                   type="button"
                   disabled={demo || busy !== null}
                   onClick={() => {
-                    if (window.confirm(s("confirmDelete"))) run(item.slug, () => callApi(`/api/admin/case-studies/${item.slug}`, "DELETE"));
+                    void confirm({ message: s("confirmDelete"), confirmLabel: s("delete"), tone: "danger" }).then((ok) => {
+                      if (ok) void run(item.slug, () => callApi(`/api/admin/case-studies/${item.slug}`, "DELETE"));
+                    });
                   }}
                   className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-surface-line ps-3 pe-3 text-[14px] font-semibold text-danger hover:border-danger disabled:opacity-50"
                 >

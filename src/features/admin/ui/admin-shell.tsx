@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
+import { AdminFeedbackProvider } from "./feedback";
 import { MobileAdminMenu } from "./mobile-admin-menu";
 import { SidebarBody } from "./sidebar-body";
 
@@ -23,6 +24,7 @@ export function AdminShell({
   const brand = useTranslations("brand");
 
   return (
+    <AdminFeedbackProvider>
     <div className="min-h-dvh bg-surface-muted lg:grid lg:grid-cols-[272px_minmax(0,1fr)]">
       <aside className="hidden h-dvh flex-col overflow-y-auto bg-ink-950 p-5 text-surface lg:sticky lg:top-0 lg:flex">
         <SidebarBody user={user} />
@@ -59,5 +61,6 @@ export function AdminShell({
         </main>
       </div>
     </div>
+    </AdminFeedbackProvider>
   );
 }

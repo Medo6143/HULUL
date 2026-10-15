@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import { FIELD, Field, callApi } from "./showcase-shared";
+import { useFlash } from "./feedback";
 
 const ERRORS = ["weak_password", "wrong_password", "too_many_attempts", "invalid_input", "unauthorized", "forbidden"];
 
@@ -16,7 +17,7 @@ export function AccountView({ name, email, demo }: { name: string; email: string
   const [next, setNext] = useState("");
   const [again, setAgain] = useState("");
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [message, setMessage] = useFlash();
 
   async function submit(event: FormEvent) {
     event.preventDefault();

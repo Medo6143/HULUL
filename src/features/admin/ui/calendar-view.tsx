@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
 import { callApi } from "./showcase-shared";
+import { useAdminFeedback } from "./feedback";
 
 export interface BookingRow {
   id: string;
@@ -37,6 +38,7 @@ const TONE: Record<BookingRow["status"], string> = {
 
 export function CalendarView({ bookings, nowIso, demo }: { bookings: BookingRow[]; nowIso: string; demo: boolean }) {
   const t = useTranslations("admin.calendar");
+  const { confirm } = useAdminFeedback();
   const router = useRouter();
   const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
   const [busy, setBusy] = useState<string | null>(null);
@@ -157,7 +159,9 @@ export function CalendarView({ bookings, nowIso, demo }: { bookings: BookingRow[
                         type="button"
                         disabled={demo || busy !== null}
                         onClick={() => {
-                          if (window.confirm(t("confirmCancel"))) setStatus(b.id, "cancelled");
+                          void confirm({ message: t("confirmCancel"), confirmLabel: t("actions.cancelled"), tone: "danger" }).then((ok) => {
+                            if (ok) void setStatus(b.id, "cancelled");
+                          });
                         }}
                         className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-surface-line ps-3 pe-3 text-[14px] font-semibold text-danger hover:border-danger disabled:opacity-50"
                       >

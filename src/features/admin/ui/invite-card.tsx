@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import { WhatsAppIcon } from "@/components/ui/whatsapp-icon";
 import { pickText, renderTemplate, whatsappLink, type InviteTemplates } from "@/features/templates";
 import { AREA, FIELD, Field, callApi } from "./showcase-shared";
+import { useFlash } from "./feedback";
 
 export interface InviteCardData {
   templates: InviteTemplates;
@@ -50,7 +51,7 @@ export function InviteCard({
   const [meetingLink, setMeetingLink] = useState(data.meetingLink);
   const [edited, setEdited] = useState<{ wa?: string; subject?: string; body?: string }>({});
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [message, setMessage] = useFlash();
 
   const values = useMemo(
     () => ({ name: leadName, service: data.service[locale], date: formatDate(date, locale), time, meetingLink, company: data.company[locale] }),

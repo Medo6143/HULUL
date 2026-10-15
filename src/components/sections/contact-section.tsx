@@ -105,8 +105,8 @@ export function ContactSection({
         title={t("title")}
         intro={t("intro")}
       />
-      <div className="grid items-start gap-6 lg:grid-cols-[0.85fr_1.15fr]">
-        <ul className="grid gap-4">
+      <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-6 lg:grid-cols-[0.85fr_1.15fr]">
+        <ul className="grid grid-cols-[minmax(0,1fr)] gap-4">
           {channels.map(({ key, title, value, hint, href, external, ltr, Icon, accent }) => {
             const body = (
               <>
@@ -123,7 +123,7 @@ export function ContactSection({
                 <span className="min-w-0">
                   <span className="block text-[15px] text-text-muted">{title}</span>
                   <b
-                    className="block truncate text-[18px] leading-[1.5] text-ink-900"
+                    className="block text-[18px] leading-[1.5] text-ink-900 [overflow-wrap:anywhere]"
                     dir={ltr ? "ltr" : undefined}
                   >
                     {value}

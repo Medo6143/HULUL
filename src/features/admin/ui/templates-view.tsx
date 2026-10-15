@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import { DEFAULT_TEMPLATES, MAX_LENGTHS, TEMPLATE_VARIABLES, renderTemplate, type InviteTemplates } from "@/features/templates";
 import { AREA, FIELD, Field, callApi } from "./showcase-shared";
+import { useAdminFeedback, useFlash } from "./feedback";
 
 const SAMPLE = {
   ar: { name: "سارة", service: "موقع إلكتروني", date: "الأحد 12 أكتوبر", time: "10:00", meetingLink: "https://meet.example/abc", company: "حلول تك" },
@@ -14,10 +15,11 @@ const SAMPLE = {
 
 export function TemplatesView({ initial, isDefault, demo }: { initial: InviteTemplates; isDefault: boolean; demo: boolean }) {
   const t = useTranslations("admin.templates");
+  const { confirm } = useAdminFeedback();
   const router = useRouter();
   const [data, setData] = useState<InviteTemplates>(initial);
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [message, setMessage] = useFlash();
 
   const set = (key: keyof InviteTemplates, lang: "ar" | "en", value: string) =>
     setData((d) => ({ ...d, [key]: { ...d[key], [lang]: value } }));
@@ -110,7 +112,9 @@ export function TemplatesView({ initial, isDefault, demo }: { initial: InviteTem
             type="button"
             disabled={demo || busy}
             onClick={() => {
-              if (window.confirm(t("confirmReset"))) setData(DEFAULT_TEMPLATES);
+              void confirm({ message: t("confirmReset"), confirmLabel: t("reset") }).then((ok) => {
+                if (ok) setData(DEFAULT_TEMPLATES);
+              });
             }}
             className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-surface-line ps-5 pe-5 font-semibold hover:border-ink-900 disabled:opacity-50"
           >

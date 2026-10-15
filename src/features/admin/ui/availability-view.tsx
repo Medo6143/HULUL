@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import { FIELD, Field, callApi } from "./showcase-shared";
+import { useFlash } from "./feedback";
 
 type Window = { start: string; end: string };
 
@@ -38,7 +39,7 @@ export function AvailabilityView({
   const router = useRouter();
   const [data, setData] = useState<AvailabilityData>(initial);
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [message, setMessage] = useFlash();
   const [exDate, setExDate] = useState("");
   const [exClosed, setExClosed] = useState(true);
   const [exWindow, setExWindow] = useState<Window>({ start: "09:00", end: "12:00" });

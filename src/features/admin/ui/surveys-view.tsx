@@ -11,6 +11,7 @@ import { whatsappLink } from "@/features/templates";
 import { cn } from "@/lib/cn";
 import { formatDateTime } from "./format";
 import { AREA, FIELD, Field, callApi } from "./showcase-shared";
+import { useAdminFeedback } from "./feedback";
 
 export interface SurveyRow {
   id: string;
@@ -60,10 +61,17 @@ export function SurveysView({
   demo: boolean;
 }) {
   const t = useTranslations("admin.surveys");
+  const { confirm, toast } = useAdminFeedback();
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [error, setErrorState] = useState<string | null>(null);
+  const setError = (text: string | null) => {
+    setErrorState(text);
+    if (text) toast({ kind: "error", text });
+  };
+  const setNotice = (text: string | null) => {
+    if (text) toast({ kind: "success", text });
+  };
   const [openId, setOpenId] = useState<string | null>(null);
   const [form, setForm] = useState({ projectSlug: projects[0]?.slug ?? "", projectTitle: "", clientName: "", clientPhone: "", clientEmail: "", locale: "ar" as "ar" | "en" });
   const [texts, setTexts] = useState<Record<string, { whatsapp: string; subject: string; body: string }>>({});
@@ -205,11 +213,6 @@ export function SurveysView({
           {error}
         </p>
       ) : null}
-      {notice ? (
-        <p role="status" className="rounded-xl bg-success/10 p-3 text-[15px] text-success">
-          {notice}
-        </p>
-      ) : null}
 
       {surveys.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-text-muted/30 bg-surface p-10 text-center text-text-muted">{t("empty")}</p>
@@ -280,7 +283,9 @@ export function SurveysView({
                       type="button"
                       disabled={demo || busy !== null}
                       onClick={() => {
-                        if (window.confirm(t("confirmDelete"))) void act(s.id, () => callApi(`/api/admin/surveys/${s.id}`, "DELETE"), t("deleted"));
+                        void confirm({ message: t("confirmDelete"), confirmLabel: t("delete"), tone: "danger" }).then((ok) => {
+                          if (ok) void act(s.id, () => callApi(`/api/admin/surveys/${s.id}`, "DELETE"), t("deleted"));
+                        });
                       }}
                       className={`${link} border border-surface-line text-danger hover:border-danger disabled:opacity-50`}
                     >

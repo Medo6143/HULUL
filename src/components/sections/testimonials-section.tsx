@@ -81,8 +81,8 @@ export function TestimonialsSection({ items, preview = false }: { items: readonl
                     </span>
                   )}
                   <span className="min-w-0 text-[15px]">
-                    <b className="block truncate text-[16px]">{name}</b>
-                    {(item.role[locale] || item.role.ar) ? <span className="block truncate text-text-muted">{item.role[locale] || item.role.ar}</span> : null}
+                    <b className="block text-[16px] [overflow-wrap:anywhere]">{name}</b>
+                    {(item.role[locale] || item.role.ar) ? <span className="block text-text-muted [overflow-wrap:anywhere]">{item.role[locale] || item.role.ar}</span> : null}
                     {item.project ? (
                       preview ? (
                         <span className="mt-1 inline-block text-[13px] font-semibold text-brand-strong">

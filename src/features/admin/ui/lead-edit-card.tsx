@@ -6,19 +6,21 @@ import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import type { AdminLeadDetail } from "../model/admin-lead";
 import { FIELD, AREA, Field, callApi } from "./showcase-shared";
+import { useAdminFeedback, useFlash } from "./feedback";
 
 const ERRORS = ["invalid_name", "invalid_phone", "invalid_email", "invalid_input", "not_found", "unauthorized", "forbidden"];
 
 /** Staff correct a lead's contact and request details; the owner can also delete the lead. */
 export function LeadEditCard({ lead, demo, canDelete }: { lead: AdminLeadDetail; demo: boolean; canDelete: boolean }) {
   const t = useTranslations("admin.lead");
+  const { confirm } = useAdminFeedback();
   const svc = useTranslations("start.services");
   const ch = useTranslations("start.channels");
   const tl = useTranslations("start.timelines");
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [message, setMessage] = useFlash();
   const [form, setForm] = useState({
     name: lead.name,
     phone: lead.phone,
@@ -45,7 +47,7 @@ export function LeadEditCard({ lead, demo, canDelete }: { lead: AdminLeadDetail;
   }
 
   async function remove() {
-    if (!window.confirm(t("confirmDelete", { name: lead.name }))) return;
+    if (!(await confirm({ message: t("confirmDelete", { name: lead.name }), confirmLabel: t("delete"), tone: "danger" }))) return;
     setBusy(true);
     const result = await callApi(`/api/admin/leads/${lead.id}`, "DELETE");
     setBusy(false);

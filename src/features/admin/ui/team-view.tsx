@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Fragment, useState, type FormEvent } from "react";
 import { cn } from "@/lib/cn";
 import { formatDateTime } from "./format";
+import { useAdminFeedback, useFlashKind } from "./feedback";
 
 export interface TeamRow {
   uid: string;
@@ -48,6 +49,7 @@ async function call(url: string, method: string, body?: unknown): Promise<{ ok: 
 
 export function TeamView({ members, currentUid, demo }: { members: TeamRow[]; currentUid: string; demo: boolean }) {
   const t = useTranslations("admin.team");
+  const { confirm } = useAdminFeedback();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -56,7 +58,7 @@ export function TeamView({ members, currentUid, demo }: { members: TeamRow[]; cu
   const [busy, setBusy] = useState<string | null>(null);
   const [pwFor, setPwFor] = useState<string | null>(null);
   const [newPw, setNewPw] = useState("");
-  const [message, setMessage] = useState<{ kind: "ok" | "warn" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useFlashKind();
 
   const errorText = (code?: string) =>
     (ERROR_KEYS as readonly string[]).includes(code ?? "") ? t(`errors.${code}`) : t("errors.internal_error");
@@ -306,7 +308,9 @@ export function TeamView({ members, currentUid, demo }: { members: TeamRow[]; cu
                             type="button"
                             disabled={demo || working}
                             onClick={() => {
-                              if (window.confirm(t("confirmDelete", { name: member.name }))) remove(member.uid);
+                              void confirm({ message: t("confirmDelete", { name: member.name }), confirmLabel: t("delete"), tone: "danger" }).then((ok) => {
+                                if (ok) void remove(member.uid);
+                              });
                             }}
                             className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-surface-line ps-3 pe-3 text-[14px] font-semibold text-danger hover:border-danger disabled:opacity-50"
                           >

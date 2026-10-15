@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { TelegramCard, type TelegramSettings } from "./telegram-card";
+import { useFlash } from "./feedback";
 
 const MAX = 10;
 const ERROR_KEYS = ["invalid_email", "too_many", "empty", "unauthorized", "forbidden", "invalid_input"] as const;
@@ -14,7 +15,7 @@ export function SettingsView({ recipients, telegram, demo }: { recipients: strin
   const router = useRouter();
   const [list, setList] = useState<string[]>(recipients.length > 0 ? recipients : [""]);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [message, setMessage] = useFlash();
 
   const setAt = (index: number, value: string) => setList((l) => l.map((v, i) => (i === index ? value : v)));
 

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState, type FormEvent } from "react";
 import { FIELD, Field } from "./showcase-shared";
+import { useFlash } from "./feedback";
 
 export const SOCIAL_FIELDS = ["instagram", "x", "facebook", "linkedin", "youtube", "tiktok", "snapchat", "github", "telegram"] as const;
 export type SocialField = (typeof SOCIAL_FIELDS)[number];
@@ -24,7 +25,7 @@ export function SiteSettingsView({ initial, demo }: { initial: SiteSettingsData;
   const router = useRouter();
   const [data, setData] = useState<SiteSettingsData>(initial);
   const [busy, setBusy] = useState(false);
-  const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [message, setMessage] = useFlash();
 
   async function save(event: FormEvent) {
     event.preventDefault();
