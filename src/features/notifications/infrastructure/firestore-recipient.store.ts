@@ -36,11 +36,10 @@ export class FirestoreRecipientStore implements RecipientStore {
   }
 
   async save(recipients: string[], updatedBy: string): Promise<void> {
-    await this.db.collection("settings").doc("notifications").set({
-      recipients,
-      updatedBy,
-      updatedAt: FieldValue.serverTimestamp(),
-    });
+    await this.db
+      .collection("settings")
+      .doc("notifications")
+      .set({ recipients, updatedBy, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
     this.cache = null;
   }
 }

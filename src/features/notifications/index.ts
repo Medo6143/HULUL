@@ -7,3 +7,7 @@ export type { RenderedEmail } from "./domain/events";
 export { makeSaveRecipients } from "./application/recipients.usecase";
 export { MAX_RECIPIENTS, normalizeRecipients } from "./domain/recipients";
 export type { RecipientsError } from "./domain/recipients";
+export { makeDiscoverTelegramChats, makeSaveTelegramChats, makeSendTelegramTest } from "./application/telegram.usecases";
+export type { TelegramBot, TelegramChatStore } from "./application/telegram.usecases";
+export { MAX_TELEGRAM_CHATS, isChatId, normalizeTelegramChats } from "./domain/telegram";
+export type { TelegramChat, TelegramChatsError } from "./domain/telegram";

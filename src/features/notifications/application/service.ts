@@ -108,6 +108,11 @@ export function makeNotificationService(deps: NotificationDeps) {
       ]);
     },
 
+    /** Sends one team chat (Telegram) alert for an event, logged like every other notification. */
+    alertChat(base: { event: NotificationLogEntry["event"]; subjectId: string }, text: string): Promise<SendOutcome> {
+      return attempt({ ...base, channel: "chat_team" }, () => deps.chat.send(text));
+    },
+
     /** Alerts every configured team recipient with the same message (used by bookings). */
     alertTeamWith(
       base: { event: NotificationLogEntry["event"]; subjectId: string },

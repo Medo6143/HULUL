@@ -66,6 +66,25 @@ export async function loadTeam(): Promise<{ members: TeamRow[]; demo: boolean }>
   };
 }
 
+export interface TelegramData {
+  configured: boolean;
+  botUsername: string | null;
+  chats: { id: string; name: string }[];
+  /** True when only the old single chat from the environment is in use. */
+  usingEnvChat: boolean;
+}
+
+export async function loadTelegram(): Promise<TelegramData> {
+  if (isAdminDemo()) return { configured: true, botUsername: "demo_bot", chats: [], usingEnvChat: false };
+  const [botUsername, chats] = await Promise.all([container.telegramBot.username(), (await container.telegramStore()).list().catch(() => [])]);
+  return {
+    configured: container.telegramBot.configured,
+    botUsername,
+    chats,
+    usingEnvChat: chats.length === 0 && container.env.TELEGRAM_CHAT_ID !== "",
+  };
+}
+
 export async function loadRecipients(): Promise<{ recipients: string[]; demo: boolean }> {
   if (isAdminDemo()) return { recipients: ["team@example.test"], demo: true };
   const store = await container.recipientStore();

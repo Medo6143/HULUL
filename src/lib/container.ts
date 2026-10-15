@@ -1,7 +1,13 @@
 import "server-only";
 import { FirestoreLeadRepository } from "@/features/leads/infrastructure/firestore-lead.repository";
 import { makeSendContactMessage } from "@/features/contact";
-import { makeNotificationService, makeSaveRecipients } from "@/features/notifications";
+import {
+  makeDiscoverTelegramChats,
+  makeNotificationService,
+  makeSaveRecipients,
+  makeSaveTelegramChats,
+  makeSendTelegramTest,
+} from "@/features/notifications";
 import {
   buildInviteEmail,
   buildPasswordResetEmail,
@@ -77,6 +83,8 @@ import { FirestoreTemplateStore } from "@/features/templates/infrastructure/fire
 import { FirestoreNotificationLog } from "@/features/notifications/infrastructure/firestore-notification.log";
 import { FirestoreRecipientStore } from "@/features/notifications/infrastructure/firestore-recipient.store";
 import { ResendEmailSender } from "@/features/notifications/infrastructure/resend-email.sender";
+import { FirestoreTelegramStore } from "@/features/notifications/infrastructure/firestore-telegram.store";
+import { TelegramBotClient } from "@/features/notifications/infrastructure/telegram-bot";
 import { TelegramChatAlerter } from "@/features/notifications/infrastructure/telegram-chat.alerter";
 import { FirestoreContactRepository } from "@/features/contact/infrastructure/firestore-contact.repository";
 import {
@@ -119,11 +127,17 @@ async function recipientStore() {
   return new FirestoreRecipientStore(await getAdminApp(), [serverEnv.TEAM_ALERT_EMAIL]);
 }
 
+const telegramBot = new TelegramBotClient(serverEnv.TELEGRAM_BOT_TOKEN);
+
+async function telegramStore() {
+  return new FirestoreTelegramStore(await getAdminApp());
+}
+
 async function notifications() {
   const recipients = await recipientStore();
   return makeNotificationService({
     email: new ResendEmailSender(serverEnv.RESEND_API_KEY, serverEnv.EMAIL_FROM),
-    chat: new TelegramChatAlerter(serverEnv.TELEGRAM_BOT_TOKEN, serverEnv.TELEGRAM_CHAT_ID),
+    chat: new TelegramChatAlerter(telegramBot, await telegramStore(), serverEnv.TELEGRAM_CHAT_ID),
     log: new FirestoreNotificationLog(await getAdminApp()),
     teamEmails: () => recipients.list(),
     clock,
@@ -231,8 +245,10 @@ async function bookingEvents(): Promise<BookingEvents> {
     async created(notice) {
       const input = emailInput(notice);
       const base = { event: "booking.created", subjectId: notice.booking.id } as const;
+      const alert = renderBookingTeamAlert(input);
       await Promise.all([
-        service.alertTeamWith(base, renderBookingTeamAlert(input)),
+        service.alertChat(base, `${alert.subject}\n${notice.booking.phone}`),
+        service.alertTeamWith(base, alert),
         notice.booking.email
           ? service.sendEmail({
               ...base,
@@ -403,6 +419,18 @@ export const container = {
         },
       },
     });
+  },
+  /** Telegram alerts: the bot, the chats that receive them, and the helpers behind the settings page. */
+  telegramBot,
+  telegramStore,
+  async saveTelegramChats() {
+    return makeSaveTelegramChats({ store: await telegramStore() });
+  },
+  async discoverTelegramChats() {
+    return makeDiscoverTelegramChats({ bot: telegramBot, store: await telegramStore() });
+  },
+  async sendTelegramTest() {
+    return makeSendTelegramTest({ bot: telegramBot, store: await telegramStore() });
   },
   async saveRecipients() {
     return makeSaveRecipients({ store: await recipientStore() });

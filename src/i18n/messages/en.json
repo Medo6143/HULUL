@@ -1154,6 +1154,44 @@
         "forbidden": "This action is for the owner only",
         "generic": "Something went wrong. Try again"
       }
+    },
+    "telegram": {
+      "title": "Telegram alerts",
+      "hint": "You get a Telegram alert for every new lead, contact message, or consultation booking. You can add several people or groups.",
+      "notConfiguredTitle": "The bot is not set up yet",
+      "setup1": "In Telegram open @BotFather, send it /newbot, and follow the steps to create a bot.",
+      "setup2": "Copy the token it gives you (it looks like 123456:ABC...). Do not share it.",
+      "setup3": "Put it in .env.local on your computer and in the Vercel settings as",
+      "setup4": "Restart the server (or redeploy on Vercel), then come back to this page.",
+      "bot": "Bot:",
+      "botUnknown": "We could not read the bot name. Check the token.",
+      "howToJoin": "Each person who should get alerts opens the bot in Telegram and presses Start; then press \"Discover chats\" here and add them from the list. A bot cannot message a phone number; it needs the Chat ID.",
+      "usingEnv": "Alerts currently go to one chat set in the server settings (TELEGRAM_CHAT_ID). If you add chats here and save, the list is used instead.",
+      "noChats": "No chats added yet.",
+      "name": "Name",
+      "chatId": "Chat ID",
+      "add": "Add manually",
+      "discover": "Discover chats",
+      "save": "Save list",
+      "saved": "The list was saved.",
+      "test": "Test",
+      "saveFirst": "Save the list first to test sending",
+      "testSent": "A test message was sent. Check that it arrived on Telegram.",
+      "remove": "Remove chat",
+      "foundTitle": "Chats that wrote to the bot",
+      "foundNone": "No new chats found. Ask the person to open the bot and press Start, then try again.",
+      "foundHint": "Click a name to add it to the list, then save.",
+      "errors": {
+        "invalid_chat_id": "A Chat ID is digits only (it may start with -), 5 to 20 digits",
+        "too_many": "The limit is 10 chats",
+        "invalid_input": "The data is invalid",
+        "unauthorized": "Your session expired. Sign in again",
+        "forbidden": "This action is for the owner only",
+        "not_configured": "The bot is not set up. Add the token first",
+        "unreachable": "We could not reach Telegram. Check the token and try again",
+        "testFailed": "The test message did not arrive. Check that the person pressed Start on the bot and the ID is right",
+        "generic": "Something went wrong. Try again"
+      }
     }
   },
   "booking": {

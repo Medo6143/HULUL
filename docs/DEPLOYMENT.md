@@ -39,7 +39,7 @@ Create a reCAPTCHA v3 key pair for the domain. The site key goes in `NEXT_PUBLIC
 
 1. Add and verify the sending domain in Resend (SPF and DKIM records at the DNS provider).
 2. `RESEND_API_KEY`, `EMAIL_FROM` (for example `HULOL TECH <hello@your-domain>`), `TEAM_ALERT_EMAIL`.
-3. Optional team chat alert: `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`.
+3. Optional Telegram alerts: create a bot with @BotFather and set `TELEGRAM_BOT_TOKEN`. Then add the people or groups that receive alerts in the admin (Settings, Telegram alerts): each opens the bot and presses Start, and you add them from "Discover chats". `TELEGRAM_CHAT_ID` is only a fallback single chat used while that list is empty.
 
 Every attempt is recorded in the `notificationLogs` collection, with its status (`sent`, `failed`, `skipped`). A skipped entry means the channel is not configured.
 

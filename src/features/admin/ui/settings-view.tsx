@@ -4,11 +4,12 @@ import { Check, Loader2, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { TelegramCard, type TelegramSettings } from "./telegram-card";
 
 const MAX = 10;
 const ERROR_KEYS = ["invalid_email", "too_many", "empty", "unauthorized", "forbidden", "invalid_input"] as const;
 
-export function SettingsView({ recipients, demo }: { recipients: string[]; demo: boolean }) {
+export function SettingsView({ recipients, telegram, demo }: { recipients: string[]; telegram?: TelegramSettings; demo: boolean }) {
   const t = useTranslations("admin.settings");
   const router = useRouter();
   const [list, setList] = useState<string[]>(recipients.length > 0 ? recipients : [""]);
@@ -115,6 +116,7 @@ export function SettingsView({ recipients, demo }: { recipients: string[]; demo:
         <p className="text-[14px] text-text-muted">{t("fallbackNote")}</p>
         {demo ? <p className="text-[14px] text-text-muted">{t("demoNote")}</p> : null}
       </section>
+      {telegram ? <TelegramCard telegram={telegram} demo={demo} /> : null}
     </div>
   );
 }

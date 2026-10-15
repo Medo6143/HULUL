@@ -1,22 +1,32 @@
 import type { ChatAlerter, SendOutcome } from "../application/ports";
+import type { TelegramBot, TelegramChatStore } from "../application/telegram.usecases";
 
-/** Optional team chat alert. Skipped when the bot token or chat id is not configured. */
+/**
+ * Team chat alert: one message to every chat the owner added in the admin. With no chats saved it falls back to
+ * the chat id from the environment. It is skipped when there is no bot token or no chat at all.
+ */
 export class TelegramChatAlerter implements ChatAlerter {
   constructor(
-    private readonly botToken: string,
-    private readonly chatId: string,
+    private readonly bot: TelegramBot,
+    private readonly store: TelegramChatStore,
+    private readonly fallbackChatId: string,
   ) {}
 
   async send(text: string): Promise<SendOutcome> {
-    if (!this.botToken || !this.chatId) return { ok: false, skipped: true };
+    if (!this.bot.configured) return { ok: false, skipped: true };
 
-    const response = await fetch(`https://api.telegram.org/bot${encodeURIComponent(this.botToken)}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: this.chatId, text }),
-      signal: AbortSignal.timeout(8_000),
-    });
-    if (response.ok) return { ok: true };
-    return { ok: false, error: `telegram_${response.status}` };
+    let ids: string[] = [];
+    try {
+      ids = (await this.store.list()).map((chat) => chat.id);
+    } catch {
+      ids = [];
+    }
+    if (ids.length === 0 && this.fallbackChatId) ids = [this.fallbackChatId];
+    if (ids.length === 0) return { ok: false, skipped: true };
+
+    const outcomes = await Promise.all(ids.map((id) => this.bot.send(id, text)));
+    if (outcomes.some((outcome) => outcome.ok)) return { ok: true };
+    const first = outcomes.find((outcome) => !outcome.ok && !("skipped" in outcome && outcome.skipped));
+    return { ok: false, error: first && "error" in first ? first.error : "telegram_failed" };
   }
 }
