@@ -14,6 +14,10 @@ export interface CaseStudyRow {
   slug: string;
   category: "web" | "mobile" | "design";
   title: Pair;
+  summary: Pair;
+  liveUrl: string;
+  codeUrl: string;
+  stack: string[];
   result: Pair;
   problem: Pair;
   solution: Pair;
@@ -30,6 +34,10 @@ const EMPTY: CaseStudyRow = {
   slug: "",
   category: "web",
   title: { ar: "", en: "" },
+  summary: { ar: "", en: "" },
+  liveUrl: "",
+  codeUrl: "",
+  stack: [],
   result: { ar: "", en: "" },
   problem: { ar: "", en: "" },
   solution: { ar: "", en: "" },
@@ -42,7 +50,7 @@ const EMPTY: CaseStudyRow = {
   order: 0,
 };
 
-type PairKey = "title" | "result" | "problem" | "solution";
+type PairKey = "title" | "summary" | "result" | "problem" | "solution";
 
 export function CaseStudiesView({ items, demo }: { items: CaseStudyRow[]; demo: boolean }) {
   const t = useTranslations("admin.caseStudies");
@@ -83,10 +91,10 @@ export function CaseStudiesView({ items, demo }: { items: CaseStudyRow[]; demo: 
     if (done) setForm(null);
   }
 
-  const pairField = (key: PairKey, label: string, rows: number, max: number) => (
+  const pairField = (key: PairKey, label: string, rows: number, max: number, required = false) => (
     <>
       <Field label={`${label} (${s("arabic")})`}>
-        <textarea required rows={rows} maxLength={max} value={form?.[key].ar ?? ""} onChange={(e) => setPair(key, "ar", e.target.value)} className={AREA} />
+        <textarea required={required} rows={rows} maxLength={max} value={form?.[key].ar ?? ""} onChange={(e) => setPair(key, "ar", e.target.value)} className={AREA} />
       </Field>
       <Field label={`${label} (${s("english")})`}>
         <textarea rows={rows} maxLength={max} dir="ltr" value={form?.[key].en ?? ""} onChange={(e) => setPair(key, "en", e.target.value)} className={AREA} />
@@ -135,7 +143,19 @@ export function CaseStudiesView({ items, demo }: { items: CaseStudyRow[]; demo: 
                 <option value="design">{t("categories.design")}</option>
               </select>
             </Field>
-            {pairField("title", t("titleField"), 2, 140)}
+            {pairField("title", t("titleField"), 2, 140, true)}
+            {pairField("summary", t("summary"), 5, 1500)}
+            <Field label={t("liveUrl")}>
+              <input type="url" dir="ltr" maxLength={300} placeholder="https://" value={form.liveUrl} onChange={(e) => set("liveUrl", e.target.value)} className={FIELD} />
+            </Field>
+            <Field label={t("codeUrl")}>
+              <input type="url" dir="ltr" maxLength={300} placeholder="https://github.com/..." value={form.codeUrl} onChange={(e) => set("codeUrl", e.target.value)} className={FIELD} />
+            </Field>
+            <div className="md:col-span-2">
+              <Field label={t("stack")} hint={t("stackHint")}>
+                <input dir="ltr" maxLength={400} value={form.stack.join(", ")} onChange={(e) => set("stack", e.target.value.split(",").map((x) => x.trimStart()))} className={FIELD} />
+              </Field>
+            </div>
             {pairField("result", t("result"), 3, 400)}
             <p className="rounded-xl bg-warning/10 p-3 text-[14px] text-warning md:col-span-2">{t("resultWarning")}</p>
             {pairField("problem", t("problem"), 6, 3000)}

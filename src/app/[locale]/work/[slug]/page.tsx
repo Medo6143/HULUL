@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ExternalLink } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const study = await loadCaseStudy(slug);
   if (!study) return {};
   const key = locale === "en" ? "en" : "ar";
-  return pageMetadata({ locale, path: `/work/${slug}`, title: study.title[key], description: study.result[key] });
+  return pageMetadata({ locale, path: `/work/${slug}`, title: study.title[key], description: study.result[key] || study.summary[key] });
 }
 
 export default async function CaseStudyPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
@@ -35,10 +35,11 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ loca
   const key = locale === "en" ? "en" : "ar";
 
   const blocks = [
+    { id: "summary", title: t("overview"), text: study.summary[key] },
     { id: "problem", title: t("problem"), text: study.problem[key] },
     { id: "solution", title: t("solution"), text: study.solution[key] },
     { id: "result", title: t("result"), text: study.result[key] },
-  ];
+  ].filter((block) => block.text.trim() !== "");
 
   return (
     <main id="main" data-track-view="case_study_view" data-slug={slug}>
@@ -71,6 +72,36 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ loca
                   />
                 </div>
               ))}
+            </div>
+          ) : null}
+          {study.liveUrl || study.codeUrl || study.stack.length > 0 ? (
+            <div className="grid gap-4 rounded-card border border-surface-line bg-surface p-6">
+              {study.stack.length > 0 ? (
+                <div>
+                  <h2 className="text-[18px] font-bold">{t("stack")}</h2>
+                  <ul className="mt-3 flex flex-wrap gap-2" dir="ltr">
+                    {study.stack.map((item) => (
+                      <li key={item} className="rounded-full bg-brand-soft ps-3 pe-3 py-1 text-[14px] font-semibold text-ink-900">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+              <div className="flex flex-wrap gap-3">
+                {study.liveUrl ? (
+                  <a href={study.liveUrl} target="_blank" rel="noopener noreferrer" className={buttonClassName("primary", "min-h-12")}>
+                    {t("visitSite")}
+                    <ExternalLink className="size-5" aria-hidden="true" />
+                  </a>
+                ) : null}
+                {study.codeUrl ? (
+                  <a href={study.codeUrl} target="_blank" rel="noopener noreferrer" className={buttonClassName("ghost", "min-h-12")}>
+                    {t("viewCode")}
+                    <ExternalLink className="size-5" aria-hidden="true" />
+                  </a>
+                ) : null}
+              </div>
             </div>
           ) : null}
           {blocks.map((block) => (

@@ -12,6 +12,7 @@ const ERROR_KEYS = [
   "invalid_input",
   "invalid_slug",
   "invalid_image",
+  "invalid_url",
   "slug_exists",
   "consent_required",
   "consent_note_required",

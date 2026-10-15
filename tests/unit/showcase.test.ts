@@ -36,6 +36,10 @@ const study = (over: Partial<CaseStudyInput> = {}): CaseStudyInput => ({
   slug: "shop-app",
   category: "web",
   title: { ar: "متجر", en: "Shop" },
+  summary: { ar: "", en: "" },
+  liveUrl: "",
+  codeUrl: "",
+  stack: [],
   result: { ar: "نتيجة موثقة", en: "" },
   problem: { ar: "تحدي", en: "" },
   solution: { ar: "حل", en: "" },
@@ -112,7 +116,7 @@ describe("case studies", () => {
     expect(await save({ create: true, input: study({ slug: "bad slug" }) })).toMatchObject({ ok: false, error: { code: "invalid_slug" } });
     expect(await save({ create: true, input: study({ slug: "x" }) })).toMatchObject({ ok: false, error: { code: "invalid_slug" } });
     expect(await save({ create: true, input: study({ category: "other" }) })).toMatchObject({ ok: false, error: { code: "invalid_input" } });
-    expect(await save({ create: true, input: study({ problem: { ar: "", en: "x" } }) })).toMatchObject({ ok: false, error: { code: "invalid_input" } });
+    expect(await save({ create: true, input: study({ title: { ar: " ", en: "x" } }) })).toMatchObject({ ok: false, error: { code: "invalid_input" } });
   });
   it("does not overwrite on create and does not invent on update", async () => {
     const save = makeSaveCaseStudy({ store: new InMemoryCaseStudyStore(), clock });
@@ -166,5 +170,42 @@ describe("case study images", () => {
     await save({ create: true, input: study({ images: [{ url: good, alt: { ar: "واجهة", en: "" } }] }) });
     const [shown] = await makeGetPublishedCaseStudies({ store })();
     expect(shown?.images[0]?.alt.en).toBe("واجهة");
+  });
+});
+
+describe("portfolio projects without a case-study story", () => {
+  it("accepts a title, summary, links and stack, and shows them publicly", async () => {
+    const store = new InMemoryCaseStudyStore();
+    const save = makeSaveCaseStudy({ store, clock });
+    const input = study({
+      slug: "smart-clinic",
+      summary: { ar: "منصة لإدارة العيادات", en: "" },
+      result: { ar: "", en: "" },
+      problem: { ar: "", en: "" },
+      solution: { ar: "", en: "" },
+      liveUrl: "https://smartclinic-two.vercel.app/",
+      codeUrl: "https://github.com/Medo6143/smart-clinic-dashbord",
+      stack: [" Next.js ", "", "Firebase"],
+    });
+    expect((await save({ create: true, input })).ok).toBe(true);
+    const [shown] = await makeGetPublishedCaseStudies({ store })();
+    expect(shown?.stack).toEqual(["Next.js", "Firebase"]);
+    expect(shown?.liveUrl).toBe("https://smartclinic-two.vercel.app/");
+    expect(shown?.summary.en).toBe("منصة لإدارة العيادات");
+  });
+  it("still needs some real content, and only https links", async () => {
+    const save = makeSaveCaseStudy({ store: new InMemoryCaseStudyStore(), clock });
+    const empty = { summary: { ar: "", en: "" }, result: { ar: "", en: "" }, problem: { ar: "", en: "" }, solution: { ar: "", en: "" } };
+    expect(await save({ create: true, input: study({ ...empty }) })).toMatchObject({ ok: false, error: { code: "invalid_input" } });
+    for (const liveUrl of ["http://insecure.example", "javascript:alert(1)", "not a url"]) {
+      expect(await save({ create: true, input: study({ slug: "other", liveUrl }) })).toMatchObject({ ok: false, error: { code: "invalid_url" } });
+    }
+  });
+  it("caps the stack at 12 short items", async () => {
+    const store = new InMemoryCaseStudyStore();
+    await makeSaveCaseStudy({ store, clock })({ create: true, input: study({ stack: Array.from({ length: 20 }, (_, i) => `T${i}`.padEnd(40, "x")) }) });
+    const saved = await store.get("shop-app");
+    expect(saved?.stack).toHaveLength(12);
+    expect(saved?.stack[0]?.length).toBe(30);
   });
 });

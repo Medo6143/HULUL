@@ -53,7 +53,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <TrustBar />
       <ServicesSection />
       <MarketSection />
-      <WorkSection items={work} />
+      <WorkSection items={work} limit={6} />
       <TestimonialsSection items={reviews} />
       <JourneySection />
       <CostSection />

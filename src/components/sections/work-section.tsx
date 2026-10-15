@@ -9,11 +9,12 @@ export interface WorkItem {
   category: "web" | "mobile" | "design";
   title: { ar: string; en: string };
   result: { ar: string; en: string };
+  summary?: { ar: string; en: string };
   images?: { url: string; alt: { ar: string; en: string } }[];
 }
 
 // Hidden until real, permitted case studies exist.
-export function WorkSection({ items }: { items: readonly WorkItem[] }) {
+export function WorkSection({ items, limit }: { items: readonly WorkItem[]; limit?: number }) {
   const t = useTranslations("home.work");
   const s = useTranslations("services");
   const more = useTranslations("work");
@@ -25,7 +26,7 @@ export function WorkSection({ items }: { items: readonly WorkItem[] }) {
     <Section id="work" tone="muted" labelledBy="work-title">
       <SectionHeading id="work-title" eyebrow={t("eyebrow")} title={t("title")} />
       <div className="grid gap-6 md:grid-cols-3">
-        {items.map((study) => (
+        {(limit ? items.slice(0, limit) : items).map((study) => (
           <article key={study.slug} className="rounded-card border border-surface-line bg-surface p-7">
             {study.images?.[0] ? (
               <div className="relative -mx-2 mb-4 aspect-[16/10] overflow-hidden rounded-xl bg-surface-muted">
@@ -40,7 +41,9 @@ export function WorkSection({ items }: { items: readonly WorkItem[] }) {
             ) : null}
             <p className="text-[15px] text-text-muted">{s(`${study.category}.title`)}</p>
             <h3 className="mt-1 text-[20px] font-semibold leading-[1.4]">{study.title[locale]}</h3>
-            <p className="mt-3 font-bold text-ink-900">{study.result[locale]}</p>
+            <p className={study.result[locale] ? "mt-3 font-bold text-ink-900" : "mt-3 line-clamp-3 text-[15px] leading-[1.7] text-text-muted"}>
+              {study.result[locale] || study.summary?.[locale]}
+            </p>
             <Link
               href={`/work/${study.slug}`}
               className="mt-4 inline-flex min-h-11 items-center gap-2 font-semibold text-ink-900"
@@ -51,6 +54,14 @@ export function WorkSection({ items }: { items: readonly WorkItem[] }) {
           </article>
         ))}
       </div>
+      {limit && items.length > limit ? (
+        <div className="mt-8 text-center">
+          <Link href="/work" className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-surface-line bg-surface ps-6 pe-6 font-semibold hover:border-ink-900">
+            {more("allWork")}
+            <ArrowRight className="size-[18px] rtl:-scale-x-100" aria-hidden="true" />
+          </Link>
+        </div>
+      ) : null}
     </Section>
   );
 }

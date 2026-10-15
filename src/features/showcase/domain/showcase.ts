@@ -17,6 +17,7 @@ export type ShowcaseError =
   | { code: "invalid_input" }
   | { code: "invalid_slug" }
   | { code: "invalid_image" }
+  | { code: "invalid_url" }
   | { code: "slug_exists" }
   | { code: "consent_required" }
   | { code: "consent_note_required" }
@@ -56,10 +57,16 @@ export interface CaseStudy extends Consent {
   slug: string;
   category: CaseCategory;
   title: Localized;
-  /** The measurable result with its real, documented number. */
+  /** Short description of the project, shown first. */
+  summary: Localized;
+  /** The measurable result with its real, documented number. Optional. */
   result: Localized;
+  /** Optional: only when there is a real story to tell. */
   problem: Localized;
   solution: Localized;
+  liveUrl: string;
+  codeUrl: string;
+  stack: string[];
   clientName: string;
   /** Separate consent: the client's name appears only when this is true as well. */
   clientNameConsent: boolean;
@@ -86,9 +93,13 @@ export interface CaseStudyInput {
   slug: string;
   category: string;
   title: Localized;
+  summary: Localized;
   result: Localized;
   problem: Localized;
   solution: Localized;
+  liveUrl: string;
+  codeUrl: string;
+  stack: string[];
   clientName: string;
   clientNameConsent: boolean;
   images: CaseImage[];
@@ -106,6 +117,10 @@ const order = (value: number) => (Number.isFinite(value) ? Math.min(Math.max(Mat
 
 export const isCaseCategory = (value: unknown): value is CaseCategory =>
   typeof value === "string" && (CASE_CATEGORIES as readonly string[]).includes(value);
+
+/** An https link up to 300 characters. Empty is fine when `allowEmpty`. */
+export const isHttpsUrl = (value: string, allowEmpty = false): boolean =>
+  value === "" ? allowEmpty : value.length <= 300 && /^https:\/\/[^\s<>"']+$/.test(value);
 
 export const isValidSlug = (slug: string) => slug.length >= 2 && slug.length <= 60 && SLUG_RE.test(slug);
 
@@ -152,10 +167,16 @@ export function buildCaseStudy(
   if (!isValidSlug(slug)) return err({ code: "invalid_slug" });
   if (!isCaseCategory(input.category)) return err({ code: "invalid_input" });
   const title = localized(input.title, 140);
+  const summary = localized(input.summary, 1500);
   const result = localized(input.result, 400);
   const problem = localized(input.problem, 3000);
   const solution = localized(input.solution, 3000);
-  if (!title.ar || !result.ar || !problem.ar || !solution.ar) return err({ code: "invalid_input" });
+  // A title and at least one piece of real content; challenge, solution and result are optional.
+  if (!title.ar || !(summary.ar || result.ar || problem.ar || solution.ar)) return err({ code: "invalid_input" });
+  const liveUrl = input.liveUrl.trim();
+  const codeUrl = input.codeUrl.trim();
+  if (!isHttpsUrl(liveUrl, true) || !isHttpsUrl(codeUrl, true)) return err({ code: "invalid_url" });
+  const stack = input.stack.map((item) => clean(item, 30)).filter(Boolean).slice(0, 12);
   if (input.images.length > MAX_CASE_IMAGES || !input.images.every((image) => isCloudinaryImageUrl(image.url))) {
     return err({ code: "invalid_image" });
   }
@@ -166,9 +187,13 @@ export function buildCaseStudy(
     slug,
     category: input.category,
     title,
+    summary,
     result,
     problem,
     solution,
+    liveUrl,
+    codeUrl,
+    stack,
     clientName,
     images: input.images.map((image) => ({ url: image.url, alt: localized(image.alt, 150) })),
     clientNameConsent: input.clientNameConsent && clientName.length > 0 && consent.value.consentToPublish,
@@ -201,9 +226,13 @@ export interface PublicCaseStudy {
   slug: string;
   category: CaseCategory;
   title: Localized;
+  summary: Localized;
   result: Localized;
   problem: Localized;
   solution: Localized;
+  liveUrl: string;
+  codeUrl: string;
+  stack: string[];
   images: CaseImage[];
   /** Present only with the separate client-name consent. */
   clientName?: string;
@@ -228,9 +257,13 @@ export function toPublicCaseStudy(item: CaseStudy): PublicCaseStudy | null {
     slug: item.slug,
     category: item.category,
     title: pick(item.title),
+    summary: pick(item.summary ?? { ar: "", en: "" }),
     result: pick(item.result),
     problem: pick(item.problem),
     solution: pick(item.solution),
+    liveUrl: item.liveUrl ?? "",
+    codeUrl: item.codeUrl ?? "",
+    stack: item.stack ?? [],
     images: (item.images ?? []).map((image) => ({ url: image.url, alt: pick(image.alt) })),
     ...(item.clientNameConsent && item.clientName ? { clientName: item.clientName } : {}),
   };

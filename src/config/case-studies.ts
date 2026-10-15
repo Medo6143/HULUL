@@ -11,9 +11,13 @@ export interface CaseStudy {
   category: "web" | "mobile" | "design";
   title: Localized;
   /** The measurable result, with its real number. */
+  summary: Localized;
   result: Localized;
   problem: Localized;
   solution: Localized;
+  liveUrl: string;
+  codeUrl: string;
+  stack: string[];
   images: { url: string; alt: Localized }[];
 }
 

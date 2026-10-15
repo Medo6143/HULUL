@@ -93,7 +93,11 @@
     "allWork": "All work",
     "problem": "The challenge",
     "solution": "The solution",
-    "result": "The result"
+    "result": "The result",
+    "overview": "About the project",
+    "stack": "Tech stack",
+    "visitSite": "Visit the site",
+    "viewCode": "Source code"
   },
   "about": {
     "title": "About",
@@ -756,7 +760,8 @@
         "unauthorized": "Your session expired. Sign in again",
         "forbidden": "This action is not allowed",
         "internal_error": "Something went wrong on our side. Try again",
-        "invalid_image": "The image link is not valid. Upload images from this page only"
+        "invalid_image": "The image link is not valid. Upload images from this page only",
+        "invalid_url": "The link must start with https and be at most 300 characters"
       }
     },
     "testimonials": {
@@ -789,7 +794,7 @@
       },
       "titleField": "Title",
       "result": "Result",
-      "resultWarning": "Write a real, documented result only. Do not write unconfirmed numbers or percentages.",
+      "resultWarning": "Challenge, solution, and result are optional. Write a real, documented result only; never unconfirmed numbers or percentages.",
       "problem": "Challenge",
       "solution": "Solution",
       "clientName": "Client name (optional)",
@@ -808,7 +813,12 @@
         "tooLarge": "The image is larger than 5 MB",
         "failed": "The image upload failed. Try again",
         "notConfigured": "Image upload is not set up yet. Add the Cloudinary keys to the server settings."
-      }
+      },
+      "summary": "Project summary",
+      "liveUrl": "Live site link",
+      "codeUrl": "Source code link (optional)",
+      "stack": "Tech stack",
+      "stackHint": "Separate with commas, for example: Next.js, Firebase, Tailwind CSS"
     },
     "calendar": {
       "title": "Appointments",
