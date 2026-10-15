@@ -507,7 +507,14 @@
       "templates": "Invite templates",
       "account": "My account",
       "overview": "Overview",
-      "surveys": "Surveys"
+      "surveys": "Surveys",
+      "groups": {
+        "main": "Main",
+        "content": "Content",
+        "manage": "Manage"
+      },
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
     },
     "user": {
       "name": "Demo admin",
