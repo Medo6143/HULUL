@@ -5,7 +5,7 @@ import { PageHero } from "@/components/layout/page-hero";
 import { buttonClassName } from "@/components/ui/button";
 import { processSteps } from "@/config/process";
 import { LeadForm, type LeadType } from "@/features/leads";
-import { whatsappHref } from "@/lib/whatsapp-href";
+import { getWhatsappHref } from "@/app/_lib/site";
 import { WhatsAppIcon } from "@/components/ui/whatsapp-icon";
 
 /** The only page that hosts the request form (/start). One page-level form, no wizard. */
@@ -20,7 +20,7 @@ export async function RequestPage({
   const nav = await getTranslations("nav");
   const process = await getTranslations("processPage");
   const side = await getTranslations("requestSide");
-  const href = whatsappHref(locale);
+  const href = await getWhatsappHref(locale);
 
   return (
     <main id="main">

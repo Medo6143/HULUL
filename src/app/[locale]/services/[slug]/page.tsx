@@ -13,7 +13,7 @@ import { Link } from "@/i18n/navigation";
 import { JsonLd } from "@/components/seo/json-ld";
 import { publicEnv } from "@/lib/env.public";
 import { faqSchema, serviceSchema } from "@/lib/structured-data";
-import { whatsappHref } from "@/lib/whatsapp-href";
+import { getWhatsappHref } from "@/app/_lib/site";
 import { WhatsAppIcon } from "@/components/ui/whatsapp-icon";
 import { pageMetadata } from "@/lib/page-metadata";
 
@@ -51,7 +51,7 @@ export default async function ServicePage({
   const h = await getTranslations("home.services");
   const d = await getTranslations("serviceDetail");
   const nav = await getTranslations("nav");
-  const href = whatsappHref(locale, slug);
+  const href = await getWhatsappHref(locale, slug);
   const brand = await getTranslations("brand");
   const config = findService(slug)!;
   const key = locale === "en" ? "en" : "ar";

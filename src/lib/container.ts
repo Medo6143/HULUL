@@ -57,6 +57,8 @@ import {
   FirestoreAvailabilityStore,
   FirestoreBookingStore,
 } from "@/features/bookings/infrastructure/firestore-booking.store";
+import { makeGetSiteSettings, makeSaveSiteSettings } from "@/features/site-settings";
+import { FirestoreSiteSettingsStore } from "@/features/site-settings/infrastructure/firestore-site-settings.store";
 import { makeGetTemplates, makeSaveTemplates, makeSendInviteEmail } from "@/features/templates";
 import { FirestoreTemplateStore } from "@/features/templates/infrastructure/firestore-template.store";
 import { FirestoreNotificationLog } from "@/features/notifications/infrastructure/firestore-notification.log";
@@ -248,6 +250,10 @@ async function bookingEvents(): Promise<BookingEvents> {
   };
 }
 
+async function siteSettingsStore() {
+  return new FirestoreSiteSettingsStore(await getAdminApp());
+}
+
 async function templateStore() {
   return new FirestoreTemplateStore(await getAdminApp());
 }
@@ -418,6 +424,12 @@ export const container = {
   },
   async deleteException() {
     return makeDeleteException({ availability: await availabilityStore() });
+  },
+  async getSiteSettings() {
+    return makeGetSiteSettings({ store: await siteSettingsStore() });
+  },
+  async saveSiteSettings() {
+    return makeSaveSiteSettings({ store: await siteSettingsStore() });
   },
   async getTemplates() {
     return makeGetTemplates({ store: await templateStore() });

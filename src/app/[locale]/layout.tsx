@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { hasLocale } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
+import { loadSite } from "@/app/_lib/site";
 import { container } from "@/lib/container";
 import { ArabicDocument } from "./arabic-document";
 import { LatinDocument } from "./latin-document";
@@ -41,7 +42,8 @@ export default async function LocaleLayout({
   if (!hasLocale(routing.locales, locale)) notFound();
   setRequestLocale(locale);
   const messages = await getMessages();
-  const phone = container.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+  const site = await loadSite();
+  const phone = site.whatsappNumber;
   const env = container.env;
   const analyticsIds = {
     ga4: env.NEXT_PUBLIC_GA4_ID,
@@ -50,7 +52,7 @@ export default async function LocaleLayout({
     snap: env.NEXT_PUBLIC_SNAP_PIXEL_ID,
     tiktok: env.NEXT_PUBLIC_TIKTOK_PIXEL_ID,
   };
-  const documentProps = { locale, messages, phone, analyticsIds, children };
+  const documentProps = { locale, messages, phone, socials: site.socials as Record<string, string>, analyticsIds, children };
 
   if (locale === "ar") return <ArabicDocument {...documentProps} />;
   return <LatinDocument {...documentProps} />;

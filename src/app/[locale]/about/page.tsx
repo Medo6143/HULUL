@@ -7,7 +7,7 @@ import { FinalCta } from "@/components/sections/final-cta";
 import { JourneySection } from "@/components/sections/journey-section";
 import { Section, SectionHeading } from "@/components/sections/section";
 import { ServicesGrid } from "@/components/sections/services-section";
-import { whatsappHref } from "@/lib/whatsapp-href";
+import { getWhatsappHref } from "@/app/_lib/site";
 import { pageMetadata } from "@/lib/page-metadata";
 
 const VALUES: { key: "clarity" | "arabic" | "visibility" | "support"; Icon: LucideIcon }[] = [
@@ -97,7 +97,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
         </div>
       </Section>
 
-      <FinalCta whatsappHref={whatsappHref(locale)} />
+      <FinalCta whatsappHref={await getWhatsappHref(locale)} />
     </main>
   );
 }

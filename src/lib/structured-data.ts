@@ -3,7 +3,7 @@ import { baseUrl, localizedUrl, type SeoLocale } from "./seo";
 // Structured data uses only confirmed facts: the name, the city, and the three services.
 // No phone, email, address line, rating, or review is included until real ones exist.
 
-export function organizationSchema(input: { base: string; name: string }) {
+export function organizationSchema(input: { base: string; name: string; sameAs?: string[] }) {
   const url = baseUrl(input.base);
   return {
     "@context": "https://schema.org",
@@ -12,6 +12,7 @@ export function organizationSchema(input: { base: string; name: string }) {
     url,
     logo: `${url}/icons/icon-192.png`,
     address: { "@type": "PostalAddress", addressLocality: "Riyadh", addressCountry: "SA" },
+    ...(input.sameAs && input.sameAs.length > 0 ? { sameAs: input.sameAs } : {}),
   };
 }
 

@@ -13,12 +13,14 @@ export function ArabicDocument({
   locale,
   messages,
   phone,
+  socials,
   analyticsIds,
   children,
 }: {
   locale: string;
   messages: Record<string, unknown>;
   phone: string;
+  socials: Record<string, string>;
   analyticsIds: ProviderIds;
   children: ReactNode;
 }) {
@@ -29,7 +31,7 @@ export function ArabicDocument({
           <SkipLink />
           <Navbar />
           {children}
-          <Footer />
+          <Footer socials={socials} />
           <WhatsAppFloat phone={phone} />
           <CookieBanner />
           <AnalyticsProvider ids={analyticsIds} />

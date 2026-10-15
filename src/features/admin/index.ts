@@ -26,3 +26,5 @@ export { AccountView } from "./ui/account-view";
 export { OverviewView } from "./ui/overview-view";
 export type { OverviewData } from "./ui/overview-view";
 export { bookingsPerDay, leadsPerDay, overviewKpis, statusBreakdown } from "./model/dashboard";
+export { SiteSettingsView } from "./ui/site-settings-view";
+export type { SiteSettingsData } from "./ui/site-settings-view";

@@ -6,7 +6,7 @@ import { FinalCta } from "@/components/sections/final-cta";
 import { Section } from "@/components/sections/section";
 import { WorkSection } from "@/components/sections/work-section";
 import { loadCaseStudies } from "@/app/_lib/public-content";
-import { whatsappHref } from "@/lib/whatsapp-href";
+import { getWhatsappHref } from "@/app/_lib/site";
 import { pageMetadata } from "@/lib/page-metadata";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -37,7 +37,7 @@ export default async function WorkPage({ params }: { params: Promise<{ locale: s
           </div>
         </Section>
       )}
-      <FinalCta whatsappHref={whatsappHref(locale)} />
+      <FinalCta whatsappHref={await getWhatsappHref(locale)} />
     </main>
   );
 }

@@ -3,9 +3,24 @@ import { getTranslations } from "next-intl/server";
 import { segments } from "@/config/segments";
 import { services } from "@/config/services";
 import { ConsentReopen } from "@/components/layout/consent-reopen";
+import { Facebook, Github, Globe, Instagram, Linkedin, Music2, Send, Twitter, Youtube, type LucideIcon } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
-export async function Footer() {
+const SOCIAL_ICONS: Record<string, LucideIcon> = {
+  instagram: Instagram,
+  x: Twitter,
+  facebook: Facebook,
+  linkedin: Linkedin,
+  youtube: Youtube,
+  tiktok: Music2,
+  snapchat: Globe,
+  github: Github,
+  telegram: Send,
+};
+
+/** `socials` maps a platform key to its link; the page passes what the owner saved in the admin. */
+export async function Footer({ socials: socialLinks = {} }: { socials?: Record<string, string> }) {
+  const socials = Object.entries(socialLinks);
   const t = await getTranslations("footer");
   const brand = await getTranslations("brand");
   const serviceCopy = await getTranslations("services");
@@ -31,6 +46,26 @@ export async function Footer() {
             <span className="text-[20px] font-bold">{brand("name")}</span>
           </Link>
           <p className="mt-4 max-w-xs">{t("blurb")}</p>
+          {socials.length > 0 ? (
+            <ul className="mt-5 flex flex-wrap gap-2">
+              {socials.map(([key, href]) => {
+                const Icon = SOCIAL_ICONS[key] ?? Globe;
+                return (
+                  <li key={key}>
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={t(`social.${key}`)}
+                      className="grid size-10 place-items-center rounded-full border border-surface/20 text-surface/80 motion-safe:transition-colors hover:border-brand hover:text-brand"
+                    >
+                      <Icon className="size-5" aria-hidden="true" />
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : null}
         </div>
         <div className={column}>
           <h2 className={heading}>{t("services")}</h2>

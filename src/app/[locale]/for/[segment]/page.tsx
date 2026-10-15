@@ -10,7 +10,7 @@ import { JourneySection } from "@/components/sections/journey-section";
 import { ServicesSection } from "@/components/sections/services-section";
 import { isSegmentSlug, segments } from "@/config/segments";
 import { Link } from "@/i18n/navigation";
-import { whatsappHref } from "@/lib/whatsapp-href";
+import { getWhatsappHref } from "@/app/_lib/site";
 import { pageMetadata } from "@/lib/page-metadata";
 
 export function generateStaticParams() {
@@ -61,7 +61,7 @@ export default async function SegmentPage({
       <ServicesSection />
       <JourneySection />
       <FaqSection />
-      <FinalCta whatsappHref={whatsappHref(locale, config.whatsappContext)} />
+      <FinalCta whatsappHref={await getWhatsappHref(locale, config.whatsappContext)} />
     </main>
   );
 }

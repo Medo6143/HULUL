@@ -5,7 +5,7 @@ import { FinalCta } from "@/components/sections/final-cta";
 import { JsonLd } from "@/components/seo/json-ld";
 import { pageMetadata } from "@/lib/page-metadata";
 import { faqSchema } from "@/lib/structured-data";
-import { whatsappHref } from "@/lib/whatsapp-href";
+import { getWhatsappHref } from "@/app/_lib/site";
 
 const ITEMS = ["1", "2", "3"] as const;
 
@@ -25,7 +25,7 @@ export default async function FaqPage({ params }: { params: Promise<{ locale: st
       <JsonLd data={faqSchema(ITEMS.map((n) => ({ question: faq(`q${n}`), answer: faq(`a${n}`) })))} />
       <PageHero eyebrow={t("eyebrow")} title={t("title")} intro={t("intro")} />
       <FaqSection />
-      <FinalCta whatsappHref={whatsappHref(locale)} />
+      <FinalCta whatsappHref={await getWhatsappHref(locale)} />
     </main>
   );
 }

@@ -9,7 +9,7 @@ import { Section } from "@/components/sections/section";
 import { loadCaseStudy } from "@/app/_lib/public-content";
 import { Link } from "@/i18n/navigation";
 import { pageMetadata } from "@/lib/page-metadata";
-import { whatsappHref } from "@/lib/whatsapp-href";
+import { getWhatsappHref } from "@/app/_lib/site";
 
 // Case studies come from the admin, so pages are rendered on demand and cached; there is nothing to prebuild.
 export const dynamicParams = true;
@@ -112,7 +112,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ loca
           ))}
         </div>
       </Section>
-      <FinalCta whatsappHref={whatsappHref(locale)} />
+      <FinalCta whatsappHref={await getWhatsappHref(locale)} />
     </main>
   );
 }

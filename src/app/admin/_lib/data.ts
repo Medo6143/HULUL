@@ -9,6 +9,7 @@ import { getTranslations } from "next-intl/server";
 import type { InviteCardData } from "@/features/admin";
 import { DEFAULT_TEMPLATES, type InviteTemplates } from "@/features/templates";
 import { bookingsPerDay, leadsPerDay, overviewKpis, statusBreakdown, type OverviewData } from "@/features/admin";
+import type { SiteSettingsData } from "@/features/admin";
 import { isAdminDemo } from "./staff";
 
 export async function loadLeads(): Promise<{ leads: AdminLead[]; demo: boolean }> {
@@ -229,4 +230,10 @@ export async function loadOverview(): Promise<{ data: OverviewData; demo: boolea
       sources: [...sources.entries()].map(([source, count]) => ({ source, leads: count })).sort((a, b) => b.leads - a.leads),
     },
   };
+}
+
+export async function loadSiteSettings(): Promise<{ settings: SiteSettingsData; demo: boolean }> {
+  if (isAdminDemo()) return { settings: { whatsappNumber: "", phoneDisplay: "", email: "", socials: {} }, demo: true };
+  const get = await container.getSiteSettings();
+  return { settings: await get(), demo: false };
 }

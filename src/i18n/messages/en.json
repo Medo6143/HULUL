@@ -43,7 +43,18 @@
     "rights": "HULOL TECH",
     "segments": "Who we serve",
     "faq": "FAQ",
-    "contact": "Contact us"
+    "contact": "Contact us",
+    "social": {
+      "instagram": "Instagram",
+      "x": "X (Twitter)",
+      "facebook": "Facebook",
+      "linkedin": "LinkedIn",
+      "youtube": "YouTube",
+      "tiktok": "TikTok",
+      "snapchat": "Snapchat",
+      "github": "GitHub",
+      "telegram": "Telegram"
+    }
   },
   "cookie": {
     "label": "Cookies",
@@ -484,7 +495,7 @@
     "nav": {
       "leads": "Leads",
       "analytics": "Analytics",
-      "site": "View site",
+      "site": "Site settings",
       "signOut": "Sign out",
       "menu": "Menu",
       "team": "Team",
@@ -1042,6 +1053,44 @@
       "perPage": "Per page",
       "previous": "Previous page",
       "next": "Next page"
+    },
+    "site": {
+      "title": "Site settings",
+      "subtitle": "Change the WhatsApp number, phone, email, and social links shown on the site. An empty field hides its button or icon.",
+      "contactTitle": "Contact",
+      "whatsapp": "WhatsApp number",
+      "whatsappHint": "Digits with the country code, for example 966581897297. Used by the floating WhatsApp button and every WhatsApp button on the site.",
+      "phone": "Phone number (display)",
+      "phoneHint": "Shown in the contact section exactly as you type it.",
+      "email": "Email",
+      "emailHint": "Shown in the contact section.",
+      "socialTitle": "Social media accounts",
+      "socialHint": "Full links starting with https. Shown as icons in the footer.",
+      "social": {
+        "instagram": "Instagram",
+        "x": "X (Twitter)",
+        "facebook": "Facebook",
+        "linkedin": "LinkedIn",
+        "youtube": "YouTube",
+        "tiktok": "TikTok",
+        "snapchat": "Snapchat",
+        "github": "GitHub",
+        "telegram": "Telegram"
+      },
+      "save": "Save",
+      "saved": "The settings were saved and the site updated.",
+      "note": "Changes show on the site right away.",
+      "demoNote": "Actions are disabled in demo mode.",
+      "errors": {
+        "invalid_whatsapp": "The WhatsApp number is not valid. Enter the digits with the country code",
+        "invalid_phone": "The phone accepts digits, spaces, and + only",
+        "invalid_email": "The email address is not valid",
+        "invalid_url": "The {field} link must start with https",
+        "invalid_input": "The data is invalid",
+        "unauthorized": "Your session expired. Sign in again",
+        "forbidden": "This action is for the owner only",
+        "generic": "Something went wrong. Try again"
+      }
     }
   },
   "booking": {

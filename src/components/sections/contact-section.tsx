@@ -31,10 +31,15 @@ interface Channel {
 export function ContactSection({
   whatsappHref,
   whatsappNumber,
+  phoneDisplay = siteConfig.phoneDisplay ?? "",
+  email = siteConfig.email ?? "",
   form,
 }: {
   whatsappHref: string | null;
   whatsappNumber: string;
+  /** Shown only when not empty. Defaults to the static config. */
+  phoneDisplay?: string;
+  email?: string;
   /** Email contact form, passed in as a slot so this section stays free of feature imports. */
   form: ReactNode;
 }) {
@@ -54,24 +59,24 @@ export function ContactSection({
       accent: true,
     });
   }
-  if (siteConfig.phoneDisplay) {
+  if (phoneDisplay) {
     channels.push({
       key: "phone",
       title: t("phone"),
-      value: siteConfig.phoneDisplay,
+      value: phoneDisplay,
       hint: t("phoneHint"),
-      href: `tel:${siteConfig.phoneDisplay.replace(/[^\d+]/g, "")}`,
+      href: `tel:${phoneDisplay.replace(/[^\d+]/g, "")}`,
       ltr: true,
       Icon: Phone,
     });
   }
-  if (siteConfig.email) {
+  if (email) {
     channels.push({
       key: "email",
       title: t("email"),
-      value: siteConfig.email,
+      value: email,
       hint: t("emailHint"),
-      href: `mailto:${siteConfig.email}`,
+      href: `mailto:${email}`,
       ltr: true,
       Icon: Mail,
     });

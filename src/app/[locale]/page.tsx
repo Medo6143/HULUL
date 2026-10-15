@@ -14,6 +14,7 @@ import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { TrustBar } from "@/components/sections/trust-bar";
 import { WorkSection } from "@/components/sections/work-section";
 import { loadCaseStudies, loadTestimonials } from "@/app/_lib/public-content";
+import { loadSite } from "@/app/_lib/site";
 import { ContactForm } from "@/features/contact";
 import { publicEnv } from "@/lib/env.public";
 import { buildWaLink } from "@/lib/whatsapp";
@@ -34,15 +35,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const seoLocale = locale === "en" ? "en" : "ar";
   const [work, reviews] = await Promise.all([loadCaseStudies(), loadTestimonials()]);
 
+  const site = await loadSite();
   const whatsappHref = buildWaLink({
-    phone: publicEnv.NEXT_PUBLIC_WHATSAPP_NUMBER,
+    phone: site.whatsappNumber,
     locale: locale === "en" ? "en" : "ar",
     context: "general",
   });
 
   return (
     <main id="main">
-      <JsonLd data={organizationSchema({ base, name: brand("name") })} />
+      <JsonLd data={organizationSchema({ base, name: brand("name"), sameAs: Object.values(site.socials) })} />
       <JsonLd data={websiteSchema({ base, name: brand("name"), locale: seoLocale })} />
       <JsonLd
         data={faqSchema(
@@ -61,7 +63,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <FaqSection />
       <ContactSection
         whatsappHref={whatsappHref}
-        whatsappNumber={publicEnv.NEXT_PUBLIC_WHATSAPP_NUMBER}
+        whatsappNumber={site.whatsappNumber}
+        phoneDisplay={site.phoneDisplay}
+        email={site.email}
         form={<ContactForm />}
       />
       <FinalCta whatsappHref={whatsappHref} />

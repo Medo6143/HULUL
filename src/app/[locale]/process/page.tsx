@@ -5,7 +5,7 @@ import { PageHero } from "@/components/layout/page-hero";
 import { FinalCta } from "@/components/sections/final-cta";
 import { Section } from "@/components/sections/section";
 import { processSteps } from "@/config/process";
-import { whatsappHref } from "@/lib/whatsapp-href";
+import { getWhatsappHref } from "@/app/_lib/site";
 import { pageMetadata } from "@/lib/page-metadata";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -52,7 +52,7 @@ export default async function ProcessPage({ params }: { params: Promise<{ locale
           ))}
         </ol>
       </Section>
-      <FinalCta whatsappHref={whatsappHref(locale)} />
+      <FinalCta whatsappHref={await getWhatsappHref(locale)} />
     </main>
   );
 }
