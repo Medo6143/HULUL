@@ -542,7 +542,13 @@
       "moveTo": "Move to...",
       "lostTitle": "Why did we lose this lead?",
       "lostConfirm": "Confirm",
-      "lostCancel": "Cancel"
+      "lostCancel": "Cancel",
+      "selectAll": "Select all leads on this page",
+      "selectLead": "Select {name}'s lead",
+      "selectedCount": "{count} selected",
+      "deleteSelected": "Delete selected",
+      "clearSelection": "Clear selection",
+      "confirmDeleteMany": "Permanently delete {count} leads with their notes and history? This cannot be undone."
     },
     "lead": {
       "back": "Back to leads",
@@ -579,7 +585,32 @@
       "confirm": "Confirm",
       "cancel": "Cancel",
       "demoActions": "Actions are disabled in demo mode.",
-      "inviteTitle": "Consultation invitation"
+      "inviteTitle": "Consultation invitation",
+      "editTitle": "Manage lead",
+      "editData": "Edit details",
+      "delete": "Delete lead",
+      "confirmDelete": "Permanently delete {name}'s lead with its notes and history? This cannot be undone.",
+      "edited": "Changes saved.",
+      "editFields": {
+        "name": "Name",
+        "phone": "Phone",
+        "email": "Email",
+        "service": "Service",
+        "preferred": "Preferred contact",
+        "business": "Business type",
+        "timeline": "Start timing",
+        "description": "Project description"
+      },
+      "editErrors": {
+        "invalid_name": "The name needs at least 2 characters",
+        "invalid_phone": "The phone number is not valid",
+        "invalid_email": "The email address is not valid",
+        "invalid_input": "The data is invalid",
+        "not_found": "We could not find this lead",
+        "unauthorized": "Your session expired. Sign in again",
+        "forbidden": "This action is for the owner only",
+        "generic": "Something went wrong. Try again"
+      }
     },
     "lostReasons": {
       "price": "Price",
@@ -983,6 +1014,13 @@
       "upcomingBookingsSummary": "{total} confirmed appointments in 14 days",
       "bySource": "Leads by source",
       "empty": "No data yet."
+    },
+    "pagination": {
+      "label": "Page navigation",
+      "showing": "Showing {from} - {to} of {total}",
+      "perPage": "Per page",
+      "previous": "Previous page",
+      "next": "Next page"
     }
   },
   "booking": {

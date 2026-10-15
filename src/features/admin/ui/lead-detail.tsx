@@ -7,6 +7,7 @@ import { isLostReasonKey, type AdminLeadDetail } from "../model/admin-lead";
 import { formatDateTime } from "./format";
 import { NoteForm, StatusActions } from "./lead-actions";
 import { InviteCard, type InviteCardData } from "./invite-card";
+import { LeadEditCard } from "./lead-edit-card";
 import { StatusBadge } from "./status-badge";
 
 function Card({ title, icon, children }: { title: string; icon?: ReactNode; children: ReactNode }) {
@@ -39,11 +40,13 @@ export function LeadDetail({
   demo,
   whatsappHref,
   invite,
+  canDelete = false,
 }: {
   lead: AdminLeadDetail;
   demo: boolean;
   whatsappHref: string | null;
   invite: InviteCardData | null;
+  canDelete?: boolean;
 }) {
   const t = useTranslations("admin.lead");
   const src = useTranslations("admin.sources");
@@ -97,6 +100,10 @@ export function LeadDetail({
 
       <div className="grid items-start gap-6 lg:grid-cols-[1.5fr_1fr]">
         <div className="grid gap-6">
+          <Card title={t("editTitle")}>
+            <LeadEditCard lead={lead} demo={demo} canDelete={canDelete} />
+          </Card>
+
           <Card title={t("contact")}>
             <dl>
               <Row label={t("phone")}>

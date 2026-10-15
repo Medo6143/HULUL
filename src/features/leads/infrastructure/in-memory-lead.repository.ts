@@ -19,6 +19,21 @@ export class InMemoryLeadRepository implements LeadReader, LeadWriter, LeadNoteS
     this.historyLog.push(history);
   }
 
+  async updateDetails(lead: Lead): Promise<void> {
+    if (!this.leads.has(lead.id)) throw new Error(`Lead ${lead.id} does not exist`);
+    this.leads.set(lead.id, lead);
+  }
+
+  async delete(ids: string[]): Promise<number> {
+    let count = 0;
+    for (const id of ids) {
+      if (this.leads.delete(id)) count++;
+      for (let i = this.historyLog.length - 1; i >= 0; i--) if (this.historyLog[i]!.leadId === id) this.historyLog.splice(i, 1);
+      for (let i = this.noteLog.length - 1; i >= 0; i--) if (this.noteLog[i]!.leadId === id) this.noteLog.splice(i, 1);
+    }
+    return count;
+  }
+
   async findById(id: string): Promise<Lead | null> {
     return this.leads.get(id) ?? null;
   }

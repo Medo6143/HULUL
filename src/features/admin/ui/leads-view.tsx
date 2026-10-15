@@ -1,6 +1,6 @@
 "use client";
 
-import { Download, LayoutGrid, Search, Table2 } from "lucide-react";
+import { Download, LayoutGrid, Search, Table2, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -9,11 +9,13 @@ import { LEAD_STATUSES, canTransition, type LeadStatus } from "@/features/leads"
 import { cn } from "@/lib/cn";
 import { LOST_REASON_KEYS, type AdminLead } from "../model/admin-lead";
 import { formatDateTime } from "./format";
+import { Pagination } from "./pagination";
+import { callApi } from "./showcase-shared";
 import { StatusBadge, statusDot } from "./status-badge";
 
 type View = "table" | "board";
 
-export function LeadsView({ leads, demo }: { leads: AdminLead[]; demo: boolean }) {
+export function LeadsView({ leads, demo, canDelete = false }: { leads: AdminLead[]; demo: boolean; canDelete?: boolean }) {
   const t = useTranslations("admin.leads");
   const s = useTranslations("admin.status");
   const src = useTranslations("admin.sources");
@@ -23,6 +25,10 @@ export function LeadsView({ leads, demo }: { leads: AdminLead[]; demo: boolean }
   const [view, setView] = useState<View>("table");
   const [filter, setFilter] = useState<LeadStatus | "all">("all");
   const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [deleting, setDeleting] = useState(false);
   const e = useTranslations("admin.errors");
   const lr = useTranslations("admin.lostReasons");
 
@@ -83,6 +89,31 @@ export function LeadsView({ leads, demo }: { leads: AdminLead[]; demo: boolean }
         (q === "" || lead.name.toLowerCase().includes(q) || lead.business.toLowerCase().includes(q)),
     );
   }, [live, filter, query]);
+
+  const pageCount = Math.max(1, Math.ceil(visible.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const pageRows = visible.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const allOnPage = pageRows.length > 0 && pageRows.every((lead) => selected.has(lead.id));
+  const selectedHere = [...selected].filter((id) => leads.some((lead) => lead.id === id));
+
+  const toggle = (id: string) =>
+    setSelected((current) => {
+      const next = new Set(current);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+
+  async function deleteSelected() {
+    if (selectedHere.length === 0 || !window.confirm(t("confirmDeleteMany", { count: selectedHere.length }))) return;
+    setDeleting(true);
+    setBoardError("");
+    const result = await callApi("/api/admin/leads/bulk-delete", "POST", { ids: selectedHere });
+    setDeleting(false);
+    if (!result.ok) return setBoardError(e("internal_error"));
+    setSelected(new Set());
+    router.refresh();
+  }
 
   const counts = useMemo(() => {
     const map = new Map<LeadStatus, number>();
@@ -151,7 +182,10 @@ export function LeadsView({ leads, demo }: { leads: AdminLead[]; demo: boolean }
           <input
             type="search"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setPage(1);
+            }}
             placeholder={t("search")}
             aria-label={t("search")}
             className="min-h-12 w-full rounded-xl border border-surface-line bg-surface-muted ps-12 pe-4 text-base focus-visible:border-brand-strong"
@@ -165,7 +199,10 @@ export function LeadsView({ leads, demo }: { leads: AdminLead[]; demo: boolean }
                 key={key}
                 type="button"
                 aria-pressed={filter === key}
-                onClick={() => setFilter(key)}
+                onClick={() => {
+                  setFilter(key);
+                  setPage(1);
+                }}
                 className={cn(
                   "inline-flex min-h-10 items-center gap-2 rounded-full border ps-4 pe-3 text-[14px] font-semibold motion-safe:transition-colors",
                   filter === key
@@ -196,10 +233,53 @@ export function LeadsView({ leads, demo }: { leads: AdminLead[]; demo: boolean }
             {t("empty")}
           </p>
         ) : (
+          <div className="grid gap-4">
+          {canDelete && !demo && selectedHere.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-3 rounded-xl border border-danger/30 bg-danger/5 p-3">
+              <span className="text-[15px] font-semibold">{t("selectedCount", { count: selectedHere.length })}</span>
+              <button
+                type="button"
+                disabled={deleting}
+                onClick={deleteSelected}
+                className="inline-flex min-h-10 items-center gap-2 rounded-lg bg-danger ps-4 pe-4 text-[14px] font-semibold text-surface disabled:opacity-50"
+              >
+                <Trash2 className="size-4" aria-hidden="true" />
+                {t("deleteSelected")}
+              </button>
+              <button type="button" onClick={() => setSelected(new Set())} className="min-h-10 rounded-lg border border-surface-line bg-surface ps-4 pe-4 text-[14px] font-semibold">
+                {t("clearSelection")}
+              </button>
+            </div>
+          ) : null}
+          {boardError && view === "table" ? (
+            <p role="alert" className="rounded-xl bg-danger/10 p-3 text-[15px] text-danger">
+              {boardError}
+            </p>
+          ) : null}
           <div className="overflow-x-auto rounded-2xl border border-surface-line bg-surface">
             <table className="w-full min-w-[760px] border-collapse text-start">
               <thead>
                 <tr className="border-b border-surface-line bg-surface-muted text-[14px] text-text-muted">
+                  {canDelete && !demo ? (
+                    <th scope="col" className="ps-5 pe-2 py-3">
+                      <input
+                        type="checkbox"
+                        aria-label={t("selectAll")}
+                        checked={allOnPage}
+                        onChange={() =>
+                          setSelected((current) => {
+                            const next = new Set(current);
+                            for (const lead of pageRows) {
+                              if (allOnPage) next.delete(lead.id);
+                              else next.add(lead.id);
+                            }
+                            return next;
+                          })
+                        }
+                        className="size-5"
+                      />
+                    </th>
+                  ) : null}
                   {(["name", "service", "source", "status", "created"] as const).map((col) => (
                     <th key={col} scope="col" className="ps-5 pe-5 py-3 text-start font-semibold">
                       {t(`columns.${col}`)}
@@ -211,11 +291,22 @@ export function LeadsView({ leads, demo }: { leads: AdminLead[]; demo: boolean }
                 </tr>
               </thead>
               <tbody>
-                {visible.map((lead) => (
+                {pageRows.map((lead) => (
                   <tr
                     key={lead.id}
                     className="border-b border-surface-line last:border-0 motion-safe:transition-colors hover:bg-surface-muted/70"
                   >
+                    {canDelete && !demo ? (
+                      <td className="ps-5 pe-2 py-4">
+                        <input
+                          type="checkbox"
+                          aria-label={t("selectLead", { name: lead.name })}
+                          checked={selected.has(lead.id)}
+                          onChange={() => toggle(lead.id)}
+                          className="size-5"
+                        />
+                      </td>
+                    ) : null}
                     <td className="ps-5 pe-5 py-4">
                       <div className="flex items-center gap-3">
                         <span className="grid size-10 shrink-0 place-items-center rounded-full bg-brand-soft font-bold text-ink-900">
@@ -252,6 +343,8 @@ export function LeadsView({ leads, demo }: { leads: AdminLead[]; demo: boolean }
                 ))}
               </tbody>
             </table>
+          </div>
+          <Pagination page={currentPage} pageSize={pageSize} total={visible.length} onPage={setPage} onPageSize={(size) => { setPageSize(size); setPage(1); }} />
           </div>
         )
       ) : (

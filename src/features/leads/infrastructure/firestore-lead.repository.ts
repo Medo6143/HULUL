@@ -61,6 +61,24 @@ export class FirestoreLeadRepository implements LeadReader, LeadWriter, LeadNote
     await batch.commit();
   }
 
+  async updateDetails(lead: Lead): Promise<void> {
+    await this.db.collection("leads").doc(lead.id).set(toDoc(lead));
+  }
+
+  async delete(ids: string[]): Promise<number> {
+    let deleted = 0;
+    for (const id of ids) {
+      const ref = this.db.collection("leads").doc(id);
+      if (!(await ref.get()).exists) continue;
+      // The lead document together with its notes and status history, then the consent records about it.
+      await this.db.recursiveDelete(ref);
+      const consents = await this.db.collection("consents").where("subjectId", "==", id).get();
+      await Promise.all(consents.docs.map((doc) => doc.ref.delete()));
+      deleted++;
+    }
+    return deleted;
+  }
+
   async findById(id: string): Promise<Lead | null> {
     const snap = await this.db.collection("leads").doc(id).get();
     return snap.exists ? fromDoc(snap.id, snap.data()!) : null;
@@ -69,7 +87,7 @@ export class FirestoreLeadRepository implements LeadReader, LeadWriter, LeadNote
   async list(filter?: { status?: Lead["status"] }): Promise<Lead[]> {
     let q: FirebaseFirestore.Query = this.db.collection("leads");
     if (filter?.status) q = q.where("status", "==", filter.status);
-    const snap = await q.orderBy("createdAt", "desc").limit(200).get();
+    const snap = await q.orderBy("createdAt", "desc").limit(500).get();
     return snap.docs.map((d) => fromDoc(d.id, d.data()));
   }
 

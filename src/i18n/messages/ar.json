@@ -542,7 +542,13 @@
       "moveTo": "نقل إلى...",
       "lostTitle": "ليش خسرنا هذا الطلب؟",
       "lostConfirm": "تأكيد",
-      "lostCancel": "إلغاء"
+      "lostCancel": "إلغاء",
+      "selectAll": "تحديد كل الطلبات في هذه الصفحة",
+      "selectLead": "تحديد طلب {name}",
+      "selectedCount": "تم تحديد {count}",
+      "deleteSelected": "حذف المحدد",
+      "clearSelection": "إلغاء التحديد",
+      "confirmDeleteMany": "حذف {count} طلب نهائيًا مع ملاحظاتهم وسجلهم؟ ما يمكن التراجع."
     },
     "lead": {
       "back": "العودة للعملاء",
@@ -579,7 +585,32 @@
       "confirm": "تأكيد",
       "cancel": "إلغاء",
       "demoActions": "الإجراءات معطّلة في الوضع التجريبي.",
-      "inviteTitle": "دعوة استشارة"
+      "inviteTitle": "دعوة استشارة",
+      "editTitle": "إدارة الطلب",
+      "editData": "تعديل البيانات",
+      "delete": "حذف الطلب",
+      "confirmDelete": "حذف طلب {name} نهائيًا مع ملاحظاته وسجله؟ ما يمكن التراجع.",
+      "edited": "اتحفظت التعديلات.",
+      "editFields": {
+        "name": "الاسم",
+        "phone": "رقم الجوال",
+        "email": "البريد الإلكتروني",
+        "service": "الخدمة",
+        "preferred": "طريقة التواصل المفضلة",
+        "business": "نوع النشاط",
+        "timeline": "موعد البدء",
+        "description": "وصف المشروع"
+      },
+      "editErrors": {
+        "invalid_name": "الاسم لازم حرفين على الأقل",
+        "invalid_phone": "رقم الجوال غير صحيح",
+        "invalid_email": "البريد الإلكتروني غير صحيح",
+        "invalid_input": "البيانات غير صحيحة",
+        "not_found": "ما لقينا هذا الطلب",
+        "unauthorized": "انتهت جلستك. سجّل دخولك من جديد",
+        "forbidden": "هذا الإجراء للمالك فقط",
+        "generic": "صار خطأ. حاول مرة ثانية"
+      }
     },
     "lostReasons": {
       "price": "السعر",
@@ -983,6 +1014,13 @@
       "upcomingBookingsSummary": "{total} موعد مؤكد خلال 14 يومًا",
       "bySource": "الطلبات حسب المصدر",
       "empty": "ما فيه بيانات بعد."
+    },
+    "pagination": {
+      "label": "التنقل بين الصفحات",
+      "showing": "عرض {from} - {to} من {total}",
+      "perPage": "في الصفحة",
+      "previous": "الصفحة السابقة",
+      "next": "الصفحة التالية"
     }
   },
   "booking": {

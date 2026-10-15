@@ -156,3 +156,36 @@ export function changeStatus(
     },
   });
 }
+
+export interface LeadDetailsPatch {
+  name: string;
+  phone: string;
+  email: string;
+  service: LeadService;
+  preferredContact: ContactChannel;
+  businessType: string;
+  timeline: string;
+  description: string;
+}
+
+/** Staff correct a lead's contact and request details. Status, source and consent are not editable here. */
+export function updateLeadDetails(lead: Lead, patch: LeadDetailsPatch, ctx: { now: Date }): Result<Lead, LeadError> {
+  const name = patch.name.trim();
+  if (name.length < 2 || name.length > 100) return err({ code: "invalid_name" });
+  const phone = normalizePhone(patch.phone);
+  if (!PHONE_RE.test(phone)) return err({ code: "invalid_phone" });
+  const email = patch.email.trim();
+  if (email !== "" && !EMAIL_RE.test(email)) return err({ code: "invalid_email" });
+  return ok({
+    ...lead,
+    name,
+    phone,
+    email,
+    service: patch.service,
+    preferredContact: patch.preferredContact,
+    businessType: patch.businessType.trim().slice(0, 100),
+    timeline: patch.timeline,
+    description: patch.description.trim().slice(0, 2000),
+    updatedAt: ctx.now,
+  });
+}

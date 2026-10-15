@@ -64,7 +64,15 @@ import { FirestoreRecipientStore } from "@/features/notifications/infrastructure
 import { ResendEmailSender } from "@/features/notifications/infrastructure/resend-email.sender";
 import { TelegramChatAlerter } from "@/features/notifications/infrastructure/telegram-chat.alerter";
 import { FirestoreContactRepository } from "@/features/contact/infrastructure/firestore-contact.repository";
-import { makeAddLeadNote, makeChangeLeadStatus, makeCreateLead, makeGetLeadDetail, makeListLeads } from "@/features/leads";
+import {
+  makeAddLeadNote,
+  makeChangeLeadStatus,
+  makeCreateLead,
+  makeDeleteLeads,
+  makeGetLeadDetail,
+  makeListLeads,
+  makeUpdateLeadDetails,
+} from "@/features/leads";
 import { createHash, randomBytes } from "node:crypto";
 import { serverEnv } from "./env.server";
 import { getAdminApp } from "./firebase/admin";
@@ -445,6 +453,13 @@ export const container = {
   async changeLeadStatus() {
     const repo = await leadRepository();
     return makeChangeLeadStatus({ reader: repo, writer: repo, clock });
+  },
+  async updateLeadDetails() {
+    const repo = await leadRepository();
+    return makeUpdateLeadDetails({ reader: repo, writer: repo, clock });
+  },
+  async deleteLeads() {
+    return makeDeleteLeads({ writer: await leadRepository() });
   },
   async listLeads() {
     return makeListLeads({ reader: await leadRepository() });

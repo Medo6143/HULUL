@@ -5,6 +5,10 @@ export interface LeadWriter {
   /** Persists the lead and its consent record together. */
   saveNew(lead: Lead, consent: Consent): Promise<void>;
   update(lead: Lead, history: StatusHistoryEntry): Promise<void>;
+  /** Saves corrected contact/request details without touching status or history. */
+  updateDetails(lead: Lead): Promise<void>;
+  /** Permanently deletes leads with their notes, status history, and consent records. Returns how many existed. */
+  delete(ids: string[]): Promise<number>;
 }
 
 export interface LeadReader {

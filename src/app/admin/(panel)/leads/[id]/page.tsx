@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 import { leadWhatsappHref, loadInviteCard, loadLeadDetail } from "@/app/admin/_lib/data";
+import { getStaff } from "@/app/admin/_lib/staff";
 import { LeadDetail } from "@/features/admin";
 
 export default async function AdminLeadPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const found = await loadLeadDetail(id);
   if (!found) notFound();
+  const staff = await getStaff();
   const invite = await loadInviteCard(found.lead.service, found.demo);
   return (
     <LeadDetail
@@ -13,6 +15,7 @@ export default async function AdminLeadPage({ params }: { params: Promise<{ id: 
       demo={found.demo}
       whatsappHref={leadWhatsappHref(found.lead.phone, found.demo)}
       invite={invite}
+      canDelete={staff?.role === "owner"}
     />
   );
 }

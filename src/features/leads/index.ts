@@ -15,3 +15,6 @@ export type { LeadNote } from "./domain/note";
 export type { StatusHistoryEntry } from "./domain/lead";
 export type { LeadNoteStore, LeadHistoryReader } from "./application/ports";
 export { makeListLeads } from "./application/list-leads.usecase";
+export { makeUpdateLeadDetails } from "./application/update-lead-details.usecase";
+export { makeDeleteLeads, MAX_DELETE_BATCH } from "./application/delete-leads.usecase";
+export type { LeadDetailsPatch } from "./domain/lead";
